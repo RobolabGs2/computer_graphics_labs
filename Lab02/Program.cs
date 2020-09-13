@@ -33,6 +33,7 @@ namespace Lab02
         }
     }
 
+    // Только для тестов
     class StubSolution : ISolution
     {
         public StubSolution(Func<Bitmap, Bitmap> transform = null, string name = "Test solution")
@@ -42,7 +43,10 @@ namespace Lab02
         }
 
         public string Name { get; }
-        private readonly PictureBox _pictureBox = new PictureBox();
+        private readonly PictureBox _pictureBox = new PictureBox
+        {
+            SizeMode = PictureBoxSizeMode.Zoom
+        };
         private readonly Func<Bitmap, Bitmap> _transform;
 
         public void Init(Control container)
@@ -58,7 +62,7 @@ namespace Lab02
                 bitmap = _transform(bitmap);
             }
 
-            _pictureBox.Image = bitmap.Fit(_pictureBox.Size);
+            _pictureBox.Image = bitmap;
         }
     }
 

@@ -23,13 +23,14 @@ namespace Lab02
         private void SetBitmap(Bitmap bitmap)
         {
             _originImage = bitmap;
-            mainPictureDisplay.Image = bitmap.Fit(mainPictureDisplay.Size);
+            mainPictureDisplay.Image = bitmap;
             _lastSolution.Item2?.Show(bitmap);
         }
 
         public MainForm(IList<ISolution> solutions)
         {
             InitializeComponent();
+            this.mainPictureDisplay.SizeMode = PictureBoxSizeMode.Zoom;
             foreach (var solution in solutions)
             {
                 var container = new FlowLayoutPanel
