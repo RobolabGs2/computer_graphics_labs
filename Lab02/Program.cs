@@ -21,12 +21,8 @@ namespace Lab02
             Application.SetCompatibleTextRenderingDefault(false);
             var mainForm = new MainForm(new List<ISolution>
             {
-                new StubSolution(), new StubSolution(bitmap =>
-                {
-                    var res = (Bitmap) bitmap.Clone();
-                    res.RotateFlip(RotateFlipType.Rotate90FlipNone);
-                    return res;
-                }, "Поворот"),
+                new StubSolution(), 
+                new ColorToGray(),
                 new EmptySolution()
             });
             Application.Run(mainForm);
