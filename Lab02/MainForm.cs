@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Windows.Forms;
 
 namespace Lab02
@@ -12,19 +13,22 @@ namespace Lab02
         // Установка родительского контейнера
         void Init(Control container);
         // Обработка картинки
-        void Show(Bitmap bitmap);
+        void Show(FastBitmap bitmap);
     }
 
     public partial class MainForm : Form
     {
         private Bitmap _originImage;
         private (Control, ISolution) _lastSolution;
-
         private void SetBitmap(Bitmap bitmap)
         {
             _originImage = bitmap;
             mainPictureDisplay.Image = bitmap;
-            _lastSolution.Item2?.Show(bitmap);
+            if (_lastSolution.Item2 == null) return;
+            using (var wrappedBitmap = new FastBitmap(bitmap, ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb))
+            {
+                _lastSolution.Item2.Show(wrappedBitmap);
+            }
         }
 
         public MainForm(IList<ISolution> solutions)
@@ -46,7 +50,7 @@ namespace Lab02
                     Text = solution.Name,
                     Dock = DockStyle.Top,
                     Width = taskButtonsPanel.Width,
-                    Height = chooseImageButton.Height
+                    Height = chooseImageButton.Height,
                 };
                 button.Click += (sender, args) =>
                 {
@@ -61,7 +65,10 @@ namespace Lab02
                         _lastSolution.Item1.Visible = false;
                     }
                     container.Visible = true;
-                    solution.Show(_originImage);
+                    using (var wrappedBitmap = new FastBitmap(_originImage, ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb))
+                    {
+                        solution.Show(wrappedBitmap);
+                    }
                     _lastSolution = (container, solution);
                 };
                 taskButtonsPanel.Controls.Add(button);
