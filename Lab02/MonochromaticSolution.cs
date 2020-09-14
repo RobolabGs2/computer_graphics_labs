@@ -117,17 +117,16 @@ namespace Lab02
                 var series = new Series(s)
                 {
                     Name = s,
-                    ChartType = SeriesChartType.Column,
+                    ChartType = SeriesChartType.Area,
                     ChartArea = s,
                     Legend = LegendName,
                     Color = g.HistogramColor,
                 };
-                var histogram = g.Histogram;
-                var sum = histogram.Sum();
-                foreach (var y in histogram)
+                foreach (var y in g.Histogram)
                 {
-                    series.Points.Add(y * 100 / sum);
+                    series.Points.Add(y);
                 }
+
 
                 _chart.Series.Add(series);
                 _chart.ChartAreas[s].RecalculateAxesScale();

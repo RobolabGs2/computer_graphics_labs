@@ -17,6 +17,7 @@ namespace Lab02
             var mainForm = new MainForm(new List<ISolution>
             {
                 Grayscale.MakeSolution(),
+                PullRGB.MakeSolution(),
                 new EmptySolution()
             });
             Application.Run(mainForm);
