@@ -10,25 +10,28 @@ namespace Lab02
     {
         // Название будет на кнопке
         string Name { get; }
+
         // Установка родительского контейнера
         void Init(Control container);
+
         // Обработка картинки
         void Show(FastBitmap bitmap);
     }
 
     public partial class MainForm : Form
     {
+        private FastBitmap _originImageFast;
         private Bitmap _originImage;
         private (Control, ISolution) _lastSolution;
+
         private void SetBitmap(Bitmap bitmap)
         {
-            _originImage = bitmap;
+            _originImageFast?.Dispose();
+            _originImage?.Dispose();
+            mainPictureDisplay.Image?.Dispose();
             mainPictureDisplay.Image = bitmap;
-            if (_lastSolution.Item2 == null) return;
-            using (var wrappedBitmap = new FastBitmap(bitmap, ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb))
-            {
-                _lastSolution.Item2.Show(wrappedBitmap);
-            }
+            _originImageFast = new FastBitmap(_originImage = (Bitmap)bitmap.Clone(), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
+            _lastSolution.Item2?.Show(_originImageFast);
         }
 
         public MainForm(IList<ISolution> solutions)
@@ -54,20 +57,21 @@ namespace Lab02
                 };
                 button.Click += (sender, args) =>
                 {
-                    if (_originImage == null)
+                    if (_originImageFast == null)
                     {
                         MessageBox.Show("Нет картинки");
                         return;
                     }
 
+                    if (_lastSolution.Item1 == container)
+                    {
+                        return;
+                    }
+                    container.Visible = true;
+                    solution.Show(_originImageFast);
                     if (_lastSolution.Item1 != null)
                     {
                         _lastSolution.Item1.Visible = false;
-                    }
-                    container.Visible = true;
-                    using (var wrappedBitmap = new FastBitmap(_originImage, ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb))
-                    {
-                        solution.Show(wrappedBitmap);
                     }
                     _lastSolution = (container, solution);
                 };
