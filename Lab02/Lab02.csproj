@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Grayscale.cs" />
+    <Compile Include="HSVConverter.cs" />
     <Compile Include="MonochromaticSolution.cs" />
     <Compile Include="FastBitmap.cs" />
     <Compile Include="MainForm.cs">

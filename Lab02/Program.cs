@@ -17,6 +17,7 @@ namespace Lab02
             var mainForm = new MainForm(new List<ISolution>
             {
                 Grayscale.MakeSolution(),
+                new HSVConverter(),
                 new EmptySolution()
             });
             Application.Run(mainForm);
