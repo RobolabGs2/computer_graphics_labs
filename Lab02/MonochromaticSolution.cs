@@ -126,8 +126,6 @@ namespace Lab02
                 {
                     series.Points.Add(y);
                 }
-
-
                 _chart.Series.Add(series);
                 _chart.ChartAreas[s].RecalculateAxesScale();
             }

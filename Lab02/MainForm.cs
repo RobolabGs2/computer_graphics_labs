@@ -22,6 +22,7 @@ namespace Lab02
         private (Control, ISolution) _lastSolution;
         private void SetBitmap(Bitmap bitmap)
         {
+            _originImage?.Dispose();
             _originImage = bitmap;
             mainPictureDisplay.Image = bitmap;
             if (_lastSolution.Item2 == null) return;

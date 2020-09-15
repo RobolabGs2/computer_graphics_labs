@@ -11,15 +11,12 @@ namespace Lab02
             return new MonochromaticSolution("Выделить RGB",
                 new List<MonochromaticSolution.Monochromatic>
                 {
-                    new MonochromaticSolution.Monochromatic("Red",
-                        (format, src, dst) => dst[2] = src[2],
-                        Color.Red),
-                    new MonochromaticSolution.Monochromatic("Green",
-                        (format, src, dst) => dst[1] = src[1],
-                        Color.Green),
-                    new MonochromaticSolution.Monochromatic("Blue",
-                        (format, src, dst) => dst[0] = src[0],
-                        Color.Blue)
+                    new MonochromaticSolution.Monochromatic("R",
+                        (format, src, dst) => dst[ColorChannel.R] = src[ColorChannel.R], Color.Red),
+                    new MonochromaticSolution.Monochromatic("G",
+                        (format, src, dst) => dst[ColorChannel.G] = src[ColorChannel.G], Color.Green),
+                    new MonochromaticSolution.Monochromatic("B",
+                        (format, src, dst) => dst[ColorChannel.B] = src[ColorChannel.B], Color.Blue)
                 });
         }
     }

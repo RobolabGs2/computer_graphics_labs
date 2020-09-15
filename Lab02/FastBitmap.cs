@@ -4,8 +4,17 @@ using System.Drawing.Imaging;
 
 namespace Lab02
 {
+    // Не enum, потому что используется как индекс при работе с массивами
+    public static class ColorChannel
+    {
+        public const int R = 2;
+        public const int G = 1;
+        public const int B = 0;
+        public const int A = 3;
+    }
     public unsafe class FastBitmap : IDisposable
     {
+
         private readonly Bitmap _bitmap;
 
         public readonly BitmapData Data;
@@ -98,9 +107,9 @@ namespace Lab02
             {
                 case PixelFormat.Format24bppRgb:
                 case PixelFormat.Format32bppRgb:
-                    return Color.FromArgb(pixel[0], pixel[1], pixel[2]);
+                    return Color.FromArgb(pixel[ColorChannel.R], pixel[ColorChannel.G], pixel[ColorChannel.B]);
                 case PixelFormat.Format32bppArgb:
-                    return Color.FromArgb(pixel[3], pixel[0], pixel[1], pixel[2]);
+                    return Color.FromArgb(pixel[ColorChannel.A], pixel[ColorChannel.R], pixel[ColorChannel.G], pixel[ColorChannel.B]);
                 default:
                     throw new NotSupportedException($"Unsupported pixel format:{format}");
             }
@@ -117,15 +126,15 @@ namespace Lab02
             {
                 case PixelFormat.Format24bppRgb:
                 case PixelFormat.Format32bppRgb:
-                    pixel[0] = color.R;
-                    pixel[1] = color.G;
-                    pixel[2] = color.B;
+                    pixel[ColorChannel.R] = color.R;
+                    pixel[ColorChannel.G] = color.G;
+                    pixel[ColorChannel.B] = color.B;
                     break;
                 case PixelFormat.Format32bppArgb:
-                    pixel[0] = color.R;
-                    pixel[1] = color.G;
-                    pixel[2] = color.B;
-                    pixel[3] = color.A;
+                    pixel[ColorChannel.R] = color.R;
+                    pixel[ColorChannel.G] = color.G;
+                    pixel[ColorChannel.B] = color.B;
+                    pixel[ColorChannel.A] = color.A;
                     break;
                 default:
                     throw new NotSupportedException($"Unsupported pixel format:{format}");
