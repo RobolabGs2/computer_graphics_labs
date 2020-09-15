@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing;
+using System.IO;
+using System.Drawing.Imaging;
 
 namespace Lab02
 {
@@ -58,7 +60,9 @@ namespace Lab02
                 container.Controls.Add(label);
                 tracks.Add(track);
             }
-            container.Controls.Add(new Button {Text = "Save" });
+            Button btn = new Button { Text = "Save" };
+            btn.Click += new EventHandler(SaveClick);
+            container.Controls.Add(btn);
         }
 
         private void RefrashPictures(PictureBox[] pbs, Func<Color, Color>[] map)
@@ -185,6 +189,30 @@ namespace Lab02
         {
             this.bitmap = bitmap;
             TrackBarScroll(null, null);
+        }
+
+        private void SaveClick(object sender, EventArgs e)
+        {
+            SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+
+            saveFileDialog1.Filter = "txt files (*.png)|*.png";
+            saveFileDialog1.FilterIndex = 2;
+            saveFileDialog1.RestoreDirectory = true;
+
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                string fname = saveFileDialog1.FileName;
+                if (fname != null)
+                {
+                    int hue = tracks[0].Value;
+                    int saturation = tracks[1].Value;
+                    int value = tracks[2].Value;
+
+                    bitmap.Map(new Func<Color, Color>[]{
+                        col =>  HSVColor(col, hue, saturation, value)})[0].
+                        Save(fname, ImageFormat.Png);
+                }
+            }
         }
     }
 }
