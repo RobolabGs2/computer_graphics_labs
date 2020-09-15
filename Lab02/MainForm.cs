@@ -52,7 +52,7 @@ namespace Lab02
                 {
                     Text = solution.Name,
                     Dock = DockStyle.Top,
-                    Width = taskButtonsPanel.Width,
+                    Width = taskButtonsPanel.Width - 8,
                     Height = chooseImageButton.Height,
                 };
                 button.Click += (sender, args) =>
