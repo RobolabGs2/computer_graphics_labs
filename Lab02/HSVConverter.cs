@@ -186,6 +186,8 @@ namespace Lab02
 
         public void Show(FastBitmap bitmap)
         {
+            for (int i = 0; i < 3; ++i)
+                tracks[i].Value = scrollRange / 2;
             this.bitmap = bitmap;
             TrackBarScroll(null, null);
         }
@@ -194,7 +196,7 @@ namespace Lab02
         {
             SaveFileDialog saveFileDialog1 = new SaveFileDialog();
 
-            saveFileDialog1.Filter = "txt files (*.png)|*.png";
+            saveFileDialog1.Filter = "png files (*.png)|*.png";
             saveFileDialog1.FilterIndex = 2;
             saveFileDialog1.RestoreDirectory = true;
 
