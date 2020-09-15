@@ -83,6 +83,7 @@ namespace Lab02
 
                     Width = pictureWithDesc.Width - 6,
                     Height = 16,
+                    TextAlign = ContentAlignment.MiddleCenter
                 };
                 pictureWithDesc.Controls.Add(textBox);
                 var pict = new PictureBox

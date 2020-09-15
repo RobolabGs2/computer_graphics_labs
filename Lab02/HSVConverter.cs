@@ -31,6 +31,7 @@ namespace Lab02
             int width = container.Width;
             int height = container.Height;
 
+            string[] labels = { "Hue", "Saturation", "Value", "Mix" };
             for (int i = 0; i < 4; ++i)
             {
                 var pict = new PictureBox
@@ -40,11 +41,17 @@ namespace Lab02
                     Height = height / 3,
                 };
 
+                if (i % 2 == 0)
+                {
+                    var label1 = new Label { Width = width / 2 - 10, Text = labels[i], TextAlign = ContentAlignment.MiddleCenter };
+                    var label2 = new Label { Width = width / 2 - 10, Text = labels[i + 1], TextAlign = ContentAlignment.MiddleCenter};
+                    container.Controls.Add(label1);
+                    container.Controls.Add(label2);
+                }
                 container.Controls.Add(pict);
                 pictures.Add(pict);
             }
 
-            string[] labels = { "Hue", "Saturation", "Brightness" };
             for (int i = 0; i < 3; ++i)
             {
                 var track = new TrackBar
@@ -112,7 +119,7 @@ namespace Lab02
         {
             int max = Math.Max(col.R, Math.Max(col.G, col.B));
             int min = Math.Min(col.R, Math.Min(col.G, col.B));
-            if (min == max) return 0;
+            if (min == max) return 180;
             int result;
             if (max == col.R)
             {
@@ -151,12 +158,14 @@ namespace Lab02
 
         static void SaturationColor(FastBitmap.MyColor src, FastBitmap.MyColor dst, int depth)
         {
-            dst.Set(0, (byte)Math.Round(Saturation(src, depth) * 255 / 100), 0);
+            byte res = (byte)Math.Round(Saturation(src, depth) * 255 / 100);
+            dst.Set(res, res, res);
         }
 
         static void ValueColor(FastBitmap.MyColor src, FastBitmap.MyColor dst, int depth)
         {
-            dst.Set(0, (byte)Math.Round(Value(src, depth) * 255 / 100), 0);
+            byte res = (byte)Math.Round(Value(src, depth) * 255 / 100);
+            dst.Set(res, res, res);
         }
 
         static void HSV(FastBitmap.MyColor dst, int H, double S, double V)
