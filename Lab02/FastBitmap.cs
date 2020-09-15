@@ -31,6 +31,25 @@ namespace Lab02
             Start = (byte*) Data.Scan0;
         }
 
+        public unsafe struct MyColor
+        {
+            private byte* data;
+            public MyColor(byte* data)
+            {
+                this.data = data;
+            }
+
+            public byte R => data[ColorChannel.R];
+            public byte G => data[ColorChannel.G];
+            public byte B => data[ColorChannel.B];
+            public void Set(byte r, byte g, byte b)
+            {
+                data[ColorChannel.R] = r;
+                data[ColorChannel.G] = g;
+                data[ColorChannel.B] = b;
+            }
+        }
+
         public delegate void PixelMap(PixelFormat format, byte* src, byte* dst);
 
         public Bitmap[] Map(params PixelMap[] map)
@@ -63,6 +82,18 @@ namespace Lab02
                 write[i].Dispose();
 
             return result;
+        }
+
+        public Bitmap[] Map(params Action<PixelFormat, MyColor, MyColor>[] map)
+        {
+            PixelMap[] pixmap = new PixelMap[map.Length];
+            for (int i = 0; i < map.Length; ++i)
+            {
+                var func = map[i];
+                pixmap[i] = (pc, src, dst) => 
+                        func(pc, new MyColor(src), new MyColor(dst));
+            }
+            return Map(pixmap);
         }
 
         public Bitmap[] Map(params Func<Color, Color>[] map)

@@ -10,7 +10,7 @@ using System.Drawing.Imaging;
 
 namespace Lab02
 {
-    class HSVConverter: ISolution
+    class HSVConverter : ISolution
     {
         const int scrollRange = 100;
 
@@ -65,10 +65,10 @@ namespace Lab02
             container.Controls.Add(btn);
         }
 
-        private void RefrashPictures(PictureBox[] pbs, Func<Color, Color>[] map)
+        private void RefrashPictures(PictureBox[] pbs, Action<PixelFormat, FastBitmap.MyColor, FastBitmap.MyColor>[] map)
         {
             Bitmap[] bmps = bitmap.Map(map);
-            for(int i = 0; i < pbs.Length; ++i)
+            for (int i = 0; i < pbs.Length; ++i)
             {
                 pbs[i].Image?.Dispose();
                 pbs[i].Image = bmps[i];
@@ -77,15 +77,15 @@ namespace Lab02
 
         private void TrackBarScroll(object sender, EventArgs e)
         {
-            int hue =        tracks[0].Value;
+            int hue = tracks[0].Value;
             int saturation = tracks[1].Value;
-            int value =      tracks[2].Value;
+            int value = tracks[2].Value;
 
-            Func<Color, Color>[] funcs = {
-                col => HueColor(col, hue),
-                col => SaturationColor(col, saturation),
-                col => ValueColor(col, value),
-                col => HSVColor(col, hue, saturation, value),
+            Action<PixelFormat, FastBitmap.MyColor, FastBitmap.MyColor>[] funcs = {
+                (fmt, src, dst) => HueColor(src, dst, hue),
+                (fmt, src, dst) => SaturationColor(src, dst, saturation),
+                (fmt, src, dst) => ValueColor(src, dst, value),
+                (fmt, src, dst) => HSVColor(src, dst, hue, saturation, value)
             };
 
             for (int i = 0; i < 3; ++i)
@@ -93,7 +93,7 @@ namespace Lab02
                 {
                     RefrashPictures(
                       new PictureBox[] { pictures[i], pictures[3] },
-                      new Func<Color, Color>[] { funcs[i], funcs[3] });
+                      new Action<PixelFormat, FastBitmap.MyColor, FastBitmap.MyColor>[] { funcs[i], funcs[3] });
                     return;
                 }
             RefrashPictures(pictures.ToArray(), funcs);
@@ -108,7 +108,7 @@ namespace Lab02
             return source;
         }
 
-        static int Hue(Color col, int depth)
+        static int Hue(FastBitmap.MyColor col, int depth)
         {
             int max = Math.Max(col.R, Math.Max(col.G, col.B));
             int min = Math.Min(col.R, Math.Min(col.G, col.B));
@@ -128,7 +128,7 @@ namespace Lab02
             return result;
         }
 
-        static double Saturation(Color col, int depth)
+        static double Saturation(FastBitmap.MyColor col, int depth)
         {
             int max = Math.Max(col.R, Math.Max(col.G, col.B));
             int min = Math.Min(col.R, Math.Min(col.G, col.B));
@@ -138,51 +138,50 @@ namespace Lab02
             return Scale(result, depth);
         }
 
-        static double Value(Color col, int depth)
+        static double Value(FastBitmap.MyColor col, int depth)
         {
-            double result =  Math.Max(col.R, Math.Max(col.G, col.B)) * 100 / (double) 255;
+            double result = Math.Max(col.R, Math.Max(col.G, col.B)) * 100 / (double)255;
             return Scale(result, depth);
         }
 
-        static Color HueColor(Color col, int depth)
+        static void HueColor(FastBitmap.MyColor src, FastBitmap.MyColor dst, int depth)
         {
-            return HSV(Hue(col, depth), 100, 100);
+             HSV(dst, Hue(src, depth), 100, 100);
         }
 
-        static Color SaturationColor(Color col, int depth)
+        static void SaturationColor(FastBitmap.MyColor src, FastBitmap.MyColor dst, int depth)
         {
-            return Color.FromArgb(0, (int)Math.Round(Saturation(col, depth) * 255 / 100), 0);
+            dst.Set(0, (byte)Math.Round(Saturation(src, depth) * 255 / 100), 0);
         }
 
-        static Color ValueColor(Color col, int depth)
+        static void ValueColor(FastBitmap.MyColor src, FastBitmap.MyColor dst, int depth)
         {
-            return Color.FromArgb(0,(int)Math.Round(Value(col, depth) * 255 / 100), 0);
+            dst.Set(0, (byte)Math.Round(Value(src, depth) * 255 / 100), 0);
         }
 
-        static Color HSV(int H, double S, double V)
+        static void HSV(FastBitmap.MyColor dst, int H, double S, double V)
         {
             int Hi = (H / 60) % 6;
             double Vmin = (100 - S) * V / 100;
             double a = (V - Vmin) * (H % 60) / 60;
-            int Vinc = (int)Math.Round((Vmin + a) * 255 / 100);
-            int Vdec = (int)Math.Round((V - a) * 255 / 100);
-            int iVmin = (int)Math.Round(Vmin * 255 / 100);
-            int iV = (int)Math.Round(V * 255 / 100);
+            byte Vinc = (byte)Math.Round((Vmin + a) * 255 / 100);
+            byte Vdec = (byte)Math.Round((V - a) * 255 / 100);
+            byte iVmin = (byte)Math.Round(Vmin * 255 / 100);
+            byte iV = (byte)Math.Round(V * 255 / 100);
             switch (Hi)
             {
-                case (0): return Color.FromArgb(iV, Vinc, iVmin);
-                case (1): return Color.FromArgb(Vdec, iV, iVmin);
-                case (2): return Color.FromArgb(iVmin, iV, Vinc);
-                case (3): return Color.FromArgb(iVmin, Vdec, iV);
-                case (4): return Color.FromArgb(Vinc, iVmin, iV);
-                case (5): return Color.FromArgb(iV, iVmin, Vdec);
-                default: return Color.Black;
+                case (0): dst.Set(iV, Vinc, iVmin); return;
+                case (1): dst.Set(Vdec, iV, iVmin); return;
+                case (2): dst.Set(iVmin, iV, Vinc); return;
+                case (3): dst.Set(iVmin, Vdec, iV); return;
+                case (4): dst.Set(Vinc, iVmin, iV); return;
+                case (5): dst.Set(iV, iVmin, Vdec); return;
             }
         }
 
-        static Color HSVColor(Color col, int h, int s, int v)
+        static void HSVColor(FastBitmap.MyColor src, FastBitmap.MyColor dst, int h, int s, int v)
         {
-            return HSV(Hue(col, h), Saturation(col, s), Value(col, v));
+            HSV(dst, Hue(src, h), Saturation(src, s), Value(src, v));
         }
 
         public void Show(FastBitmap bitmap)
@@ -208,8 +207,8 @@ namespace Lab02
                     int saturation = tracks[1].Value;
                     int value = tracks[2].Value;
 
-                    bitmap.Map(new Func<Color, Color>[]{
-                        col =>  HSVColor(col, hue, saturation, value)})[0].
+                    bitmap.Map(new Action<PixelFormat, FastBitmap.MyColor, FastBitmap.MyColor>[]{
+                        (fmt, src, dst) => HSVColor(src, dst, hue, saturation, value)})[0].
                         Save(fname, ImageFormat.Png);
                 }
             }
