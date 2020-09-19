@@ -17,6 +17,7 @@ namespace Lab03
         IDrawingTool Selected;
         ColorBar colorBar;
         Bitmap mainBitmap;
+        LinkedList<Bitmap> buffer = new LinkedList<Bitmap>();
 
         public mainForm(List<IDrawingTool> tools)
         {
@@ -75,7 +76,15 @@ namespace Lab03
         private void mainPictureBox_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
+            {
+                buffer.AddLast((Bitmap)mainBitmap.Clone());
+                if (buffer.Count > 100)
+                {
+                    buffer.First().Dispose();
+                    buffer.RemoveFirst();
+                }
                 CallForBitmap(bmp => Selected.MoseDown(e.X, e.Y, bmp));
+            }
             else if (e.Button == MouseButtons.Right)
                 CallForBitmap(bmp => { Selected.Start(bmp); });
         }
@@ -92,6 +101,17 @@ namespace Lab03
                 return;
             if (e.Button == MouseButtons.Left)
                 CallForBitmap(bmp => Selected.MoseMove(e.X, e.Y, bmp));
+        }
+
+        private void mainForm_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == 26 && Control.ModifierKeys == Keys.Control && buffer.Count > 0)
+            {
+                mainBitmap?.Dispose();
+                mainBitmap = buffer.Last();
+                buffer.RemoveLast();
+                mainPictureBox.Image = mainBitmap;
+            }
         }
     }
 

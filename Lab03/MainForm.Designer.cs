@@ -70,8 +70,10 @@
             this.Controls.Add(this.toolPanel);
             this.Controls.Add(this.colorPictureBox);
             this.Controls.Add(this.mainPictureBox);
+            this.KeyPreview = true;
             this.Name = "mainForm";
             this.Text = "Lab03";
+            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.mainForm_KeyPress);
             ((System.ComponentModel.ISupportInitialize)(this.mainPictureBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.colorPictureBox)).EndInit();
             this.ResumeLayout(false);
