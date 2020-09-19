@@ -23,6 +23,8 @@ namespace Lab03
         // Bytes per pixel
         public readonly int Bpp;
         public readonly byte* Start;
+        public int Width => _bitmap.Width;
+        public int Height => _bitmap.Height;
 
         public FastBitmap(Bitmap bitmap, ImageLockMode lockMode, PixelFormat pixelFormat)
         {

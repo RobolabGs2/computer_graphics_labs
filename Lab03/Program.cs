@@ -18,7 +18,8 @@ namespace Lab03
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new mainForm(new List<IDrawingTool>{
                 new PixelDrawing(),
-                new LineDrawing()
+                new LineDrawing(),
+                new FillTool()
             }));
         }
     }
