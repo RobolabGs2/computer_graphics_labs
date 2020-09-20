@@ -34,7 +34,7 @@ namespace Lab03
             container.Controls.Add(checkbox = new CheckBox { Text = "Draw", Checked = false});
         }
 
-        public void MoseDown(int x, int y, FastBitmap bitmap)
+        public void MouseDown(int x, int y, FastBitmap bitmap)
         {
             if (lastPoint != null)
                 DrawLine(x, y, bitmap);
@@ -53,13 +53,13 @@ namespace Lab03
             }
         }
 
-        public void MoseMove(int x, int y, FastBitmap bitmap)
+        public void MouseMove(int x, int y, FastBitmap bitmap)
         {
             if (checkbox.Checked)
-                MoseDown(x, y, bitmap);
+                MouseDown(x, y, bitmap);
         }
 
-        public void MoseUp(int x, int y, FastBitmap bitmap)
+        public void MouseUp(int x, int y, FastBitmap bitmap)
         {
             if (checkbox.Checked)
                 lastPoint = null;

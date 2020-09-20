@@ -18,11 +18,11 @@ namespace Lab03
         // Установка родительского контейнера
         void Init(Control container);
         //  Нажатие мышки по битмапу
-        void MoseDown(int x, int y, FastBitmap bitmap);
+        void MouseDown(int x, int y, FastBitmap bitmap);
         //  Отпускание мышки
-        void MoseUp(int x, int y, FastBitmap bitmap);
+        void MouseUp(int x, int y, FastBitmap bitmap);
         //  Шевеление мышки по битмапу
-        void MoseMove(int x, int y, FastBitmap bitmap);
+        void MouseMove(int x, int y, FastBitmap bitmap);
         //  Выбран инструмент
         void Start(FastBitmap bitmap);
     }

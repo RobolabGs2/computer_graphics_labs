@@ -83,7 +83,7 @@ namespace Lab03
                     buffer.First().Dispose();
                     buffer.RemoveFirst();
                 }
-                CallForBitmap(bmp => Selected.MoseDown(e.X, e.Y, bmp));
+                CallForBitmap(bmp => Selected.MouseDown(e.X, e.Y, bmp));
             }
             else if (e.Button == MouseButtons.Right)
                 CallForBitmap(bmp => { Selected.Start(bmp); });
@@ -92,7 +92,7 @@ namespace Lab03
         private void mainPictureBox_MouseUp(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
-                CallForBitmap(bmp => Selected.MoseUp(e.X, e.Y, bmp));
+                CallForBitmap(bmp => Selected.MouseUp(e.X, e.Y, bmp));
         }
 
         private void mainPictureBox_MouseMove(object sender, MouseEventArgs e)
@@ -100,7 +100,7 @@ namespace Lab03
             if (e.X < 0 || e.Y < 0 || e.X >= mainBitmap.Width || e.Y >= mainBitmap.Height)
                 return;
             if (e.Button == MouseButtons.Left)
-                CallForBitmap(bmp => Selected.MoseMove(e.X, e.Y, bmp));
+                CallForBitmap(bmp => Selected.MouseMove(e.X, e.Y, bmp));
         }
 
         private void mainForm_KeyPress(object sender, KeyPressEventArgs e)

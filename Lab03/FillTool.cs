@@ -78,7 +78,7 @@ namespace Lab03
             }
         }
 
-        public void MoseDown(int x, int y, FastBitmap bitmap)
+        public void MouseDown(int x, int y, FastBitmap bitmap)
         {
             if (!usePicture.Checked)
             {
@@ -97,10 +97,10 @@ namespace Lab03
 
         }
 
-        public void MoseMove(int x, int y, FastBitmap bitmap)
+        public void MouseMove(int x, int y, FastBitmap bitmap)
         { }
 
-        public void MoseUp(int x, int y, FastBitmap bitmap)
+        public void MouseUp(int x, int y, FastBitmap bitmap)
         { }
 
         public void Start(FastBitmap bitmap)
