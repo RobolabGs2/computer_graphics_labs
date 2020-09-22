@@ -19,7 +19,8 @@ namespace Lab03
             Application.Run(new mainForm(new List<IDrawingTool>{
                 new PixelDrawing(),
                 new LineDrawing(),
-                new FillTool()
+                new FillTool(),
+                new OutlineTool(),
             }));
         }
     }

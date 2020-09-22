@@ -58,6 +58,7 @@
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="IDrawingTool.cs" />
+    <Compile Include="OutlineTool.cs" />
     <Compile Include="PixelDrawing.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
