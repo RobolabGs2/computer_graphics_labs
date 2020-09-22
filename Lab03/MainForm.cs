@@ -18,7 +18,7 @@ namespace Lab03
         ColorBar colorBar;
         Bitmap mainBitmap;
         LinkedList<Bitmap> buffer = new LinkedList<Bitmap>();
-        private int Scale = 3;
+        private int Scale = 1;
         public mainForm(List<IDrawingTool> tools)
         {
             InitializeComponent();

@@ -157,14 +157,14 @@ namespace Lab03
             var start = OutlineSearcher.StartOutline(x, y, bitmap);
             if (!start.HasValue)
             {
-                _logs.Text = "Граница не найдена";
+                _logs.Text = "Граница за рамками битмапа";
                 return;
             }
 
             try
             {
                 var outline = OutlineSearcher.Outline(start.Value, bitmap);
-                StringBuilder logsBuilder = new StringBuilder();
+                var logsBuilder = new StringBuilder();
                 logsBuilder.AppendLine($"Точек в границе: {outline.Count}");
                 logsBuilder.AppendLine($"{"X",6}|{"Y",6}");
                 foreach (var point in outline)
@@ -195,6 +195,7 @@ namespace Lab03
 
         public void Start(FastBitmap bitmap)
         {
+            _logs.Clear();
         }
     }
 }
