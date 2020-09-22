@@ -90,7 +90,8 @@ namespace Lab03
                 return;
             }
             FastBitmap fastBitmap = new FastBitmap(bmp, ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
-            Fill(x, y, bitmap, (X, Y) => fastBitmap.GetPixel(X % fastBitmap.Width, Y % fastBitmap.Height));
+            Fill(x, y, bitmap, (X, Y) => fastBitmap.GetPixel((fastBitmap.Width * bitmap.Width + X - x) % fastBitmap.Width, 
+                (fastBitmap.Height * bitmap.Height + Y - y) % fastBitmap.Height));
             fastBitmap.Dispose();
 
         }
