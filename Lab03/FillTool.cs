@@ -57,10 +57,8 @@ namespace Lab03
         {
             int width = bitmap.Width;
             int height = bitmap.Height;
+            
             bool[,] flags = new bool[width, height];
-            for (int i = 0; i < bitmap.Width; ++i)
-                for (int j = 0; j < bitmap.Height; ++j)
-                    flags[i, j] = false;
             Color replaced = bitmap.GetPixel(x, y);
             Stack<Point> points = new Stack<Point>();
             points.Push(new Point(x, y));
