@@ -143,7 +143,7 @@ namespace Lab03
 
         public void TrySetPixel(int x, int y, Color color)
         {
-            if (x < this.Width && x > 0 && y > 0 && y < this.Height)
+            if (x < this.Width && x >= 0 && y >= 0 && y < this.Height)
                     SetPixel(x, y, color);
         }
 
