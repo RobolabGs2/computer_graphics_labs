@@ -18,7 +18,7 @@ namespace Lab03
         ColorBar colorBar;
         Bitmap mainBitmap;
         LinkedList<Bitmap> buffer = new LinkedList<Bitmap>();
-
+        private int Scale = 3;
         public mainForm(List<IDrawingTool> tools)
         {
             InitializeComponent();
@@ -28,7 +28,8 @@ namespace Lab03
                 Color.Black, Color.Red, Color.Green, Color.DarkBlue, Color.Yellow,
                 Color.White, Color.Orange, Color.Lime, Color.Blue, Color.Gray
             });
-            mainBitmap = new Bitmap(mainPictureBox.Width, mainPictureBox.Height);
+            mainPictureBox.SizeMode = PictureBoxSizeMode.Zoom;
+            mainBitmap = new Bitmap(mainPictureBox.Width/Scale, mainPictureBox.Height/Scale);
             CallForBitmap(bmp => { });
 
             foreach (IDrawingTool tool in tools)
@@ -83,7 +84,7 @@ namespace Lab03
                     buffer.First().Dispose();
                     buffer.RemoveFirst();
                 }
-                CallForBitmap(bmp => Selected.MouseDown(e.X, e.Y, bmp));
+                CallForBitmap(bmp => Selected.MouseDown(e.X/Scale, e.Y/Scale, bmp));
             }
             else if (e.Button == MouseButtons.Right)
                 CallForBitmap(bmp => { Selected.Start(bmp); });
@@ -92,15 +93,15 @@ namespace Lab03
         private void mainPictureBox_MouseUp(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
-                CallForBitmap(bmp => Selected.MouseUp(e.X, e.Y, bmp));
+                CallForBitmap(bmp => Selected.MouseUp(e.X/Scale, e.Y/Scale, bmp));
         }
 
         private void mainPictureBox_MouseMove(object sender, MouseEventArgs e)
         {
-            if (e.X < 0 || e.Y < 0 || e.X >= mainBitmap.Width || e.Y >= mainBitmap.Height)
+            if (e.X < 0 || e.Y < 0 || e.X >= mainPictureBox.Width || e.Y >= mainPictureBox.Height)
                 return;
             if (e.Button == MouseButtons.Left)
-                CallForBitmap(bmp => Selected.MouseMove(e.X, e.Y, bmp));
+                CallForBitmap(bmp => Selected.MouseMove(e.X/Scale, e.Y/Scale, bmp));
         }
 
         private void mainForm_KeyPress(object sender, KeyPressEventArgs e)
