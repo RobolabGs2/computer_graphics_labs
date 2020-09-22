@@ -10,58 +10,169 @@ namespace Lab03
 {
     class LineDrawing : IDrawingTool
     {
-        class NullablePoint
-        {
-            public int X { get; set; }
-            public int Y { get; set; }
-            public NullablePoint(int x, int y)
-            {
-                X = x;
-                Y = y;
-            }
-        }
-
         public string Name => "Line";
 
-        NullablePoint lastPoint = null;
+        Point? lastPoint = null;
 
-        CheckBox checkbox;
+        CheckBox drawing; //включение/выключение свободного рисования
+
+        CheckBox smoothing; //включение/выключение сглаживания(алгоритм Ву)
 
         public Color Color { set; get; }
+        static void Swap<T>(ref T lhs, ref T rhs)
+        {
+            T temp;
+            temp = lhs;
+            lhs = rhs;
+            rhs = temp;
+        }
 
         public void Init(Control container)
         {
-            container.Controls.Add(checkbox = new CheckBox { Text = "Draw", Checked = false});
+            container.Controls.Add(drawing = new CheckBox { Text = "Draw", Checked = false });
+            container.Controls.Add(smoothing = new CheckBox { Text = "Smoothing", Checked = false});
         }
-
+       
         public void MouseDown(int x, int y, FastBitmap bitmap)
         {
             if (lastPoint != null)
-                DrawLine(x, y, bitmap);
-            lastPoint = new NullablePoint(x, y);
+                if (smoothing.Checked)
+                    WuLine(x, y, bitmap);
+                else BresenhamLine(x, y, bitmap);
+            lastPoint = new Point(x, y);
         }
-        private void DrawLine(double x, double y, FastBitmap bitmap)
+        private void BresenhamLine(int x0, int y0, FastBitmap bitmap)
         {
-            double dx = lastPoint.X - x;
-            double dy = lastPoint.Y - y;
-            double len = Math.Sqrt(dx * dx + dy * dy);
-            for(int i = 0; i < len; ++i)
+            int x1 = lastPoint.Value.X;
+            int y1 = lastPoint.Value.Y;
+
+            int deltax = Math.Abs(x1 - x0);
+            int deltay = Math.Abs(y1 - y0);
+
+            int stepx = x0 < x1 ? 1 : -1; //направление роста координат (шаг)
+            int stepy = y0 < y1 ? 1 : -1; 
+            int error = (deltax > deltay ? deltax : -deltay) / 2; //эффективнее работает
+            int deltaerr;
+            for (; ;)
             {
-                bitmap.SetPixel((int)Math.Round(x) , (int)Math.Round(y), Color);
-                x += dx / len;
-                y += dy / len;
+                bitmap.SetPixel(x0, y0, Color);
+                if (x0 == x1 && y0 == y1) break; //выход, когда пришли от начала к конечной точке
+                deltaerr = error;
+                if (deltaerr > -deltax)
+                {
+                    error -= deltay;
+                    x0 += stepx; 
+                }
+                if (deltaerr < deltay)
+                {
+                    error += deltax;
+                    y0 += stepy; 
+                }
             }
+                
         }
 
+        int Round(double x) 
+        { 
+            return (int)(x + 0.5); 
+        }
+
+        double getFracPart(double x)
+        {
+            if (x < 0) return (1 - (x - Math.Floor(x)));
+            return (x - Math.Floor(x));
+        }
+
+        //возвращает новый цвет для пикселя в соответствии с интенсивностью 
+        Color getColor(double intensity, Color c)
+        {
+            return Double.IsNaN(intensity) ? Color : Color.FromArgb((int)(c.R * (1 - intensity) + Color.R * intensity),
+                (int)(c.G * (1 - intensity) + Color.G * intensity),
+                (int)(c.B * (1 - intensity) + Color.B * intensity));
+        }
+
+        public void WuLine(int x0, int y0, FastBitmap bitmap)
+        {
+            int x1 = lastPoint.Value.X;
+            int y1 = lastPoint.Value.Y;
+
+            bool angle = Math.Abs(y1 - y0) > Math.Abs(x1 - x0); // проверка угла наклона
+            if (angle)
+            {
+                Swap(ref x0, ref y0);
+                Swap(ref x1, ref y1);
+            }
+            if (x0 > x1) //направление по ox
+            {
+                Swap(ref x0, ref x1);
+                Swap(ref y0, ref y1);
+            }
+
+            //закрашиваем пиксель для начальной точки
+            double deltax = x1 - x0;
+            double deltay = y1 - y0;
+            double gradient = deltay / deltax;
+
+            double xEnd = Round(x0);
+            double yEnd = y0 + gradient * (xEnd - x0);
+            double xGap = 1 - getFracPart(x0 + 0.5);
+            double xPixel1 = xEnd;
+            double yPixel1 = (int)yEnd;
+
+            if (angle)
+            {
+                bitmap.SetPixel((int)yPixel1, (int)xPixel1, getColor((1 - getFracPart(yEnd)) * xGap, bitmap.GetPixel((int)yPixel1, (int)xPixel1)));
+                bitmap.SetPixel((int)yPixel1 + 1, (int)xPixel1, getColor(getFracPart(yEnd) * xGap, bitmap.GetPixel((int)yPixel1 + 1, (int)xPixel1)));
+            }
+            else
+            {
+                bitmap.SetPixel((int)xPixel1, (int)yPixel1, getColor((1 - getFracPart(yEnd)) * xGap, bitmap.GetPixel((int)xPixel1, (int)yPixel1)));
+                bitmap.SetPixel((int)xPixel1, (int)yPixel1 + 1, getColor(getFracPart(yEnd) * xGap, bitmap.GetPixel((int)xPixel1, (int)yPixel1 + 1)));
+            }
+            double y = yEnd + gradient;
+
+            //закрашиваем пиксель для конечной точки
+            xEnd = Round(x1);
+            yEnd = y1 + gradient * (xEnd - x1);
+            xGap = getFracPart(x1 + 0.5);
+            double xPixel2 = xEnd;
+            double yPixel2 = (int)yEnd;
+            if (angle)
+            {
+                bitmap.SetPixel((int)yPixel2, (int)xPixel2, getColor((1 - getFracPart(yEnd)) * xGap, bitmap.GetPixel((int)yPixel2, (int)xPixel2)));
+                bitmap.SetPixel((int)yPixel2 + 1, (int)xPixel2, getColor(getFracPart(yEnd) * xGap, bitmap.GetPixel((int)yPixel2 + 1, (int)xPixel2)));
+            }
+            else
+            {
+                bitmap.SetPixel((int)xPixel2, (int)yPixel2, getColor((1 - getFracPart(yEnd)) * xGap, bitmap.GetPixel((int)xPixel2, (int)yPixel2)));
+                bitmap.SetPixel((int)xPixel2, (int)yPixel2 + 1, getColor(getFracPart(yEnd) * xGap, bitmap.GetPixel((int)xPixel2, (int)yPixel2 + 1)));
+            }
+
+            //закрашиваем пиксели от начала до конца 
+            if (angle)
+                for (int x = (int)(xPixel1 + 1); x <= xPixel2 - 1; x++)
+                {
+                    bitmap.SetPixel((int)y, x, getColor(1 - (y - (int)y), bitmap.GetPixel((int)y, x)));
+                    bitmap.SetPixel((int)y + 1, x, getColor(y - (int)y, bitmap.GetPixel((int)y + 1, x)));
+                    y += gradient;
+                }
+            else
+                for (int x = (int)(xPixel1 + 1); x <= xPixel2 - 1; x++)
+                {
+                    bitmap.SetPixel(x, (int)y, getColor(1 - (y - (int)y), bitmap.GetPixel(x, (int)y)));
+                    bitmap.SetPixel(x, (int)y + 1, getColor(y - (int)y, bitmap.GetPixel((int)x, (int)y + 1)));
+                    y += gradient;
+                }
+        }
         public void MouseMove(int x, int y, FastBitmap bitmap)
         {
-            if (checkbox.Checked)
+            if (drawing.Checked)
                 MouseDown(x, y, bitmap);
         }
 
         public void MouseUp(int x, int y, FastBitmap bitmap)
         {
-            if (checkbox.Checked)
+            if (drawing.Checked)
                 lastPoint = null;
         }
 

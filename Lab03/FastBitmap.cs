@@ -42,11 +42,19 @@ namespace Lab03
                 this.data = data;
             }
 
+            public byte A => data[ColorChannel.A];
             public byte R => data[ColorChannel.R];
             public byte G => data[ColorChannel.G];
             public byte B => data[ColorChannel.B];
             public void Set(byte r, byte g, byte b)
             {
+                data[ColorChannel.R] = r;
+                data[ColorChannel.G] = g;
+                data[ColorChannel.B] = b;
+            }
+            public void Set(byte a, byte r, byte g, byte b)
+            {
+                data[ColorChannel.A] = a;
                 data[ColorChannel.R] = r;
                 data[ColorChannel.G] = g;
                 data[ColorChannel.B] = b;
