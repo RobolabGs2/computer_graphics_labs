@@ -84,12 +84,11 @@ namespace Lab03
             int stepx = x0 < x1 ? 1 : -1; //направление роста координат (шаг)
             int stepy = y0 < y1 ? 1 : -1; 
             int error = (deltax > deltay ? deltax : -deltay) / 2; //эффективнее работает
-            int deltaerr;
             for (; ;)
             {
                 bitmap.SetPixel(x0, y0, Color);
                 if (x0 == x1 && y0 == y1) break; //выход, когда пришли от начала к конечной точке
-                deltaerr = error;
+                int deltaerr = error;
                 if (deltaerr > -deltax)
                 {
                     error -= deltay;
@@ -111,21 +110,14 @@ namespace Lab03
             int error = 0;
             while (y >= 0)
             {
-                if (x0 + x < bitmap.Width && x0 + x > 0)
-                {
-                    if (y0 + y > 0 && y0 + y < bitmap.Height)
-                        bitmap.SetPixel(x0 + x, y0 + y, Color);
-                    if (y0 - y > 0 && y0 - y < bitmap.Height)
-                        bitmap.SetPixel(x0 + x, y0 - y, Color);
-                }
-                if (x0 - x < bitmap.Width && x0 - x > 0)
-                {
-                    if (y0 + y > 0 && y0 + y < bitmap.Height)
-                        bitmap.SetPixel(x0 - x, y0 + y, Color);
-                    if (y0 - y > 0 && y0 - y < bitmap.Height)
-                        bitmap.SetPixel(x0 - x, y0 - y, Color);
-                }
-                
+
+                bitmap.TrySetPixel(x0 + x, y0 + y, Color);
+                bitmap.TrySetPixel(x0 + x, y0 - y, Color);
+
+                bitmap.TrySetPixel(x0 - x, y0 + y, Color);
+                bitmap.TrySetPixel(x0 - x, y0 - y, Color);
+
+
                 error = 2 * (delta + y) - 1;
                 if (delta < 0 && error <= 0)
                 {

@@ -141,6 +141,12 @@ namespace Lab03
             ColorToPixel(pixel, color);
         }
 
+        public void TrySetPixel(int x, int y, Color color)
+        {
+            if (x < this.Width && x > 0 && y > 0 && y < this.Height)
+                    SetPixel(x, y, color);
+        }
+
         public Color PixelToColor(byte* pixel)
         {
             return PixelToColor(Data.PixelFormat, pixel);
