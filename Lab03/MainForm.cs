@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
@@ -19,32 +20,32 @@ namespace Lab03
         Bitmap mainBitmap;
         LinkedList<Bitmap> buffer = new LinkedList<Bitmap>();
         private int Scale = 1;
+
         public mainForm(List<IDrawingTool> tools)
         {
             InitializeComponent();
             this.tools = tools;
 
-            colorBar = new ColorBar(colorPictureBox, new List<Color>{
+            colorBar = new ColorBar(colorPictureBox, new List<Color>
+            {
                 Color.Black, Color.Red, Color.Green, Color.DarkBlue, Color.Yellow,
                 Color.White, Color.Orange, Color.Lime, Color.Blue, Color.Gray
             });
             mainPictureBox.SizeMode = PictureBoxSizeMode.Zoom;
-            mainBitmap = new Bitmap(mainPictureBox.Width/Scale, mainPictureBox.Height/Scale);
+            mainBitmap = new Bitmap(mainPictureBox.Width / Scale, mainPictureBox.Height / Scale);
             CallForBitmap(bmp => { });
-
+            toolPanel.Controls.Add(MakeSaveLoadPanel());
             foreach (IDrawingTool tool in tools)
             {
                 tool.Color = Color.Yellow;
 
-                Button button = new Button {
+                Button button = new Button
+                {
                     Width = toolPanel.Width - 8,
                     Text = tool.Name
                 };
 
-                button.Click += (sender, args) =>
-                {
-                    Selected = tool;
-                };
+                button.Click += (sender, args) => { Selected = tool; };
                 toolPanel.Controls.Add(button);
 
                 FlowLayoutPanel panel = new FlowLayoutPanel
@@ -56,8 +57,79 @@ namespace Lab03
 
                 tool.Init(panel);
             }
+
             Selected = tools[0];
-        }        
+        }
+
+        private FlowLayoutPanel MakeSaveLoadPanel()
+        {
+            var loadButton = new Button
+            {
+                Width = (toolPanel.Width) / 2 - 8,
+                Text = "Load",
+            };
+            loadButton.Click += (sender, args) =>
+            {
+                using (OpenFileDialog openFileDialog = new OpenFileDialog())
+                {
+                    openFileDialog.Filter = "All files (*.*)|*.*";
+                    openFileDialog.FilterIndex = 2;
+
+                    if (openFileDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        try
+                        {
+                            using (var img = Image.FromFile(openFileDialog.FileName))
+                            {
+                                using (var drawer = Graphics.FromImage(mainBitmap))
+                                {
+                                    drawer.SmoothingMode = SmoothingMode.None;
+                                    drawer.DrawImage(img, new Rectangle(0, 0, mainBitmap.Width, mainBitmap.Height));
+                                }
+                            }
+                        }
+                        catch
+                        {
+                            MessageBox.Show("Не вышло загрузить картинку :(", "Окошко-всплывашка", MessageBoxButtons.OK,
+                                MessageBoxIcon.Information);
+                            return;
+                        }
+                    }
+                }
+            };
+            var saveButton = new Button
+            {
+                Width = (toolPanel.Width) / 2 - 8,
+                Text = "Save"
+            };
+            saveButton.Click += (sender, args) =>
+            {
+                using (var saveFileDialog = new SaveFileDialog())
+                {
+                    saveFileDialog.Filter = "png files (*.png)|*.png";
+                    saveFileDialog.FilterIndex = 2;
+                    if (saveFileDialog.ShowDialog() != DialogResult.OK) return;
+                    try
+                    {
+                        mainBitmap.Save(saveFileDialog.FileName, ImageFormat.Png);
+                    }
+                    catch
+                    {
+                        MessageBox.Show("Не вышло сохранить картинку :(", "Окошко-всплывашка", MessageBoxButtons.OK,
+                            MessageBoxIcon.Information);
+                    }
+                }
+            };
+            var saveLoadPanel = new FlowLayoutPanel
+            {
+                Width = toolPanel.Width,
+                Height = loadButton.Height + 4,
+                FlowDirection = FlowDirection.LeftToRight,
+            };
+            saveLoadPanel.Controls.Add(loadButton);
+            saveLoadPanel.Controls.Add(saveButton);
+            return saveLoadPanel;
+        }
 
         private void colorPictureBox_MouseDown(object sender, MouseEventArgs e)
         {
@@ -78,13 +150,14 @@ namespace Lab03
         {
             if (e.Button == MouseButtons.Left)
             {
-                buffer.AddLast((Bitmap)mainBitmap.Clone());
+                buffer.AddLast((Bitmap) mainBitmap.Clone());
                 if (buffer.Count > 100)
                 {
                     buffer.First().Dispose();
                     buffer.RemoveFirst();
                 }
-                CallForBitmap(bmp => Selected.MouseDown(e.X/Scale, e.Y/Scale, bmp));
+
+                CallForBitmap(bmp => Selected.MouseDown(e.X / Scale, e.Y / Scale, bmp));
             }
             else if (e.Button == MouseButtons.Right)
                 CallForBitmap(bmp => { Selected.Start(bmp); });
@@ -93,7 +166,7 @@ namespace Lab03
         private void mainPictureBox_MouseUp(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
-                CallForBitmap(bmp => Selected.MouseUp(e.X/Scale, e.Y/Scale, bmp));
+                CallForBitmap(bmp => Selected.MouseUp(e.X / Scale, e.Y / Scale, bmp));
         }
 
         private void mainPictureBox_MouseMove(object sender, MouseEventArgs e)
@@ -101,7 +174,7 @@ namespace Lab03
             if (e.X < 0 || e.Y < 0 || e.X >= mainPictureBox.Width || e.Y >= mainPictureBox.Height)
                 return;
             if (e.Button == MouseButtons.Left)
-                CallForBitmap(bmp => Selected.MouseMove(e.X/Scale, e.Y/Scale, bmp));
+                CallForBitmap(bmp => Selected.MouseMove(e.X / Scale, e.Y / Scale, bmp));
         }
 
         private void mainForm_KeyPress(object sender, KeyPressEventArgs e)
@@ -129,9 +202,9 @@ namespace Lab03
         {
             this.picture = picture;
             this.colors = colors;
-            rowCount = (int)Math.Ceiling(Math.Sqrt(colors.Count * picture.Width / picture.Height));
-            double x = (double)colors.Count / rowCount;
-            colCount = (int)Math.Ceiling(x);
+            rowCount = (int) Math.Ceiling(Math.Sqrt(colors.Count * picture.Width / picture.Height));
+            double x = (double) colors.Count / rowCount;
+            colCount = (int) Math.Ceiling(x);
             boxSide = Math.Min(picture.Width / rowCount, picture.Height / colCount);
             picture.Paint += Paint;
             picture.Size = new Size(rowCount * boxSide, colCount * boxSide);
@@ -141,7 +214,8 @@ namespace Lab03
 
         public Color Click(int x, int y)
         {
-            this.x = x; this.y = y;
+            this.x = x;
+            this.y = y;
             Graphics g = picture.CreateGraphics();
             Paint(null, new PaintEventArgs(g, new Rectangle()));
             g.Dispose();
@@ -149,7 +223,7 @@ namespace Lab03
             foreach (Color color in colors)
             {
                 if (boxSide * row <= x && x < boxSide * row + boxSide
-                    && boxSide * col <= y && y < boxSide * col + boxSide)
+                                       && boxSide * col <= y && y < boxSide * col + boxSide)
                     return color;
                 row += 1;
                 if (row >= rowCount)
@@ -158,6 +232,7 @@ namespace Lab03
                     col += 1;
                 }
             }
+
             return Color.Black;
         }
 
@@ -172,8 +247,9 @@ namespace Lab03
                     e.Graphics.FillRectangle(brush, boxSide * row + 2, boxSide * col + 2, boxSide - 4, boxSide - 4);
 
                 if (boxSide * row <= x && x < boxSide * row + boxSide
-                    && boxSide * col <= y && y < boxSide * col + boxSide)
-                    e.Graphics.DrawRectangle(new Pen(Color.Black, 2), boxSide * row + 1, boxSide * col + 1, boxSide - 2, boxSide - 2);
+                                       && boxSide * col <= y && y < boxSide * col + boxSide)
+                    e.Graphics.DrawRectangle(new Pen(Color.Black, 2), boxSide * row + 1, boxSide * col + 1, boxSide - 2,
+                        boxSide - 2);
                 row += 1;
                 if (row >= rowCount)
                 {
@@ -181,6 +257,7 @@ namespace Lab03
                     col += 1;
                 }
             }
+
             whiteBrush.Dispose();
         }
     }
