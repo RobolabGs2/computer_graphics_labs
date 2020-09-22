@@ -111,14 +111,20 @@ namespace Lab03
             int error = 0;
             while (y >= 0)
             {
-                if (x0 + x < bitmap.Width && y0 + y < bitmap.Height && x0 + x > 0 && y0 + y > 0)
-                    bitmap.SetPixel(x0 + x, y0 + y, Color);
-                if (x0 + x < bitmap.Width && y0 - y < bitmap.Height && x0 + x > 0 && y0 - y > 0)
-                    bitmap.SetPixel(x0 + x, y0 - y, Color);
-                if (x0 - x < bitmap.Width && y0 + y < bitmap.Height && x0 - x > 0 && y0 + y > 0)
-                    bitmap.SetPixel(x0 - x, y0 + y, Color);
-                if (x0 - x < bitmap.Width && y0 - y < bitmap.Height && x0 - x > 0 && y0 - y > 0)
-                    bitmap.SetPixel(x0 - x, y0 - y, Color);
+                if (x0 + x < bitmap.Width && x0 + x > 0)
+                {
+                    if (y0 + y > 0 && y0 + y < bitmap.Height)
+                        bitmap.SetPixel(x0 + x, y0 + y, Color);
+                    if (y0 - y > 0 && y0 - y < bitmap.Height)
+                        bitmap.SetPixel(x0 + x, y0 - y, Color);
+                }
+                if (x0 - x < bitmap.Width && x0 - x > 0)
+                {
+                    if (y0 + y > 0 && y0 + y < bitmap.Height)
+                        bitmap.SetPixel(x0 - x, y0 + y, Color);
+                    if (y0 - y > 0 && y0 - y < bitmap.Height)
+                        bitmap.SetPixel(x0 - x, y0 - y, Color);
+                }
                 
                 error = 2 * (delta + y) - 1;
                 if (delta < 0 && error <= 0)
@@ -188,13 +194,21 @@ namespace Lab03
 
             if (angle)
             {
-                bitmap.SetPixel((int)yPixel1, (int)xPixel1, getColor((1 - getFracPart(yEnd)) * xGap, bitmap.GetPixel((int)yPixel1, (int)xPixel1)));
-                bitmap.SetPixel((int)yPixel1 + 1, (int)xPixel1, getColor(getFracPart(yEnd) * xGap, bitmap.GetPixel((int)yPixel1 + 1, (int)xPixel1)));
+                if (xPixel1 < bitmap.Width && yPixel1 < bitmap.Height - 1
+                        && xPixel1 > 0 && yPixel1 > 0)
+                {
+                    bitmap.SetPixel((int)yPixel1, (int)xPixel1, getColor((1 - getFracPart(yEnd)) * xGap, bitmap.GetPixel((int)yPixel1, (int)xPixel1)));
+                    bitmap.SetPixel((int)yPixel1 + 1, (int)xPixel1, getColor(getFracPart(yEnd) * xGap, bitmap.GetPixel((int)yPixel1 + 1, (int)xPixel1)));
+                }
             }
             else
             {
-                bitmap.SetPixel((int)xPixel1, (int)yPixel1, getColor((1 - getFracPart(yEnd)) * xGap, bitmap.GetPixel((int)xPixel1, (int)yPixel1)));
-                bitmap.SetPixel((int)xPixel1, (int)yPixel1 + 1, getColor(getFracPart(yEnd) * xGap, bitmap.GetPixel((int)xPixel1, (int)yPixel1 + 1)));
+                if (xPixel1 < bitmap.Width && yPixel1 < bitmap.Height - 1
+                        && xPixel1 > 0 && yPixel1 > 0)
+                {
+                    bitmap.SetPixel((int)xPixel1, (int)yPixel1, getColor((1 - getFracPart(yEnd)) * xGap, bitmap.GetPixel((int)xPixel1, (int)yPixel1)));
+                    bitmap.SetPixel((int)xPixel1, (int)yPixel1 + 1, getColor(getFracPart(yEnd) * xGap, bitmap.GetPixel((int)xPixel1, (int)yPixel1 + 1)));
+                }
             }
             double y = yEnd + gradient;
 
@@ -206,20 +220,29 @@ namespace Lab03
             double yPixel2 = (int)yEnd;
             if (angle)
             {
-                bitmap.SetPixel((int)yPixel2, (int)xPixel2, getColor((1 - getFracPart(yEnd)) * xGap, bitmap.GetPixel((int)yPixel2, (int)xPixel2)));
-                bitmap.SetPixel((int)yPixel2 + 1, (int)xPixel2, getColor(getFracPart(yEnd) * xGap, bitmap.GetPixel((int)yPixel2 + 1, (int)xPixel2)));
+                if (yPixel2 < bitmap.Width - 1 && xPixel2 < bitmap.Height
+                        && xPixel2 > 0 && yPixel2 > 0)
+                {
+                    bitmap.SetPixel((int)yPixel2, (int)xPixel2, getColor((1 - getFracPart(yEnd)) * xGap, bitmap.GetPixel((int)yPixel2, (int)xPixel2)));
+                    bitmap.SetPixel((int)yPixel2 + 1, (int)xPixel2, getColor(getFracPart(yEnd) * xGap, bitmap.GetPixel((int)yPixel2 + 1, (int)xPixel2)));
+                }
             }
             else
             {
-                bitmap.SetPixel((int)xPixel2, (int)yPixel2, getColor((1 - getFracPart(yEnd)) * xGap, bitmap.GetPixel((int)xPixel2, (int)yPixel2)));
-                bitmap.SetPixel((int)xPixel2, (int)yPixel2 + 1, getColor(getFracPart(yEnd) * xGap, bitmap.GetPixel((int)xPixel2, (int)yPixel2 + 1)));
+                if (xPixel2 < bitmap.Width && yPixel2 < bitmap.Height - 1
+                        && xPixel2 > 0 && yPixel2 > 0)
+                {
+                    bitmap.SetPixel((int)xPixel2, (int)yPixel2, getColor((1 - getFracPart(yEnd)) * xGap, bitmap.GetPixel((int)xPixel2, (int)yPixel2)));
+                    bitmap.SetPixel((int)xPixel2, (int)yPixel2 + 1, getColor(getFracPart(yEnd) * xGap, bitmap.GetPixel((int)xPixel2, (int)yPixel2 + 1)));
+                }
             }
 
             //закрашиваем пиксели от начала до конца 
             if (angle)
                 for (int x = (int)(xPixel1 + 1); x <= xPixel2 - 1; x++)
                 {
-                    if (x <= bitmap.Width * bitmap.Bpp && y < bitmap.Height * bitmap.Bpp)
+                    if (y < bitmap.Width - 1 && x < bitmap.Height
+                        && x > 0 && y > 0)
                     {
                         bitmap.SetPixel((int)y, x, getColor(1 - (y - (int)y), bitmap.GetPixel((int)y, x)));
                         bitmap.SetPixel((int)y + 1, x, getColor(y - (int)y, bitmap.GetPixel((int)y + 1, x)));
@@ -229,7 +252,8 @@ namespace Lab03
             else
                 for (int x = (int)(xPixel1 + 1); x <= xPixel2 - 1; x++)
                 {
-                    if (x <= bitmap.Width * bitmap.Bpp && y < bitmap.Height * bitmap.Bpp)
+                    if (x < bitmap.Width && y < bitmap.Height  - 1
+                        && x > 0 && y > 0)
                     {
                         bitmap.SetPixel(x, (int)y, getColor(1 - (y - (int)y), bitmap.GetPixel(x, (int)y)));
                         bitmap.SetPixel(x, (int)y + 1, getColor(y - (int)y, bitmap.GetPixel((int)x, (int)y + 1)));
