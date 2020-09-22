@@ -55,9 +55,7 @@ namespace Lab03
             public void Set(byte a, byte r, byte g, byte b)
             {
                 data[ColorChannel.A] = a;
-                data[ColorChannel.R] = r;
-                data[ColorChannel.G] = g;
-                data[ColorChannel.B] = b;
+                Set(r, g, b);
             }
         }
 

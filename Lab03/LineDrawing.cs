@@ -16,7 +16,9 @@ namespace Lab03
 
         CheckBox drawing; //включение/выключение свободного рисования
 
-        CheckBox smoothing; //включение/выключение сглаживания(алгоритм Ву)
+        CheckBox smoothing; //включение/выключение сглаживания(алгоритм Ву
+
+        CheckBox circle; //включение/выключение рисования кругов
 
         public Color Color { set; get; }
         static void Swap<T>(ref T lhs, ref T rhs)
@@ -31,15 +33,45 @@ namespace Lab03
         {
             container.Controls.Add(drawing = new CheckBox { Text = "Draw", Checked = false });
             container.Controls.Add(smoothing = new CheckBox { Text = "Smoothing", Checked = false});
+            container.Controls.Add(circle = new CheckBox { Text = "Circle", Checked = false });
+            circle.CheckedChanged += Circle_CheckedChanged;
         }
-       
+        private void Circle_CheckedChanged(Object sender, EventArgs e)
+        {
+
+            if (circle.Checked)
+            {
+                drawing.Checked = false;
+                drawing.AutoCheck = false;
+                smoothing.Checked = false;
+                smoothing.AutoCheck = false;
+            }
+            else
+            {
+                drawing.AutoCheck = true;
+                smoothing.AutoCheck = true;
+            }
+        }
         public void MouseDown(int x, int y, FastBitmap bitmap)
         {
-            if (lastPoint != null)
-                if (smoothing.Checked)
-                    WuLine(x, y, bitmap);
-                else BresenhamLine(x, y, bitmap);
-            lastPoint = new Point(x, y);
+            if (circle.Checked)
+            {
+                if (lastPoint != null)
+                {
+                    BresenhamCircle(x, y, bitmap);
+                    lastPoint = null;
+                }
+                else
+                    lastPoint = new Point(x, y);
+            }
+            else
+            {
+                if (lastPoint != null)
+                    if (smoothing.Checked)
+                        WuLine(x, y, bitmap);
+                    else BresenhamLine(x, y, bitmap);
+                lastPoint = new Point(x, y);
+            }
         }
         private void BresenhamLine(int x0, int y0, FastBitmap bitmap)
         {
@@ -71,7 +103,42 @@ namespace Lab03
             }
                 
         }
-
+        void BresenhamCircle(int x0, int y0, FastBitmap bitmap)
+        {
+            int x = 0;
+            int y = (int)Math.Sqrt(Math.Pow(lastPoint.Value.X - x0, 2) + Math.Pow(lastPoint.Value.Y - y0, 2));
+            int delta = 1 - 2 * y;
+            int error = 0;
+            while (y >= 0)
+            {
+                if (x0 + x < bitmap.Width && y0 + y < bitmap.Height && x0 + x > 0 && y0 + y > 0)
+                    bitmap.SetPixel(x0 + x, y0 + y, Color);
+                if (x0 + x < bitmap.Width && y0 - y < bitmap.Height && x0 + x > 0 && y0 - y > 0)
+                    bitmap.SetPixel(x0 + x, y0 - y, Color);
+                if (x0 - x < bitmap.Width && y0 + y < bitmap.Height && x0 - x > 0 && y0 + y > 0)
+                    bitmap.SetPixel(x0 - x, y0 + y, Color);
+                if (x0 - x < bitmap.Width && y0 - y < bitmap.Height && x0 - x > 0 && y0 - y > 0)
+                    bitmap.SetPixel(x0 - x, y0 - y, Color);
+                
+                error = 2 * (delta + y) - 1;
+                if (delta < 0 && error <= 0)
+                {
+                    ++x;
+                    delta += 2 * x + 1;
+                    continue;
+                }
+                error = 2 * (delta - x) - 1;
+                if (delta > 0 && error > 0)
+                {
+                    --y;
+                    delta += 1 - 2 * y;
+                    continue;
+                }
+                ++x;
+                delta += 2 * (x - y);
+                --y;
+            }
+        }
         int Round(double x) 
         { 
             return (int)(x + 0.5); 
@@ -152,15 +219,21 @@ namespace Lab03
             if (angle)
                 for (int x = (int)(xPixel1 + 1); x <= xPixel2 - 1; x++)
                 {
-                    bitmap.SetPixel((int)y, x, getColor(1 - (y - (int)y), bitmap.GetPixel((int)y, x)));
-                    bitmap.SetPixel((int)y + 1, x, getColor(y - (int)y, bitmap.GetPixel((int)y + 1, x)));
+                    if (x <= bitmap.Width * bitmap.Bpp && y < bitmap.Height * bitmap.Bpp)
+                    {
+                        bitmap.SetPixel((int)y, x, getColor(1 - (y - (int)y), bitmap.GetPixel((int)y, x)));
+                        bitmap.SetPixel((int)y + 1, x, getColor(y - (int)y, bitmap.GetPixel((int)y + 1, x)));
+                    }
                     y += gradient;
                 }
             else
                 for (int x = (int)(xPixel1 + 1); x <= xPixel2 - 1; x++)
                 {
-                    bitmap.SetPixel(x, (int)y, getColor(1 - (y - (int)y), bitmap.GetPixel(x, (int)y)));
-                    bitmap.SetPixel(x, (int)y + 1, getColor(y - (int)y, bitmap.GetPixel((int)x, (int)y + 1)));
+                    if (x <= bitmap.Width * bitmap.Bpp && y < bitmap.Height * bitmap.Bpp)
+                    {
+                        bitmap.SetPixel(x, (int)y, getColor(1 - (y - (int)y), bitmap.GetPixel(x, (int)y)));
+                        bitmap.SetPixel(x, (int)y + 1, getColor(y - (int)y, bitmap.GetPixel((int)x, (int)y + 1)));
+                    }
                     y += gradient;
                 }
         }
