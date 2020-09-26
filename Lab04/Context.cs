@@ -65,7 +65,7 @@ namespace Lab04
 
 
             var rect = SelectedABBA();
-            if(rect.p1.X != rect.p2.X && rect.p1.Y != rect.p2.Y)
+            if(rect.p1 != rect.p2)
             {
                 pen = new Pen(Color.Gray);
                 pen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;

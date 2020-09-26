@@ -15,10 +15,7 @@ namespace Lab04.Tools
         { }
         public Matrix Draw(Point start, Point end, Graphics graphics)
         {
-            Matrix m = Matrix.Ident();
-            m[2, 0] = end.X - start.X;
-            m[2, 1] = end.Y - start.Y;
-            return m;
+            return Matrix.Move(end - start);
         }
     }
 }

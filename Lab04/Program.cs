@@ -18,11 +18,8 @@ namespace Lab04
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new MainForm(new List<ITool> {
                 new Tools.Move(),
-                new Tools.JustPicture(Properties.Resources.Point),
-                new Tools.JustPicture(Properties.Resources.Scale),
-                new Tools.JustPicture(Properties.Resources.Rotate),
-                new Tools.JustPicture(Properties.Resources.Rectangle),
-                new Tools.JustPicture(Properties.Resources.Devision)
+                new Tools.Rectangle(),
+                new Tools.Devision()
             }));
         }
     }

@@ -49,61 +49,45 @@ namespace Lab04
             }
         }
 
-        void DrawContext(Graphics g)
+        void DrawContext(Action<Graphics> action)
         {
+            Graphics g = Graphics.FromImage(bitmap);
             g.Clear(Color.White);
             context.Draw(g, lastMatrix);
+            action(g);
+            g.Dispose();
+            mainPictureBox.Image = bitmap;
         }
 
         private void mainPictureBox_MouseDown(object sender, MouseEventArgs e)
         {
             if(e.Button == MouseButtons.Left)
             {
-                Graphics g = Graphics.FromImage(bitmap);
-                DrawContext(g);
                 if (currentTool == drawing)
-                {
-                    drawing.Down(new Point { X = e.X, Y = e.Y }, g);
-                }else
-                {
+                    DrawContext(g => drawing.Down(new Point { X = e.X, Y = e.Y }, g));
+                else
                     startPoint = new Point { X = e.X, Y = e.Y };
-                }
-                g.Dispose();
-                mainPictureBox.Image = bitmap;
             }else
             if (e.Button == MouseButtons.Right && currentTool == drawing)
                 drawing.Restart();
-            
         }
 
         private void mainPictureBox_MouseMove(object sender, MouseEventArgs e)
         {
-            if(e.Button == MouseButtons.Left)
-            {
-                Graphics g = Graphics.FromImage(bitmap);
-                DrawContext(g);
-                lastMatrix = currentTool.Draw(startPoint, new Point {X = e.X, Y = e.Y }, g);
-                g.Dispose();
-                mainPictureBox.Image = bitmap;
-            }
+            if (e.Button == MouseButtons.Left)
+                DrawContext(g => lastMatrix = currentTool.Draw(startPoint, new Point { X = e.X, Y = e.Y }, g));
             if (currentTool == drawing)
-            {
-                Graphics g = Graphics.FromImage(bitmap);
-                DrawContext(g);
-                drawing.Move(new Point { X = e.X, Y = e.Y }, g);
-                g.Dispose();
-                mainPictureBox.Image = bitmap;
-            }
+                DrawContext(g => drawing.Move(new Point { X = e.X, Y = e.Y }, g));
         }
 
         private void mainPictureBox_MouseUp(object sender, MouseEventArgs e)
         {
-            context.Apply(lastMatrix);
-            lastMatrix = Matrix.Ident();
-            Graphics g = Graphics.FromImage(bitmap);
-            DrawContext(g);
-            g.Dispose();
-            mainPictureBox.Image = bitmap;
+            if (e.Button == MouseButtons.Left)
+            {
+                context.Apply(lastMatrix);
+                lastMatrix = Matrix.Ident();
+                DrawContext(g => { });
+            } 
         }
     }
 }

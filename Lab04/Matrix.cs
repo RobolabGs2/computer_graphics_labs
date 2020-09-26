@@ -26,10 +26,18 @@ namespace Lab04
 
         public static Matrix Ident()
         {
-            Matrix result= new Matrix();
+            Matrix result = new Matrix();
             for (int i = 0; i < volume; ++i)
                 result[i, i] = 1;
             return result;
+        }
+
+        public static Matrix Move(Point delta)
+        {
+            Matrix m = Matrix.Ident();
+            m[2, 0] = delta.X;
+            m[2, 1] = delta.Y;
+            return m;
         }
 
         public static Matrix operator *(Matrix A, Matrix B)

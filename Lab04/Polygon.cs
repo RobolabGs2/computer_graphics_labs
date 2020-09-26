@@ -39,6 +39,12 @@ namespace Lab04
             float r = pen.Width;
             g.DrawEllipse(pen, (float)Points[0].X - r, (float)Points[0].Y - r, r * 2, r * 2);
         }
+        private void Drawpoint(Graphics g, Pen pen, Matrix matrix)
+        {
+            Point p = Points[0] * matrix;
+            float r = pen.Width;
+            g.DrawEllipse(pen, (float)p.X - r, (float)p.Y - r, r * 2, r * 2);
+        }
 
         public void PartialDraw(Graphics g, Pen pen)
         {
