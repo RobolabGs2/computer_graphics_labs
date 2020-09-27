@@ -12,5 +12,7 @@ namespace Lab04
         Bitmap image { get; }
         void Init(Context context);
         Matrix Draw(Point start, Point end, Graphics graphics);
+        // true если инструмент остаётся активным, false если оно одноразовое
+        bool Active();
     }
 }

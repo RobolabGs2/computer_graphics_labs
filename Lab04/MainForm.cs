@@ -44,7 +44,14 @@ namespace Lab04
                     TabStop = false
                 };
 
-                button.Click += (a, b) => { currentTool = tool; };
+                button.Click += (a, b) =>
+                {
+                    if (tool.Active())
+                    {
+                        currentTool = tool;
+                    }
+                    DrawContext(g => { });
+                };
                 mainPanel.Controls.Add(button);
             }
         }
