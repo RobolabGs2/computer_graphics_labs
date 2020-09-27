@@ -35,5 +35,9 @@ namespace Lab04.Tools
             }));
             return Matrix.Ident();
         }
+        public bool Active()
+        {
+            return true;
+        }
     }
 }

@@ -18,11 +18,6 @@ namespace Lab04.Tools
             this.context = context;
         }
 
-        public void Clean()
-        {
-            p = null;
-        }
-
         public void Restart()
         {
             if (p == null)
@@ -56,6 +51,11 @@ namespace Lab04.Tools
         public Matrix Draw(Point start, Point end, Graphics graphics)
         {
             return Matrix.Ident();
+        }
+        public bool Active()
+        {
+            p = null;
+            return true;
         }
     }
 }

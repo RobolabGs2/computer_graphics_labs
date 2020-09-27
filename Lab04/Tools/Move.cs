@@ -17,5 +17,9 @@ namespace Lab04.Tools
         {
             return Matrix.Move(end - start);
         }
+        public bool Active()
+        {
+            return true;
+        }
     }
 }

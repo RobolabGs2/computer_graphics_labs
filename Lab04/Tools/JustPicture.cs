@@ -18,11 +18,15 @@ namespace Lab04.Tools
 
         public void Init(Context context)
         {
-
         }
         public Matrix Draw(Point start, Point end, Graphics graphics)
         {
             return Matrix.Ident();
+        }
+
+        public bool Active()
+        {
+            return true;
         }
     }
 }

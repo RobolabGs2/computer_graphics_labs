@@ -11,17 +11,35 @@ namespace Lab04
         public double X { get; set; }
         public double Y { get; set; }
 
+        public static Point operator -(Point p)
+        {
+            return new Point {X = -p.X, Y = -p.Y};
+        }
+
         public static Point operator -(Point p1, Point p2)
         {
-            return new Point { X = p1.X - p2.X, Y = p1.Y - p2.Y };
+            return new Point {X = p1.X - p2.X, Y = p1.Y - p2.Y};
         }
+
         public static bool operator ==(Point p1, Point p2)
         {
             return p1.X == p2.X && p1.Y == p2.Y;
         }
+
         public static bool operator !=(Point p1, Point p2)
         {
             return !(p1 == p2);
+        }
+
+        public double DistanceTo(Point another)
+        {
+            var (x, y) = (X - another.X, Y - another.Y);
+            return Math.Sqrt(x * x + y * y);
+        }
+
+        public System.Drawing.PointF ToPointF()
+        {
+            return new System.Drawing.PointF((float) X, (float) Y);
         }
     }
 }
