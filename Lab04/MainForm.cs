@@ -58,11 +58,12 @@ namespace Lab04
 
         void DrawContext(Action<Graphics> action)
         {
-            Graphics g = Graphics.FromImage(bitmap);
-            g.Clear(Color.White);
-            context.Draw(g, lastMatrix);
-            action(g);
-            g.Dispose();
+            using (var g = Graphics.FromImage(bitmap))
+            {
+                g.Clear(Color.White);
+                context.Draw(g, lastMatrix);
+                action(g);
+            }
             mainPictureBox.Image = bitmap;
         }
 
@@ -70,11 +71,16 @@ namespace Lab04
         {
             if(e.Button == MouseButtons.Left)
             {
+                var point = new Point { X = e.X, Y = e.Y };
                 if (currentTool == drawing)
-                    DrawContext(g => drawing.Down(new Point { X = e.X, Y = e.Y }, g));
+                    DrawContext(g => drawing.Down(point, g));
                 else
-                    startPoint = new Point { X = e.X, Y = e.Y };
-            }else
+                {
+                    startPoint = point;
+                    DrawContext(g => lastMatrix = currentTool.Draw(point, point, g));
+                }
+            }
+            else
             if (e.Button == MouseButtons.Right && currentTool == drawing)
                 drawing.Restart();
         }
