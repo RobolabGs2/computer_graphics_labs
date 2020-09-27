@@ -18,15 +18,7 @@ namespace Lab04
 
         public (Point p1, Point p2) ABBA()
         {
-            Point p1 = new Point {
-                X = Points.Select(p => p.X).Min(),
-                Y = Points.Select(p => p.Y).Min() };
-
-            Point p2 = new Point {
-                X = Points.Select(p => p.X).Max(),
-                Y = Points.Select(p => p.Y).Max() };
-
-            return (p1, p2);
+            return Point.ABBA(Points);
         }
 
         public void Add(Point point)

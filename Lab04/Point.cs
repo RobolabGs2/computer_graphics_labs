@@ -41,5 +41,14 @@ namespace Lab04
         {
             return new System.Drawing.PointF((float) X, (float) Y);
         }
+
+        public static (Point p1, Point p2) ABBA(IEnumerable<Point> points)
+        {
+            var (minX, minY, maxX, maxY) = points.Aggregate(
+                (double.MaxValue, double.MaxValue, double.MinValue, double.MinValue),
+                (tuple, point) => (Math.Min(tuple.Item1, point.X), Math.Min(tuple.Item2, point.Y),
+                    Math.Max(tuple.Item3, point.X), Math.Max(tuple.Item4, point.Y)));
+            return (new Point {X = minX, Y = minY}, new Point {X = maxX, Y = maxY});
+        }
     }
 }

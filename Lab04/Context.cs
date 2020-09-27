@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Lab04
 {
@@ -18,24 +17,11 @@ namespace Lab04
             Selected = new List<Polygon>();
         }
 
-        //  TODO: Оптимизируй эту хрень!!!
-        public (Point p1, Point p2) SelectedABBA()
+        public (Point p1, Point p2) SelectedABBA(Matrix m = null)
         {
             if (Selected.Count == 0)
                 return (new Point(), new Point());
-            Point p1 = new Point
-            {
-                X = Selected.Select(p => p.ABBA().p1.X).Min(),
-                Y = Selected.Select(p => p.ABBA().p1.Y).Min()
-            };
-
-            Point p2 = new Point
-            {
-                X = Selected.Select(p => p.ABBA().p2.X).Max(),
-                Y = Selected.Select(p => p.ABBA().p2.Y).Max()
-            };
-
-            return (p1, p2);
+            return Point.ABBA(Selected.SelectMany(p => m == null ? p.Points : p.Points.Select(pt => pt * m)));
         }
 
         public void Add(Polygon p)
@@ -55,7 +41,7 @@ namespace Lab04
             Pen selected_pen = new Pen(Color.Red, 2);
 
             foreach (Polygon p in Polygons)
-                if(Selected.Contains(p))
+                if (Selected.Contains(p))
                     p.Draw(g, selected_pen, matrix);
                 else
                     p.Draw(g, pen);
@@ -64,17 +50,16 @@ namespace Lab04
             selected_pen.Dispose();
 
 
-            var rect = SelectedABBA();
-            if(rect.p1 != rect.p2)
+            var rect = SelectedABBA(matrix);
+            if (rect.p1 != rect.p2)
             {
                 pen = new Pen(Color.Gray);
-                pen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
+                pen.DashStyle = DashStyle.Dash;
 
-                Point p1 = rect.p1* matrix;
-                Point p2 = rect.p2  - rect.p1;
+                var p1 = rect.p1.ToPointF();
+                var p2 = (rect.p2 - rect.p1).ToPointF();
 
-                g.DrawRectangle(pen, (float)p1.X, (float)p1.Y,
-                    (float)p2.X, (float)p2.Y);
+                g.DrawRectangle(pen, p1.X, p1.Y, p2.X, p2.Y);
                 pen.Dispose();
             }
         }
