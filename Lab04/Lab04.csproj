@@ -59,6 +59,7 @@
     <Compile Include="Polygon.cs" />
     <Compile Include="Tools\Devision.cs" />
     <Compile Include="Tools\JustPicture.cs" />
+    <Compile Include="Tools\Rotate.cs" />
     <Compile Include="Tools\Move.cs" />
     <Compile Include="Tools\PolygonsDrawing.cs" />
     <Compile Include="Program.cs" />

@@ -19,6 +19,7 @@ namespace Lab04
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new MainForm(new List<ITool> {
                 new Tools.Move(),
+                new Tools.Rotate(),
                 new Tools.Rectangle(),
                 new Tools.Devision(),
                 new Tools.SelectAll(),

@@ -65,7 +65,7 @@ namespace Lab04
                 return;
             if (Points.Count == 1)
             {
-                Drawpoint(g, pen);
+                Drawpoint(g, pen, matrix);
                 return;
             }
             for (int i = 1; i < Points.Count; ++i)
