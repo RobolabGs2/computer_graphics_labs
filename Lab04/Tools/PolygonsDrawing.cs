@@ -27,10 +27,24 @@ namespace Lab04.Tools
             if (p == null)
                 return;
             if (p.Area() < 0)
-                p.Points.Reverse();
-            context.Add(p);
-            context.Selected.Clear();
-            context.Selected.Add(p);
+                p.Points.Reverse(); 
+            LineSegment newedge = new LineSegment(p.Points[p.Points.Count - 1], p.Points[0]);
+            for (int i = 0; i < p.Points.Count - 1; i++)
+            {
+               
+                LineSegment polyedge = new LineSegment(p.Points[i], p.Points[i + 1]);
+                float r = 2;
+                var inter = newedge.Intersection(polyedge);
+                if (inter.onLine)
+                    onLine = true;
+            }
+            if (!onLine)
+            {
+                context.Add(p);
+                context.Selected.Clear();
+                context.Selected.Add(p);
+            }
+            
             p = null;
         }
 
@@ -65,7 +79,10 @@ namespace Lab04.Tools
         public void Down(Point point, Graphics graphics)
         {
             if (p == null)
+            {
                 p = new Polygon();
+                onLine = false;
+            }
             if (!onLine)
                 p.Add(point);
             Move(point, graphics);
