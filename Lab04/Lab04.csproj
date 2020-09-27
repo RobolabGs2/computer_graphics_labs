@@ -58,7 +58,8 @@
     <Compile Include="Matrix.cs" />
     <Compile Include="Point.cs" />
     <Compile Include="Polygon.cs" />
-    <Compile Include="Tools\Devision.cs" />
+    <Compile Include="Tools\Division.cs" />
+    <Compile Include="Tools\Interseption.cs" />
     <Compile Include="Tools\JustPicture.cs" />
     <Compile Include="Tools\Rotate.cs" />
     <Compile Include="Tools\Move.cs" />

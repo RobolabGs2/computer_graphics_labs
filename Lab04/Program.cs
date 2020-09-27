@@ -21,9 +21,10 @@ namespace Lab04
                 new Tools.Move(),
                 new Tools.Rotate(),
                 new Tools.Rectangle(),
-                new Tools.Devision(),
+                new Tools.Division(),
                 new Tools.SelectAll(),
                 new Tools.Remove(),
+                new Tools.Interseption()
             }));
         }
     }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -27,6 +28,16 @@ namespace Lab04
                 Y = Points.Select(p => p.Y).Max() };
 
             return (p1, p2);
+        }
+
+        public double Area()
+        {
+            double area = 0;
+            int count = Points.Count() - 1;
+            for (int i = 0; i < count; i++)
+                area += Points[(i + count) % count].X * Points[(i + count + 1) % count].Y +
+                    Points[(i + count + 1) % count].X * Points[(i + count) % count].Y;
+            return area/2;
         }
 
         public void Add(Point point)

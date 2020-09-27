@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Lab04.Tools
 {
-    class Devision: ITool
+    class Division: ITool
     {
         public Bitmap image => Properties.Resources.Devision;
 
