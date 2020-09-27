@@ -27,8 +27,9 @@ namespace Lab04.Tools
             Pen green_pen = new Pen(Color.Lime, 3);
             graphics.DrawLine(pen, (float)start.X, (float)start.Y, (float)end.X, (float)end.Y);
 
+            LineSegment lineSegment = new LineSegment(start, end);
             context.Polygons.ForEach(poly => poly.Points.ForEach(point =>{
-                double sign = point.X * (end - start).Y - point.Y * (end - start).X + end.X * start.Y - start.X * end.Y;
+                int sign = lineSegment.Sign(point);
                 float r = 2;
                 graphics.DrawEllipse(sign > 0 ? blue_pen: green_pen, (float)point.X - r, (float)point.Y - r, r * 2, r * 2);
             }));

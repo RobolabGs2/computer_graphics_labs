@@ -18,6 +18,11 @@ namespace Lab04.Tools
             this.context = context;
         }
 
+        public void Clean()
+        {
+            p = null;
+        }
+
         public void Restart()
         {
             if (p == null)
