@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Lab04
 {
@@ -21,24 +19,11 @@ namespace Lab04
 
         }
 
-        //  TODO: Оптимизируй эту хрень!!!
-        public (Point p1, Point p2) SelectedABBA()
+        public (Point p1, Point p2) SelectedABBA(Matrix m = null)
         {
             if (Selected.Count == 0)
                 return (new Point(), new Point());
-            Point p1 = new Point
-            {
-                X = Selected.Select(p => p.ABBA().p1.X).Min(),
-                Y = Selected.Select(p => p.ABBA().p1.Y).Min()
-            };
-
-            Point p2 = new Point
-            {
-                X = Selected.Select(p => p.ABBA().p2.X).Max(),
-                Y = Selected.Select(p => p.ABBA().p2.Y).Max()
-            };
-
-            return (p1, p2);
+            return Point.ABBA(Selected.SelectMany(p => m == null ? p.Points : p.Points.Select(pt => pt * m)));
         }
 
         public void Add(Polygon p)
@@ -66,14 +51,14 @@ namespace Lab04
             //Pen.Dispose();
 
 
-            var rect = SelectedABBA();
-            if(rect.p1 != rect.p2)
+            var rect = SelectedABBA(matrix);
+            if (rect.p1 != rect.p2)
             {
                 pen_black = new Pen(Color.Gray);
                 pen_black.DashStyle = DashStyle.Dash;
 
-                Point p1 = rect.p1* matrix;
-                Point p2 = rect.p2  - rect.p1;
+                var p1 = rect.p1.ToPointF();
+                var p2 = (rect.p2 - rect.p1).ToPointF();
 
                 g.DrawRectangle(pen_black, (float)p1.X, (float)p1.Y,
                     (float)p2.X, (float)p2.Y);
