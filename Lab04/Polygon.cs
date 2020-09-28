@@ -19,13 +19,17 @@ namespace Lab04
 
         public (Point p1, Point p2) ABBA()
         {
-            Point p1 = new Point {
+            Point p1 = new Point
+            {
                 X = Points.Select(p => p.X).Min(),
-                Y = Points.Select(p => p.Y).Min() };
+                Y = Points.Select(p => p.Y).Min()
+            };
 
-            Point p2 = new Point {
+            Point p2 = new Point
+            {
                 X = Points.Select(p => p.X).Max(),
-                Y = Points.Select(p => p.Y).Max() };
+                Y = Points.Select(p => p.Y).Max()
+            };
 
             return (p1, p2);
         }
@@ -34,10 +38,15 @@ namespace Lab04
         {
             double area = 0;
             int count = Points.Count() - 1;
+
             for (int i = 0; i < count; i++)
-                area += Points[(i + count) % count].X * Points[(i + count + 1) % count].Y +
-                    Points[(i + count + 1) % count].X * Points[(i + count) % count].Y;
-            return area/2;
+                area += Points[i].X * Points[i + 1].Y -
+                    Points[i + 1].X * Points[i].Y;
+            area += Points[count].X * Points[0].Y -
+                    Points[0].X * Points[count].Y;
+
+
+            return area / 2;
         }
 
         public void Add(Point point)

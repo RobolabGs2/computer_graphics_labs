@@ -58,6 +58,7 @@
     <Compile Include="Matrix.cs" />
     <Compile Include="Point.cs" />
     <Compile Include="Polygon.cs" />
+    <Compile Include="Tools\Arrow.cs" />
     <Compile Include="Tools\Division.cs" />
     <Compile Include="Tools\FixRotate.cs" />
     <Compile Include="Tools\Interseption.cs" />
@@ -99,6 +100,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Resources\Arrow.png" />
     <Content Include="Resources\RightAngle.png" />
     <Content Include="Resources\SelectAll.png" />
     <Content Include="Resources\Remove.png" />

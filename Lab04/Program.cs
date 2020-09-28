@@ -26,7 +26,9 @@ namespace Lab04
                 new Tools.SelectAll(),
                 new Tools.Remove(),
                 new Tools.Interseption(),
-                new Tools.FixRotate(-Math.PI / 2, Properties.Resources.RightAngle)
+                new Tools.FixRotate(-Math.PI / 2, Properties.Resources.RightAngle),
+                new Tools.Interseption(),
+                new Tools.Arrow()
             }));
         }
     }

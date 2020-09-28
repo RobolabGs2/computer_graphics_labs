@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,11 +12,13 @@ namespace Lab04
     {
         public List<Polygon> Polygons { get; set; }
         public List<Polygon> Selected { get; set; }
-
+        public Pen Pen { get; set; }
         public Context()
         {
             Polygons = new List<Polygon>();
             Selected = new List<Polygon>();
+            Pen = new Pen(Color.Red, 2);
+
         }
 
         //  TODO: Оптимизируй эту хрень!!!
@@ -51,31 +54,30 @@ namespace Lab04
 
         public void Draw(Graphics g, Matrix matrix)
         {
-            Pen pen = new Pen(Color.Black, 2);
-            Pen selected_pen = new Pen(Color.Red, 2);
+            Pen pen_black = new Pen(Color.Black, 2);
 
             foreach (Polygon p in Polygons)
                 if(Selected.Contains(p))
-                    p.Draw(g, selected_pen, matrix);
+                    p.Draw(g, Pen, matrix);
                 else
-                    p.Draw(g, pen);
+                    p.Draw(g, pen_black);
 
-            pen.Dispose();
-            selected_pen.Dispose();
+            pen_black.Dispose();
+            //Pen.Dispose();
 
 
             var rect = SelectedABBA();
             if(rect.p1 != rect.p2)
             {
-                pen = new Pen(Color.Gray);
-                pen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
+                pen_black = new Pen(Color.Gray);
+                pen_black.DashStyle = DashStyle.Dash;
 
                 Point p1 = rect.p1* matrix;
                 Point p2 = rect.p2  - rect.p1;
 
-                g.DrawRectangle(pen, (float)p1.X, (float)p1.Y,
+                g.DrawRectangle(pen_black, (float)p1.X, (float)p1.Y,
                     (float)p2.X, (float)p2.Y);
-                pen.Dispose();
+                pen_black.Dispose();
             }
         }
     }
