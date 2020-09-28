@@ -84,7 +84,7 @@ namespace Lab04.Tools
             if (p == null)
                 p = new Polygon();
 
-            if (!onLine)
+            if (!onLine || p.Points.Count == 0)
                 p.Add(point);
             onLine = false;
             Move(point, graphics);
