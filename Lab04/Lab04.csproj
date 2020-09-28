@@ -59,6 +59,7 @@
     <Compile Include="Point.cs" />
     <Compile Include="Polygon.cs" />
     <Compile Include="Tools\Division.cs" />
+    <Compile Include="Tools\FixRotate.cs" />
     <Compile Include="Tools\Interseption.cs" />
     <Compile Include="Tools\JustPicture.cs" />
     <Compile Include="Tools\Rotate.cs" />
@@ -68,6 +69,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tools\InternalPoint.cs" />
     <Compile Include="Tools\Rectangle.cs" />
+    <Compile Include="Tools\Scale.cs" />
     <Compile Include="Tools\SelectAll.cs" />
     <Compile Include="Tools\Remove.cs" />
     <EmbeddedResource Include="Form1.resx">
@@ -97,6 +99,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Resources\RightAngle.png" />
     <Content Include="Resources\SelectAll.png" />
     <Content Include="Resources\Remove.png" />
     <Content Include="Resources\Collision.png" />

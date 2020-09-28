@@ -42,6 +42,13 @@ namespace Lab04
             m[2, 1] = delta.Y;
             return m;
         }
+        public static Matrix Scale(Point scale)
+        {
+            Matrix m = Matrix.Ident();
+            m[0, 0] = scale.X;
+            m[1, 1] = scale.Y;
+            return m;
+        }
 
         public static Matrix Rotate(double angel)
         {
