@@ -22,23 +22,27 @@ namespace Lab04.Tools
             onLine = false;
         }
 
+        private int CountOfInterseptions(Point p1, Point p2, int pcount)
+        {
+            int countInter = 0;
+            LineSegment newedge = new LineSegment(p1, p2);
+            for (int i = 0; i < pcount; i++)
+            {
+                LineSegment polyedge = new LineSegment(p.Points[i], p.Points[i + 1]);
+                var inter = newedge.Intersection(polyedge);
+                if (inter.onLine)
+                    countInter++;
+            }
+            return countInter;
+        }
         public void Restart()
         {
             if (p == null)
                 return;
             if (p.Area() < 0)
-                p.Points.Reverse(); 
-            LineSegment newedge = new LineSegment(p.Points[p.Points.Count - 1], p.Points[0]);
-            for (int i = 0; i < p.Points.Count - 1; i++)
-            {
-               
-                LineSegment polyedge = new LineSegment(p.Points[i], p.Points[i + 1]);
-                float r = 2;
-                var inter = newedge.Intersection(polyedge);
-                if (inter.onLine)
-                    onLine = true;
-            }
-            if (!onLine)
+                p.Points.Reverse();
+           
+            if (p.Points.Count <= 2 || CountOfInterseptions(p.Points[p.Points.Count - 1], p.Points[0], p.Points.Count - 1) == 2)
             {
                 context.Add(p);
                 context.Selected.Clear();
@@ -57,13 +61,12 @@ namespace Lab04.Tools
             graphics.DrawLine(pen, 
                 (float)p.Points[p.Points.Count - 1].X, (float)p.Points[p.Points.Count - 1].Y,
                 (float)point.X, (float)point.Y);
-
+            onLine = false;
             pen.Color = Color.Red;
             int count = p.Points.Count();
-            onLine = false;
+            LineSegment newedge = new LineSegment(p.Points[count - 1], point);
             for (int i = 0; i < count - 2; i++)
             {
-                LineSegment newedge = new LineSegment(p.Points[count - 1], point);
                 LineSegment polyedge = new LineSegment(p.Points[i], p.Points[i + 1]);
                 float r = 2;
                 var inter = newedge.Intersection(polyedge);
@@ -79,13 +82,14 @@ namespace Lab04.Tools
         public void Down(Point point, Graphics graphics)
         {
             if (p == null)
-            {
                 p = new Polygon();
-                onLine = false;
-            }
+
             if (!onLine)
                 p.Add(point);
+            onLine = false;
             Move(point, graphics);
+            
+            
         }
 
         public Matrix Draw(Point start, Point end, Graphics graphics)

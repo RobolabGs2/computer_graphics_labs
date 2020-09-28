@@ -24,7 +24,8 @@ namespace Lab04
                 new Tools.Division(),
                 new Tools.SelectAll(),
                 new Tools.Remove(),
-                new Tools.Interseption()
+                new Tools.Interseption(),
+                new Tools.Arrow()
             }));
         }
     }
