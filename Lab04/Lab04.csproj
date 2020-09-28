@@ -98,7 +98,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Arrow.bmp" />
+    <Content Include="Resources\Arrow.png" />
     <Content Include="Resources\SelectAll.png" />
     <Content Include="Resources\Remove.png" />
     <Content Include="Resources\Collision.png" />
