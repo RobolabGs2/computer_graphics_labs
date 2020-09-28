@@ -16,9 +16,14 @@ namespace Lab04.Tools
         AdjustableArrowCap bigArrow;
         public bool Active()
         {
-
-            _context.Pen.EndCap = _context.Pen.EndCap == LineCap.Custom ? LineCap.Flat : LineCap.Custom;
-
+            if (_context.Pen.EndCap != LineCap.Custom)
+            {
+                _context.Pen.CustomEndCap = bigArrow;
+            }
+            else
+            {
+                _context.Pen.EndCap = LineCap.Flat;
+            }
             return false;
         }   
 
@@ -31,7 +36,6 @@ namespace Lab04.Tools
         {
             this._context = context;
             bigArrow = new AdjustableArrowCap(5, 5);
-            _context.Pen.CustomEndCap = bigArrow;
         }
     }
 }
