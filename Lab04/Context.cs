@@ -49,7 +49,7 @@ namespace Lab04
                     {
                         for (int i = 0; i < p.Points.Count; i++)
                         {
-                            g.DrawString(i.ToString(), new Font("Consolas", 12), pen_black.Brush, p.Points[i].ToPointF());
+                            g.DrawString(i.ToString(), new Font("Consolas", 12), pen_black.Brush, (p.Points[i] * matrix).ToPointF());
                         }
                     }
                 }

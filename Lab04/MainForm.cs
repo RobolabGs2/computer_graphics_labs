@@ -99,6 +99,10 @@ namespace Lab04
             if (e.Button == MouseButtons.Left)
             {
                 context.Apply(lastMatrix);
+                context.Selected.ForEach(p => {
+                    if (p.Area() < 0)
+                        p.Points.Reverse();
+                });
                 lastMatrix = Matrix.Ident();
                 DrawContext(g => { });
             } 
