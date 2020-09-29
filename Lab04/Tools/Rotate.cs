@@ -27,7 +27,7 @@ namespace Lab04.Tools
             var cosPhi = delta.X / r;
             var sinPhi = delta.Y / r;
             DrawCircle(start, finish, g, cosPhi, r);
-            return Matrix.InPoint(start, Matrix.Rotate(cosPhi, sinPhi));
+            return Matrix.Rotate(cosPhi, sinPhi, start);
         }
 
         private static void DrawCircle(Point start, Point finish, Graphics g, double cosPhi, double r)

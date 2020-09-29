@@ -54,6 +54,7 @@ namespace Lab04
                 };
                 mainPanel.Controls.Add(button);
             }
+            DrawContext(g => { });
         }
 
         void DrawContext(Action<Graphics> action)
@@ -106,6 +107,17 @@ namespace Lab04
                 lastMatrix = Matrix.Ident();
                 DrawContext(g => { });
             } 
+        }
+
+        private void mainPictureBox_SizeChanged(object sender, EventArgs e)
+        {
+            if (mainPictureBox.Width <= 0 || mainPictureBox.Height <= 0)
+                return;
+
+            Bitmap oldBmp = bitmap;
+            bitmap = new Bitmap(mainPictureBox.Width, mainPictureBox.Height);
+            DrawContext(g => { });
+            oldBmp.Dispose();
         }
     }
 }

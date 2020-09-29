@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,14 +24,16 @@ namespace Lab04.Tools
             if (start == end)
                 return Matrix.Ident();
             Pen pen = new Pen(Color.Black);
+            float r = 2;
+            pen.CustomEndCap = new AdjustableArrowCap(5, 5);
             Pen blue_pen = new Pen(Color.Blue, 3);
             Pen green_pen = new Pen(Color.Lime, 3);
             graphics.DrawLine(pen, (float)start.X, (float)start.Y, (float)end.X, (float)end.Y);
+            graphics.DrawEllipse(pen, (float)start.X - r, (float)start.Y - r, r * 2, r * 2);
 
             LineSegment lineSegment = new LineSegment(start, end);
             context.Polygons.ForEach(poly => poly.Points.ForEach(point =>{
                 int sign = lineSegment.Sign(point);
-                float r = 2;
                 graphics.DrawEllipse(sign > 0 ? blue_pen: green_pen, (float)point.X - r, (float)point.Y - r, r * 2, r * 2);
             }));
             return Matrix.Ident();

@@ -37,9 +37,9 @@ namespace Lab04.Tools
 
         public Matrix Draw(Point start, Point end, Graphics graphics)
         {
-            Matrix matrix = Matrix.Move(-start) * Matrix.Scale(
+            Matrix matrix = Matrix.Scale(
                     ((end - start) * Matrix.Scale(new Point { X = 1, Y = -1 }) +
-                    new Point { X = delta, Y = delta }) / delta) * Matrix.Move(start);
+                    new Point { X = delta, Y = delta }) / delta, start);
 
             poly.PartialDraw(graphics, pen, Matrix.Move(start) * matrix);
             return matrix;

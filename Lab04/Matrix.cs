@@ -49,8 +49,22 @@ namespace Lab04
             m[1, 1] = scale.Y;
             return m;
         }
+        public static Matrix Scale(Point scale, Point start)
+        {
+            Matrix m = Matrix.Ident();
+            m[0, 0] = scale.X;
+            m[1, 1] = scale.Y;
+            m[2, 0] = (1 - scale.X) * start.X;
+            m[2, 1] = (1 - scale.Y) * start.Y;
+            return m;
+        }
 
         public static Matrix Rotate(double angel)
+        {
+            return Rotate(Math.Cos(angel), Math.Sin(angel));
+        }
+
+        public static Matrix Rotate(double angel, Point start)
         {
             return Rotate(Math.Cos(angel), Math.Sin(angel));
         }
@@ -60,6 +74,15 @@ namespace Lab04
             var m = Ident();
             m[0, 0] = m[1, 1] = cosAlpha;
             m[1, 0] = -(m[0, 1] = sinAlpha);
+            return m;
+        }
+        public static Matrix Rotate(double cosAlpha, double sinAlpha, Point start)
+        {
+            var m = Ident();
+            m[0, 0] = m[1, 1] = cosAlpha;
+            m[1, 0] = -(m[0, 1] = sinAlpha);
+            m[2, 0] = -start.X * cosAlpha + start.Y * sinAlpha + start.X;
+            m[2, 1] = -start.X * sinAlpha - start.Y * cosAlpha + start.Y;
             return m;
         }
 
