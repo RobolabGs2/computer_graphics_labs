@@ -25,8 +25,11 @@ namespace Lab04
 
         public (Point p, bool onLine) Intersection(LineSegment l)
         {
-            double x = (l.C * B - C * l.B ) / (A * l.B - l.A * B);
-            double y = -(C + A * x) / B;
+            double denum = (A * l.B - l.A * B);
+            if (denum == 0)
+                return (new Point { X = double.NaN, Y = double.NaN }, false);
+            double x = (l.C * B - C * l.B ) / denum;
+            double y = -(l.C * A - C * l.A) / denum;
             bool onLine = x <= Math.Max(P1.X, P2.X) && x >= Math.Min(P1.X, P2.X)
                 && x <= Math.Max(l.P1.X, l.P2.X) && x >= Math.Min(l.P1.X, l.P2.X)
                 && y <= Math.Max(P1.Y, P2.Y) && y >= Math.Min(P1.Y, P2.Y)
