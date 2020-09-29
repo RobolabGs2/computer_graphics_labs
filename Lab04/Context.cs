@@ -40,7 +40,7 @@ namespace Lab04
         public void Draw(Graphics g, Matrix matrix)
         {
             Pen pen_black = new Pen(Color.Black, 2);
-
+            var font = new Font("Consolas", 12);
             foreach (Polygon p in Polygons)
                 if (Selected.Contains(p))
                 {
@@ -49,7 +49,7 @@ namespace Lab04
                     {
                         for (int i = 0; i < p.Points.Count; i++)
                         {
-                            g.DrawString(i.ToString(), new Font("Consolas", 12), pen_black.Brush, (p.Points[i] * matrix).ToPointF());
+                            g.DrawString(i.ToString(), font, pen_black.Brush, (p.Points[i] * matrix).ToPointF());
                         }
                     }
                 }
@@ -57,9 +57,7 @@ namespace Lab04
                     p.Draw(g, pen_black);
 
             pen_black.Dispose();
-            //Pen.Dispose();
-
-
+            
             var rect = SelectedABBA(matrix);
             if (rect.p1 != rect.p2)
             {

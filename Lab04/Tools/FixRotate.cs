@@ -30,7 +30,7 @@ namespace Lab04.Tools
         {
             var abba = context.SelectedABBA();
             Point delta = (abba.p1 + abba.p2) / 2;
-            context.Apply(Matrix.Move(-delta) * matrix * Matrix.Move(delta));
+            context.Apply(Matrix.InPoint(delta, matrix));
             return false;
         }
 

@@ -13,7 +13,10 @@ namespace Lab04.Tools
         public Bitmap image => Properties.Resources.Point;
         private Context _ctx;
         private readonly Pen _beamPen = new Pen(Color.FromArgb(128, 255, 0, 0));
-        private readonly Pen _debugPen = new Pen(Color.FromArgb(128, 0, 0, 128), 8);
+        private readonly Pen _debugPenLeft = new Pen(Color.FromArgb(128, 0, 0, 128), 8);
+        private readonly Pen _debugPenRight = new Pen(Color.FromArgb(128, 0, 128, 0), 8);
+        private Font _font = new Font("Consolas", 10);
+
         public void Init(Context context)
         {
             _ctx = context;
@@ -22,8 +25,7 @@ namespace Lab04.Tools
         public Matrix Draw(Point start, Point finish, Graphics graphics)
         {
             var debug = "";
-            graphics.DrawLine(_beamPen, finish.ToPointF(), new PointF(graphics.ClipBounds.Right, (float) finish.Y));
-
+            graphics.DrawLine(_beamPen, (float)finish.X, graphics.ClipBounds.Top, (float) finish.X, graphics.ClipBounds.Bottom);
             _ctx.Selected = _ctx.Polygons.Where(
                 pol =>
                 {
@@ -34,12 +36,22 @@ namespace Lab04.Tools
                         if (!(finish.X < Math.Max(segment.P1.X, segment.P2.X)
                             && finish.X >= Math.Min(segment.P1.X, segment.P2.X)))
                             return 0;
-                        return segment.Sign(finish);
+
+                        var s = segment.Sign(finish);
+                        if (s < 0)
+                        {
+                            graphics.DrawLine(_debugPenLeft, segment.P1.ToPointF(), segment.P2.ToPointF());
+                        }
+                        else if (s > 0)
+                        {
+                            graphics.DrawLine(_debugPenRight, segment.P1.ToPointF(), segment.P2.ToPointF());
+                        }
+
+                        return s;
                     }).Sum();
                     return count != 0;
                 }).ToList();
-            // _ctx.Selected = _ctx.Polygons.Where(finish => finish.IsInternal(end)).ToList();
-            graphics.DrawString(debug, new Font("Consolas", 10), _beamPen.Brush, finish.ToPointF());
+            graphics.DrawString(debug, _font, _beamPen.Brush, finish.ToPointF());
             return Matrix.Ident();
         }
 
