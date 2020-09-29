@@ -9,23 +9,16 @@ using System.Threading.Tasks;
 
 namespace Lab04.Tools
 {
-    class Arrow : ITool
+    class Debug : ITool
     {
-        public Bitmap image => Resources.Arrow;
+        public Bitmap image => Resources.Debug;
         Context _context;
-        AdjustableArrowCap bigArrow;
+
         public bool Active()
         {
-            if (_context.Pen.EndCap != LineCap.Custom)
-            {
-                _context.Pen.CustomEndCap = bigArrow;
-            }
-            else
-            {
-                _context.Pen.EndCap = LineCap.Flat;
-            }
+            _context.Debug = !_context.Debug;
             return false;
-        }   
+        }
 
         public Matrix Draw(Point start, Point end, Graphics graphics)
         {
@@ -34,8 +27,7 @@ namespace Lab04.Tools
 
         public void Init(Context context)
         {
-            this._context = context;
-            bigArrow = new AdjustableArrowCap(5, 5);
+            _context = context;
         }
     }
 }

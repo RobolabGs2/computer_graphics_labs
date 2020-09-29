@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Lab04
 {
@@ -55,6 +57,11 @@ namespace Lab04
         public System.Drawing.PointF ToPointF()
         {
             return new System.Drawing.PointF((float) X, (float) Y);
+        }
+
+        public void Draw(Graphics graphics, Pen pen, float r = 2)
+        {
+            graphics.DrawEllipse(pen, (float)X - r, (float)Y - r, r * 2, r * 2);
         }
 
         public static (Point p1, Point p2) ABBA(IEnumerable<Point> points)

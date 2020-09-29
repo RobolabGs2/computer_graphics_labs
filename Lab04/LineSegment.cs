@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -40,6 +41,32 @@ namespace Lab04
         public int Sign(Point p)
         {
             return Math.Sign(A * p.X + B * p.Y + C);
+        }
+
+        public void Draw(Graphics graphics, Pen pen)
+        {
+            graphics.DrawLine(pen, (float)P1.X, (float)P1.Y, (float)P2.X, (float)P2.Y);
+        }
+
+        public void DrawFullLine(Graphics graphics, Pen pen)
+        {
+            var bounds = graphics.VisibleClipBounds;
+            if (Math.Abs(P1.X - P2.X) < 1000*double.Epsilon)
+            {
+                graphics.DrawLine(pen, (float)P1.X, bounds.Top, (float)P1.X, bounds.Bottom);
+                return;
+            }
+            graphics.DrawLine(pen, bounds.Left, (float)CalcY(bounds.Left), bounds.Right, (float)CalcY(bounds.Right));
+        }
+
+        public double CalcY(double x)
+        {
+            return -(A * x + C) / B;
+        }
+
+        public double CalcX(double y)
+        {
+            return -(B * y + C) / A;
         }
     }
 }

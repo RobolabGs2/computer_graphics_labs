@@ -17,6 +17,8 @@ namespace Lab04
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new MainForm(new List<ITool> {
+                new Tools.Save(),
+                new Tools.Load(),
                 new Tools.Rectangle(),
                 new Tools.InternalPoint(),
                 new Tools.SelectAll(),
@@ -27,7 +29,7 @@ namespace Lab04
                 new Tools.FixRotate(-Math.PI / 2, Properties.Resources.RightAngle),
                 new Tools.Division(),
                 new Tools.Interseption(),
-                new Tools.Arrow(),
+                new Tools.Debug(),
             }));
         }
     }

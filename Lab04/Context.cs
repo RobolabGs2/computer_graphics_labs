@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
@@ -11,12 +10,31 @@ namespace Lab04
         public List<Polygon> Polygons { get; set; }
         public List<Polygon> Selected { get; set; }
         public Pen Pen { get; set; }
+
+        public bool Debug
+        {
+            get => Pen.EndCap == LineCap.Custom;
+            set
+            {
+                if (value)
+                    Pen.CustomEndCap = new AdjustableArrowCap(5, 5);
+                else
+                    Pen.EndCap = LineCap.Flat;
+            }
+        }
+
+        private readonly Pen abbaPen = new Pen(Color.Gray)
+        {
+            DashStyle = DashStyle.Dash
+        };
+        private readonly Pen notSelectedPen = new Pen(Color.Black, 2);
+        private readonly Font font = new Font("Consolas", 12);
+
         public Context()
         {
             Polygons = new List<Polygon>();
             Selected = new List<Polygon>();
             Pen = new Pen(Color.Red, 2);
-
         }
 
         public (Point p1, Point p2) SelectedABBA(Matrix m = null)
@@ -39,37 +57,26 @@ namespace Lab04
 
         public void Draw(Graphics g, Matrix matrix)
         {
-            Pen pen_black = new Pen(Color.Black, 2);
-            var font = new Font("Consolas", 12);
             foreach (Polygon p in Polygons)
                 if (Selected.Contains(p))
                 {
                     p.Draw(g, Pen, matrix);
-                    if (Pen.EndCap == LineCap.Custom)
+                    if (Debug)
                     {
                         for (int i = 0; i < p.Points.Count; i++)
                         {
-                            g.DrawString(i.ToString(), font, pen_black.Brush, (p.Points[i] * matrix).ToPointF());
+                            g.DrawString(i.ToString(), font, notSelectedPen.Brush, (p.Points[i] * matrix).ToPointF());
                         }
                     }
                 }
                 else
-                    p.Draw(g, pen_black);
-
-            pen_black.Dispose();
-            
+                    p.Draw(g, notSelectedPen);
             var rect = SelectedABBA(matrix);
             if (rect.p1 != rect.p2)
             {
-                pen_black = new Pen(Color.Gray);
-                pen_black.DashStyle = DashStyle.Dash;
-
                 var p1 = rect.p1.ToPointF();
                 var p2 = (rect.p2 - rect.p1).ToPointF();
-
-                g.DrawRectangle(pen_black, (float)p1.X, (float)p1.Y,
-                    (float)p2.X, (float)p2.Y);
-                pen_black.Dispose();
+                g.DrawRectangle(abbaPen, p1.X, p1.Y, p2.X, p2.Y);
             }
         }
     }

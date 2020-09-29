@@ -28,7 +28,7 @@ namespace Lab04
             currentTool = drawing;
 
             tools.Add(drawing);
-            foreach(ITool tool in tools)
+            foreach (ITool tool in tools)
             {
                 tool.Init(context);
 
@@ -50,10 +50,12 @@ namespace Lab04
                     {
                         currentTool = tool;
                     }
+
                     DrawContext(g => { });
                 };
                 mainPanel.Controls.Add(button);
             }
+
             DrawContext(g => { });
         }
 
@@ -65,14 +67,15 @@ namespace Lab04
                 context.Draw(g, lastMatrix);
                 action(g);
             }
+
             mainPictureBox.Image = bitmap;
         }
 
         private void mainPictureBox_MouseDown(object sender, MouseEventArgs e)
         {
-            if(e.Button == MouseButtons.Left)
+            if (e.Button == MouseButtons.Left)
             {
-                var point = new Point { X = e.X, Y = e.Y };
+                var point = new Point {X = e.X, Y = e.Y};
                 if (currentTool == drawing)
                     DrawContext(g => drawing.Down(point, g));
                 else
@@ -82,17 +85,16 @@ namespace Lab04
                     DrawContext(g => lastMatrix = currentTool.Draw(point, point, g));
                 }
             }
-            else
-            if (e.Button == MouseButtons.Right && currentTool == drawing)
+            else if (e.Button == MouseButtons.Right && currentTool == drawing)
                 drawing.Restart();
         }
 
         private void mainPictureBox_MouseMove(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
-                DrawContext(g => lastMatrix = currentTool.Draw(startPoint, new Point { X = e.X, Y = e.Y }, g));
+                DrawContext(g => lastMatrix = currentTool.Draw(startPoint, new Point {X = e.X, Y = e.Y}, g));
             if (currentTool == drawing)
-                DrawContext(g => drawing.Move(new Point { X = e.X, Y = e.Y }, g));
+                DrawContext(g => drawing.Move(new Point {X = e.X, Y = e.Y}, g));
         }
 
         private void mainPictureBox_MouseUp(object sender, MouseEventArgs e)
@@ -100,13 +102,10 @@ namespace Lab04
             if (e.Button == MouseButtons.Left)
             {
                 context.Apply(lastMatrix);
-                context.Selected.ForEach(p => {
-                    if (p.Area() < 0)
-                        p.Points.Reverse();
-                });
+                context.Selected.ForEach(p => p.Repair());
                 lastMatrix = Matrix.Ident();
                 DrawContext(g => { });
-            } 
+            }
         }
 
         private void mainPictureBox_SizeChanged(object sender, EventArgs e)

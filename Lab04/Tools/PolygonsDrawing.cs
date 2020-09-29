@@ -39,8 +39,7 @@ namespace Lab04.Tools
         {
             if (p == null)
                 return;
-            if (p.Area() < 0)
-                p.Points.Reverse();
+            p.Repair();
            
             if (p.Points.Count <= 2 || CountOfInterseptions(p.Points[p.Points.Count - 1], p.Points[0], p.Points.Count - 1) == 2)
             {
@@ -58,21 +57,19 @@ namespace Lab04.Tools
                 return;
             Pen pen = new Pen(Color.Blue, 2);
             p.PartialDraw(graphics, pen);
-            graphics.DrawLine(pen, 
-                (float)p.Points[p.Points.Count - 1].X, (float)p.Points[p.Points.Count - 1].Y,
-                (float)point.X, (float)point.Y);
+            int count = p.Points.Count();
+            LineSegment newedge = new LineSegment(p.Points[count - 1], point); 
+            newedge.Draw(graphics, pen);
             onLine = false;
             pen.Color = Color.Red;
-            int count = p.Points.Count();
-            LineSegment newedge = new LineSegment(p.Points[count - 1], point);
+            
             for (int i = 0; i < count - 2; i++)
             {
                 LineSegment polyedge = new LineSegment(p.Points[i], p.Points[i + 1]);
-                float r = 2;
                 var inter = newedge.Intersection(polyedge);
                 if (inter.onLine)
                 {
-                    graphics.DrawEllipse(pen, (float)inter.p.X - r, (float)inter.p.Y - r, r * 2, r * 2);
+                    inter.p.Draw(graphics, pen);
                     onLine = true;
                 }
             }
@@ -88,8 +85,6 @@ namespace Lab04.Tools
                 p.Add(point);
             onLine = false;
             Move(point, graphics);
-            
-            
         }
 
         public Matrix Draw(Point start, Point end, Graphics graphics)
