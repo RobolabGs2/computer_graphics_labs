@@ -42,8 +42,17 @@ namespace Lab04
             Pen pen_black = new Pen(Color.Black, 2);
 
             foreach (Polygon p in Polygons)
-                if(Selected.Contains(p))
+                if (Selected.Contains(p))
+                {
                     p.Draw(g, Pen, matrix);
+                    if (Pen.EndCap == LineCap.Custom)
+                    {
+                        for (int i = 0; i < p.Points.Count; i++)
+                        {
+                            g.DrawString(i.ToString(), new Font("Consolas", 12), pen_black.Brush, p.Points[i].ToPointF());
+                        }
+                    }
+                }
                 else
                     p.Draw(g, pen_black);
 

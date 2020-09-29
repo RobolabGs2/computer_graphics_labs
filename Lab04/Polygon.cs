@@ -88,5 +88,37 @@ namespace Lab04
                     (float)p2.X, (float)p2.Y);
             }
         }
+
+        public IEnumerable<LineSegment> Edges()
+        {
+            for (var i = 0; i < Points.Count - 1; ++i)
+            {
+                yield return new LineSegment(Points[i], Points[i+1]);
+            }
+            yield return new LineSegment(Points.Last(), Points.First());
+        }
+
+        public bool IsInternal(Point p)
+        {
+            // return Points.Count >= 3 && Edges().Select(segment => segment.Sign(p)).Sum() < 0;
+            // return Points.Count >= 3 && Edges().All(segment => segment.Sign(p) < 0);
+            return Points.Count >= 3 && Edges().Where(segment =>
+            {
+                if(p.Y < Math.Min(segment.P1.Y, segment.P2.Y) || p.Y > Math.Max(segment.P1.Y, segment.P2.Y))
+                    return false;
+
+                if (p.X < Math.Min(segment.P1.X, segment.P2.X))
+                    return true;
+                return segment
+                    .Intersection(new LineSegment(p, new Point {X = Math.Max(segment.P1.X, segment.P2.X), Y = p.Y}))
+                    .onLine;
+                if (segment.P1.Y > segment.P2.Y)
+                {
+                    segment = new LineSegment(segment.P2, segment.P1);
+                }
+
+                return segment.Sign(p) > 0;
+            }).Count() %2==1;
+        }
     }
 }

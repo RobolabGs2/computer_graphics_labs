@@ -7,7 +7,7 @@ using System.Xml.Schema;
 
 namespace Lab04
 {
-    class LineSegment
+    public class LineSegment
     {
         public Point P1 { get; }
         public Point P2 { get; }

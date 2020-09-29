@@ -78,6 +78,7 @@ namespace Lab04
                 {
                     startPoint = point;
                     DrawContext(g => lastMatrix = currentTool.Draw(point, point, g));
+                    DrawContext(g => lastMatrix = currentTool.Draw(point, point, g));
                 }
             }
             else
