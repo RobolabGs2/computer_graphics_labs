@@ -10,10 +10,11 @@ using System.Windows.Forms;
 
 namespace Lab04.Tools
 {
-    class Save: ITool
+    class Save : ITool
     {
         public Bitmap image => Properties.Resources.Save;
         private Context ctx;
+
         public void Init(Context context)
         {
             ctx = context;
@@ -26,14 +27,26 @@ namespace Lab04.Tools
 
         public bool Active()
         {
-            using (var dialog = new SaveFileDialog{Title = "Сохранение файла",DefaultExt = ".json"})
+            using (var dialog = new SaveFileDialog
+            {
+                Title = "Сохранение в файл", DefaultExt = ".json", Filter = "JSON (*.json)|*.json"
+            })
             {
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {
-                    var json = JsonSerializer.Serialize(ctx.Polygons);
-                    File.WriteAllText(dialog.FileName, json);
+                    try
+                    {
+                        File.WriteAllText(dialog.FileName, JsonSerializer.Serialize(ctx.Polygons));
+                    }
+                    catch (Exception e)
+                    {
+                        MessageBox.Show(
+                            $"Не удалось сохранить в файл '${dialog.FileName}': ${e.Message}.", "Окошко-всплывашка",
+                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
                 }
             }
+
             return false;
         }
     }

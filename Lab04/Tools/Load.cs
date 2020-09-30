@@ -10,13 +10,22 @@ using System.Windows.Forms;
 
 namespace Lab04.Tools
 {
-    class Load: ITool
+    class Load : ITool
     {
         public Bitmap image => Properties.Resources.Load;
         private Context ctx;
+        private readonly string defaultFileName;
+
+        public Load(string defaultFileName = null)
+        {
+            this.defaultFileName = defaultFileName;
+        }
+
         public void Init(Context context)
         {
             ctx = context;
+            if (defaultFileName != null)
+                TryLoadPolygons(defaultFileName);
         }
 
         public Matrix Draw(Point start, Point end, Graphics graphics)
@@ -26,15 +35,36 @@ namespace Lab04.Tools
 
         public bool Active()
         {
-            using (var dialog = new OpenFileDialog{Title = "Загрузка файла",DefaultExt = ".json"})
+            using (var dialog = new OpenFileDialog
+            {
+                Title = "Загрузка из файла", DefaultExt = ".json", Filter = "JSON (*.json)|*.json"
+            })
             {
                 if (dialog.ShowDialog() == DialogResult.OK)
-                {
-                    ctx.Polygons = JsonSerializer.Deserialize<List<Polygon>>(File.ReadAllText(dialog.FileName));
-                    ctx.Selected.Clear();
-                }
+                    TryLoadPolygons(dialog.FileName);
             }
+
             return false;
+        }
+
+        private List<Polygon> GetFromFile(string filename)
+        {
+            return JsonSerializer.Deserialize<List<Polygon>>(File.ReadAllText(filename));
+        }
+
+        private void TryLoadPolygons(string filename)
+        {
+            try
+            {
+                ctx.Polygons = GetFromFile(filename);
+                ctx.Selected.Clear();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(
+                    $"Не удалось загрузить файл '${filename}': ${e.Message}.", "Окошко-всплывашка",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
     }
 }
