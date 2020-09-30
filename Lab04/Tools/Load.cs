@@ -37,7 +37,9 @@ namespace Lab04.Tools
         {
             using (var dialog = new OpenFileDialog
             {
-                Title = "Загрузка из файла", DefaultExt = ".json", Filter = "JSON (*.json)|*.json"
+                Title = "Загрузка из файла",
+                DefaultExt = ".cgjson",
+                Filter = "Polygons in JSON (*.cgjson)|*.cgjson"
             })
             {
                 if (dialog.ShowDialog() == DialogResult.OK)

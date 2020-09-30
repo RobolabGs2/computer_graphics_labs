@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.mainPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.mainPictureBox = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.mainPictureBox)).BeginInit();
@@ -37,9 +38,10 @@
             // 
             this.mainPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.mainPanel.Location = new System.Drawing.Point(13, 12);
+            this.mainPanel.Location = new System.Drawing.Point(20, 18);
+            this.mainPanel.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.mainPanel.Name = "mainPanel";
-            this.mainPanel.Size = new System.Drawing.Size(1118, 32);
+            this.mainPanel.Size = new System.Drawing.Size(1677, 49);
             this.mainPanel.TabIndex = 0;
             // 
             // mainPictureBox
@@ -47,9 +49,10 @@
             this.mainPictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.mainPictureBox.Location = new System.Drawing.Point(13, 50);
+            this.mainPictureBox.Location = new System.Drawing.Point(20, 77);
+            this.mainPictureBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.mainPictureBox.Name = "mainPictureBox";
-            this.mainPictureBox.Size = new System.Drawing.Size(1118, 695);
+            this.mainPictureBox.Size = new System.Drawing.Size(1677, 1069);
             this.mainPictureBox.TabIndex = 1;
             this.mainPictureBox.TabStop = false;
             this.mainPictureBox.SizeChanged += new System.EventHandler(this.mainPictureBox_SizeChanged);
@@ -59,11 +62,13 @@
             // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1142, 757);
+            this.ClientSize = new System.Drawing.Size(1713, 1165);
             this.Controls.Add(this.mainPictureBox);
             this.Controls.Add(this.mainPanel);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "MainForm";
             this.Text = "Lab04";
             ((System.ComponentModel.ISupportInitialize)(this.mainPictureBox)).EndInit();

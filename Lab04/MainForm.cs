@@ -14,7 +14,7 @@ namespace Lab04
     {
         ITool currentTool;
         Tools.PolygonsDrawing drawing;
-        Context context;
+        Context context = new Context();
         Bitmap bitmap;
         Matrix lastMatrix;
         Point startPoint;
@@ -23,7 +23,6 @@ namespace Lab04
         {
             InitializeComponent();
             drawing = new Tools.PolygonsDrawing();
-            context = new Context();
             bitmap = new Bitmap(mainPictureBox.Width, mainPictureBox.Height);
             currentTool = drawing;
 
@@ -116,7 +115,7 @@ namespace Lab04
             Bitmap oldBmp = bitmap;
             bitmap = new Bitmap(mainPictureBox.Width, mainPictureBox.Height);
             DrawContext(g => { });
-            oldBmp.Dispose();
+            oldBmp?.Dispose();
         }
     }
 }

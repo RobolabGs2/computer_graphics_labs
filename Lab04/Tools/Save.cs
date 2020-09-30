@@ -29,7 +29,9 @@ namespace Lab04.Tools
         {
             using (var dialog = new SaveFileDialog
             {
-                Title = "Сохранение в файл", DefaultExt = ".json", Filter = "JSON (*.json)|*.json"
+                Title = "Сохранение в файл", 
+                DefaultExt = ".cgjson",
+                Filter = "Polygons in JSON (*.cgjson)|*.cgjson"
             })
             {
                 if (dialog.ShowDialog() == DialogResult.OK)
