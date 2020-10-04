@@ -59,6 +59,13 @@ namespace Lab04
             graphics.DrawLine(pen, bounds.Left, (float)CalcY(bounds.Left), bounds.Right, (float)CalcY(bounds.Right));
         }
 
+        public bool aimsAt(LineSegment other)
+        {
+            double s1 = Math.Abs(A * other.P1.X + B * other.P1.Y + C);
+            double s2 = Math.Abs(A * other.P2.X + B * other.P2.Y + C);
+            return s1 < s2;
+        }
+
         public double CalcY(double x)
         {
             return -(A * x + C) / B;

@@ -12,36 +12,36 @@ namespace Lab04.Tools
     class InternalPoint : ITool
     {
         public Bitmap image => Properties.Resources.Point;
-        private Context ctx;
+        private Context context;
         private readonly Pen beamPen = new Pen(Color.FromArgb(128, 255, 0, 0));
         private readonly Pen debugPenLeft = new Pen(Color.FromArgb(128, 0, 0, 128), 8);
         private readonly Pen debugPenRight = new Pen(Color.FromArgb(128, 0, 128, 0), 8);
 
         public void Init(Context context)
         {
-            ctx = context;
+            this.context = context;
         }
 
         public Matrix Draw(Point start, Point finish, Graphics graphics)
         {
             finish.Draw(graphics, beamPen);
-            if (ctx.Debug)
+            if (context.Debug)
                 graphics.DrawLine(beamPen,
                     (float) finish.X, graphics.ClipBounds.Top,
                     (float) finish.X, graphics.ClipBounds.Bottom);
-            var selected = ctx.Polygons
-                .Where(ctx.Debug ? DebugInternalPoint(finish, graphics) : p => p.IsInternal(finish)).ToList();
+            var selected = context.Polygons
+                .Where(context.Debug ? DebugInternalPoint(finish, graphics) : p => p.IsInternal(finish));
             if ((Control.ModifierKeys & Keys.Shift) != 0)
             {
-                ctx.Selected.AddRange(selected);
+                context.Selected.UnionWith(selected);
             }
             else if ((Control.ModifierKeys & Keys.Control) != 0)
             {
-                ctx.Selected.RemoveAll(p => selected.Contains(p));
+                context.Selected.ExceptWith(selected);
             }
             else
             {
-                ctx.Selected = selected;
+                context.Selected = selected.ToHashSet();
             }
             return Matrix.Ident();
         }

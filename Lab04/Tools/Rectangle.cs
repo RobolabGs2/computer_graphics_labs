@@ -31,18 +31,18 @@ namespace Lab04.Tools
             var selected = context.Polygons.Where(p => {
                 var abba = p.ABBA();
                 return abba.p1.X > p1.X && abba.p1.Y > p1.Y && abba.p2.X < p2.X && abba.p2.Y < p2.Y;
-            }).ToList();
+            });
             if ((Control.ModifierKeys & Keys.Shift) != 0)
             {
-                context.Selected.AddRange(selected);
+                context.Selected.UnionWith(selected);
             }
             else if ((Control.ModifierKeys & Keys.Control) != 0)
             {
-                context.Selected.RemoveAll(p => selected.Contains(p));
+                context.Selected.ExceptWith(selected);
             }
             else
             {
-                context.Selected = selected;
+                context.Selected = selected.ToHashSet();
             }
             return Matrix.Ident();
         }

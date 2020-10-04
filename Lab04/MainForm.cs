@@ -101,9 +101,11 @@ namespace Lab04
             if (e.Button == MouseButtons.Left)
             {
                 context.Apply(lastMatrix);
-                context.Selected.ForEach(p => p.Repair());
                 lastMatrix = Matrix.Ident();
-                DrawContext(g => { });
+                if (currentTool == drawing)
+                    DrawContext(g => drawing.Move(new Point { X = e.X, Y = e.Y }, g));
+                else
+                    DrawContext(g => { });
             }
         }
 

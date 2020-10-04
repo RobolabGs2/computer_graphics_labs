@@ -13,11 +13,11 @@ namespace Lab04.Tools
     class Save : ITool
     {
         public Bitmap image => Properties.Resources.Save;
-        private Context ctx;
+        private Context context;
 
         public void Init(Context context)
         {
-            ctx = context;
+            this.context = context;
         }
 
         public Matrix Draw(Point start, Point end, Graphics graphics)
@@ -38,7 +38,7 @@ namespace Lab04.Tools
                 {
                     try
                     {
-                        File.WriteAllText(dialog.FileName, JsonSerializer.Serialize(ctx.Polygons));
+                        File.WriteAllText(dialog.FileName, JsonSerializer.Serialize(context.Polygons));
                     }
                     catch (Exception e)
                     {

@@ -29,8 +29,9 @@ namespace Lab04
                 new Tools.Scale(),
                 new Tools.FixRotate(-Math.PI / 2, Properties.Resources.RightAngle),
                 new Tools.Division(),
-                new Tools.Interseption(),
-                new Tools.Debug(),
+                new Tools.Collision(),
+                new Tools.Intersection(),
+                new Tools.Debug()
             }));
         }
     }

@@ -11,10 +11,10 @@ namespace Lab04.Tools
     class Remove: ITool
     {
         public Bitmap image => Resources.Remove;
-        private Context _context;
+        private Context context;
         public void Init(Context context)
         {
-            _context = context;
+            this.context = context;
         }
         public Matrix Draw(Point start, Point end, Graphics graphics)
         {
@@ -23,8 +23,8 @@ namespace Lab04.Tools
 
         public bool Active()
         {
-            _context.Polygons.RemoveAll(polygon => _context.Selected.Contains(polygon));
-            _context.Selected.Clear();
+            context.Polygons.ExceptWith(context.Selected);
+            context.Selected.Clear();
             return false;
         }
     }

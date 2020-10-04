@@ -7,8 +7,8 @@ namespace Lab04
 {
     public class Context
     {
-        public List<Polygon> Polygons { get; set; }
-        public List<Polygon> Selected { get; set; }
+        public HashSet<Polygon> Polygons { get; set; }
+        public HashSet<Polygon> Selected { get; set; }
         public Pen Pen { get; set; }
 
         public bool Debug
@@ -32,8 +32,8 @@ namespace Lab04
 
         public Context()
         {
-            Polygons = new List<Polygon>();
-            Selected = new List<Polygon>();
+            Polygons = new HashSet<Polygon>();
+            Selected = new HashSet<Polygon>();
             Pen = new Pen(Color.Red, 2);
         }
 
@@ -52,9 +52,8 @@ namespace Lab04
         public void Apply(Matrix matrix)
         {
             foreach (Polygon p in Selected)
-                p.Points = p.Points.Select(point => point * matrix).ToList();
+                p.Apply(matrix);
         }
-
         public void Draw(Graphics g, Matrix matrix)
         {
             foreach (Polygon p in Polygons)

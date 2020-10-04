@@ -11,10 +11,10 @@ namespace Lab04.Tools
     class SelectAll: ITool
     {
         public Bitmap image => Resources.SelectAll;
-        private Context _context;
+        private Context context;
         public void Init(Context context)
         {
-            _context = context;
+            this.context = context;
         }
         public Matrix Draw(Point start, Point end, Graphics graphics)
         {
@@ -23,13 +23,13 @@ namespace Lab04.Tools
 
         public bool Active()
         {
-            if (_context.Selected.Count == _context.Polygons.Count)
+            if (context.Selected.Count == context.Polygons.Count)
             {
-                _context.Selected.Clear();
+                context.Selected.Clear();
                 return false;
             }
-            _context.Selected.Clear();
-            _context.Selected.AddRange(_context.Polygons);
+            context.Selected.Clear();
+            context.Selected.UnionWith(context.Polygons);
             return false;
         }
     }

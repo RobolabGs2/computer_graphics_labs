@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lab04.Tools;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -41,6 +42,11 @@ namespace Lab04
         {
             if (Area() < 0)
                 Points.Reverse();
+        }
+        public void Apply(Matrix matrix)
+        {
+            Points = Points.Select(p => p * matrix).ToList(); 
+            Repair();
         }
 
         public void Add(Point point)
@@ -115,6 +121,25 @@ namespace Lab04
                 return segment.Sign(p);
             }).Sum();
             return count != 0;
+        }
+
+        public bool IsConvex()
+        {
+            if (Points.Count < 3)
+                return false;
+            for(int i = 0; i < Points.Count; ++i)
+            {
+                LineSegment line = new LineSegment(Points[i], Points[(i + 1) % Points.Count]);
+                if (line.Sign(Points[(i + 2) % Points.Count]) > 0)
+                    return false;
+            }
+            return true;
+        }
+
+        public Polygon Intersection(Polygon other)
+        {
+
+            return new Polygon();
         }
     }
 }

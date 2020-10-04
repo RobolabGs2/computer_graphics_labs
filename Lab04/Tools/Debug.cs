@@ -12,11 +12,11 @@ namespace Lab04.Tools
     class Debug : ITool
     {
         public Bitmap image => Resources.Debug;
-        Context _context;
+        Context context;
 
         public bool Active()
         {
-            _context.Debug = !_context.Debug;
+            context.Debug = !context.Debug;
             return false;
         }
 
@@ -27,7 +27,7 @@ namespace Lab04.Tools
 
         public void Init(Context context)
         {
-            _context = context;
+            this.context = context;
         }
     }
 }

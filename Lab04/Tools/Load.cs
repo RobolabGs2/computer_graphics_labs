@@ -13,7 +13,7 @@ namespace Lab04.Tools
     class Load : ITool
     {
         public Bitmap image => Properties.Resources.Load;
-        private Context ctx;
+        private Context context;
         private readonly string defaultFileName;
 
         public Load(string defaultFileName = null)
@@ -23,7 +23,7 @@ namespace Lab04.Tools
 
         public void Init(Context context)
         {
-            ctx = context;
+            this.context = context;
             if (defaultFileName != null)
                 TryLoadPolygons(defaultFileName);
         }
@@ -49,17 +49,17 @@ namespace Lab04.Tools
             return false;
         }
 
-        private List<Polygon> GetFromFile(string filename)
+        private HashSet<Polygon> GetFromFile(string filename)
         {
-            return JsonSerializer.Deserialize<List<Polygon>>(File.ReadAllText(filename));
+            return JsonSerializer.Deserialize<HashSet<Polygon>>(File.ReadAllText(filename));
         }
 
         private void TryLoadPolygons(string filename)
         {
             try
             {
-                ctx.Polygons = GetFromFile(filename);
-                ctx.Selected.Clear();
+                context.Polygons = GetFromFile(filename);
+                context.Selected.Clear();
             }
             catch (Exception e)
             {

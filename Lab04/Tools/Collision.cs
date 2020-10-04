@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Lab04.Tools
 {
-    class Interseption : ITool
+    class Collision : ITool
     {
         public Bitmap image => Properties.Resources.Collision;
         Context context;
@@ -29,7 +29,8 @@ namespace Lab04.Tools
 
             LineSegment lineSegment = new LineSegment(start, end);
             LineSegment polyedge;
-            context.Polygons.ForEach(poly => {
+            foreach (var poly in context.Polygons)
+            {
                 int count = poly.Points.Count();
                 for (int i = 0; i < count; i++)
                 {
@@ -38,7 +39,7 @@ namespace Lab04.Tools
                     var inter = lineSegment.Intersection(polyedge);
                     if (inter.onLine) graphics.DrawEllipse(green_pen, (float)inter.p.X - r, (float)inter.p.Y - r, r * 2, r * 2);
                 }
-            });
+            }
             return Matrix.Ident();
         }
 

@@ -17,11 +17,11 @@ namespace Lab04.Tools
         private readonly Pen _linePen = new Pen(Color.Black);
         private readonly Pen _lineFullPen = new Pen(Color.FromArgb(128, 128, 128, 128));
 
-        private Context _context;
+        private Context context;
 
         public void Init(Context context)
         {
-            _context = context;
+            this.context = context;
         }
 
         public Matrix Draw(Point start, Point finish, Graphics graphics)
@@ -30,7 +30,7 @@ namespace Lab04.Tools
                 return Matrix.Ident();
             var lineSegment = new LineSegment(start, finish);
             DrawHelperLine(lineSegment, graphics);
-            foreach (var point in _context.Polygons.SelectMany(poly => poly.Points))
+            foreach (var point in context.Polygons.SelectMany(poly => poly.Points))
                 point.Draw(graphics, lineSegment.Sign(point) > 0 ? _leftPen : _rightPen);
             return Matrix.Ident();
         }

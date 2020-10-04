@@ -107,7 +107,8 @@
     <Compile Include="Tools\Debug.cs" />
     <Compile Include="Tools\Division.cs" />
     <Compile Include="Tools\FixRotate.cs" />
-    <Compile Include="Tools\Interseption.cs" />
+    <Compile Include="Tools\Intersection.cs" />
+    <Compile Include="Tools\Collision.cs" />
     <Compile Include="Tools\JustPicture.cs" />
     <Compile Include="Tools\Rotate.cs" />
     <Compile Include="Tools\Move.cs" />
@@ -150,6 +151,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Icon.ico" />
+    <Content Include="Resources\Intersection.png" />
     <Content Include="Resources\Load.png" />
     <Content Include="Resources\Save.png" />
     <Content Include="Resources\Debug.png" />
