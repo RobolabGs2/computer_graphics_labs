@@ -61,9 +61,9 @@ namespace Lab04
 
         public bool aimsAt(LineSegment other)
         {
-            double s1 = Math.Abs(A * other.P1.X + B * other.P1.Y + C);
-            double s2 = Math.Abs(A * other.P2.X + B * other.P2.Y + C);
-            return s1 < s2;
+            double s1 = other.A * P1.X + other.B * P1.Y + other.C;
+            double s2 = other.A * P2.X + other.B * P2.Y + other.C;
+            return  Math.Sign(s1) == Math.Sign(s2) && Math.Abs(s1) > Math.Abs(s2);
         }
 
         public double CalcY(double x)

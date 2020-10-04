@@ -27,9 +27,9 @@ namespace Lab04.Tools
                     return false;
                 }
 
-            Polygon result = context.Selected.Aggregate((p1, p2) => p1.Intersection(p2));
+            Polygon result = context.Selected.Aggregate((p1, p2) => p1?.Intersection(p2));
             context.Selected.Clear();
-            if(result.Points.Count > 0)
+            if(result != null)
             {
                 context.Add(result);
                 context.Selected.Add(result);

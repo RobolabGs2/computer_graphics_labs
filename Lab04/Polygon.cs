@@ -136,10 +136,120 @@ namespace Lab04
             return true;
         }
 
+        public LineSegment GetLine(int idx)
+        {
+            return new LineSegment(Points[idx % Points.Count], Points[(idx + 1)% Points.Count]);
+        }
+
+        private bool AddInListIfNotFirst(LinkedList<Point> list, Point point)
+        {
+            if (list.Count > 0 && list.First() == point)
+                return list.Count == 1;
+            list.AddLast(point);
+            return true;
+        }
+
+        private enum Outline { Line1, Line2, Something };
+
         public Polygon Intersection(Polygon other)
         {
+            if (other == null || Points.Count < 3 || other.Points.Count < 3)
+                return null;
+            LinkedList<Point> result = new LinkedList<Point>();
+            int maxlength = 2 * (Points.Count + other.Points.Count);
+            int polygon1Idx = 0;
+            int polygon2Idx = 0;
+            Outline outline = Outline.Something;
 
-            return new Polygon();
+            for (int i = 0; i < maxlength; ++i)
+            {
+                LineSegment line1 = GetLine(polygon1Idx);
+                LineSegment line2 = other.GetLine(polygon2Idx);
+
+                bool p1Outline = line2.Sign(line1.P2) > 0;
+                bool p2Outline = line1.Sign(line2.P2) > 0;
+                var collision = line1.Intersection(line2);
+
+                if (collision.onLine)
+                {
+                    if(!AddInListIfNotFirst(result, collision.p))
+                        break;
+                    outline = p1Outline ? Outline.Line1 : Outline.Line2;
+                    
+                    if (outline == Outline.Line1)
+                        ++polygon1Idx;
+                    else
+                        ++polygon2Idx;
+                    continue;
+                }
+
+                bool aims12 = line1.aimsAt(line2);
+                bool aims21 = line2.aimsAt(line1);
+                if (p1Outline && p2Outline)
+                {
+                    if (outline == Outline.Line2)
+                        if (!AddInListIfNotFirst(result, line1.P2))
+                            break;
+                    if (outline == Outline.Line1)
+                        if (!AddInListIfNotFirst(result, line2.P2))
+                            break;
+                    continue;
+                }
+
+                if (p1Outline)
+                {
+                    if (outline == Outline.Line2)
+                        if (!AddInListIfNotFirst(result, line1.P2))
+                            break;
+                    ++polygon1Idx;
+                    continue;
+                }
+
+                if (p2Outline)
+                {
+                    if (outline == Outline.Line1)
+                        if (!AddInListIfNotFirst(result, line2.P2))
+                            break;
+                    ++polygon2Idx;
+                    continue;
+                }
+
+                if (aims12)
+                {
+                    if (outline == Outline.Line2)
+                        if (!AddInListIfNotFirst(result, line1.P2))
+                            break;
+                    ++polygon1Idx;
+                    continue;
+                }
+
+                if (aims21)
+                {
+                    if (outline == Outline.Line1)
+                        if (!AddInListIfNotFirst(result, line2.P2))
+                            break;
+                    ++polygon2Idx;
+                    continue;
+                }
+
+                if (!AddInListIfNotFirst(result, line2.P2))
+                    break;
+                ++polygon1Idx;
+                ++polygon2Idx;
+            }
+
+
+            Polygon p = new Polygon();
+            if (result.Count < 3)
+            {
+                if (IsInternal(other.Points[0]))
+                    return other;
+                if (other.IsInternal(Points[0]))
+                    return this;
+                return null;
+            }
+            p.Points = result.ToList();
+            return p;
         }
     }
 }
