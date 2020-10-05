@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -78,29 +79,59 @@ namespace Lab03
             int x1 = lastPoint.Value.X;
             int y1 = lastPoint.Value.Y;
 
-            int deltax = Math.Abs(x1 - x0);
-            int deltay = Math.Abs(y1 - y0);
+            int dispX = x1 - x0; 
+            int dispY = y1 - y0;
 
-            int stepx = x0 < x1 ? 1 : -1; //направление роста координат (шаг)
-            int stepy = y0 < y1 ? 1 : -1; 
-            int error = (deltax > deltay ? deltax : -deltay) / 2; //эффективнее работает
-            for (; ;)
+            int dstepX, dstepY; //шаг по диагонали
+            int stepX, stepY; //шаг по прямой
+            //Определяем, как лежит конечная точка от начальной (справа или слева)
+            if (dispX < 0)
+            {
+                dispX = -dispX;
+                dstepX = -1;
+            }
+            else dstepX = 1;
+            //Определяем, как лежит конечная точка от начальной (сверху или снизу)
+            if (dispY < 0)
+            {
+                dispY = -dispY;
+                dstepY = -1;
+            }
+            else dstepY = 1;
+            //Определяем октант, в котором находится конечная точка
+            if (dispX < dispY)
+            {
+                Swap(ref dispX, ref dispY);
+                stepX = 0;
+                stepY = dstepY;
+            }
+            else
+            {
+                stepX = dstepX;
+                stepY = 0;
+            }
+
+            int d = 2 * dispY - dispX;
+            int incd = 2 * dispY;
+            int diag_incd = d - dispX;
+
+            for (int i = 0; i < dispX; i++)
             {
                 bitmap.SetPixel(x0, y0, Color);
-                if (x0 == x1 && y0 == y1) break; //выход, когда пришли от начала к конечной точке
-                int deltaerr = error;
-                if (deltaerr > -deltax)
+                if (d < 0)      //если середина находится над линией, то идем по диагонали, иначе - прямо
                 {
-                    error -= deltay;
-                    x0 += stepx; 
+                    x0 += stepX;
+                    y0 += stepY;
+                    d += incd;
                 }
-                if (deltaerr < deltay)
+                else
                 {
-                    error += deltax;
-                    y0 += stepy; 
+                    x0 += dstepX;
+                    y0 += dstepY;
+                    d += diag_incd;
                 }
+
             }
-                
         }
         void BresenhamCircle(int x0, int y0, FastBitmap bitmap)
         {
