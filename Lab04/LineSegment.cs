@@ -43,6 +43,11 @@ namespace Lab04
             return Math.Sign(A * p.X + B * p.Y + C);
         }
 
+        public double Distance(Point p)
+        {
+            return (A * p.X + B * p.Y + C)/Math.Sqrt(A*A+B*B);
+        }
+
         public void Draw(Graphics graphics, Pen pen)
         {
             graphics.DrawLine(pen, (float)P1.X, (float)P1.Y, (float)P2.X, (float)P2.Y);

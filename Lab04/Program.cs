@@ -31,6 +31,7 @@ namespace Lab04
                 new Tools.Division(),
                 new Tools.Collision(),
                 new Tools.Intersection(),
+                new Tools.Triangulation(),
                 new Tools.Debug()
             }));
         }

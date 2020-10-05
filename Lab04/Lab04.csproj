@@ -104,12 +104,14 @@
     <Compile Include="Matrix.cs" />
     <Compile Include="Point.cs" />
     <Compile Include="Polygon.cs" />
+    <Compile Include="CycledVertexes.cs" />
     <Compile Include="Tools\Debug.cs" />
     <Compile Include="Tools\Division.cs" />
     <Compile Include="Tools\FixRotate.cs" />
     <Compile Include="Tools\Intersection.cs" />
     <Compile Include="Tools\Collision.cs" />
     <Compile Include="Tools\JustPicture.cs" />
+    <Compile Include="Tools\Triangulation.cs" />
     <Compile Include="Tools\Rotate.cs" />
     <Compile Include="Tools\Move.cs" />
     <Compile Include="Tools\PolygonsDrawing.cs" />
@@ -153,6 +155,7 @@
     <Content Include="Icon.ico" />
     <Content Include="Resources\Intersection.png" />
     <Content Include="Resources\Load.png" />
+    <Content Include="Resources\Triangulation.png" />
     <Content Include="Resources\Save.png" />
     <Content Include="Resources\Debug.png" />
     <Content Include="Resources\Arrow.png" />
