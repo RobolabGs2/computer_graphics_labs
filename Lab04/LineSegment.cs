@@ -63,7 +63,7 @@ namespace Lab04
         {
             double s1 = other.A * P1.X + other.B * P1.Y + other.C;
             double s2 = other.A * P2.X + other.B * P2.Y + other.C;
-            return  Math.Sign(s1) == Math.Sign(s2) && Math.Abs(s1) > Math.Abs(s2);
+            return  Math.Sign(s1) == Math.Sign(s2) && Math.Abs(s1) >= Math.Abs(s2);
         }
 
         public double CalcY(double x)
