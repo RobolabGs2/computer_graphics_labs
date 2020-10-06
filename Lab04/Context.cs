@@ -56,20 +56,23 @@ namespace Lab04
         }
         public void Draw(Graphics g, Matrix matrix)
         {
-            foreach (Polygon p in Polygons)
-                if (Selected.Contains(p))
+            foreach (var p in Polygons.Where(p=>!Selected.Contains(p)))
+            {
+                p.Draw(g, notSelectedPen);
+            }
+
+            foreach (var p in Selected)
+            {
+                p.Draw(g, Pen, matrix);
+                if (Debug)
                 {
-                    p.Draw(g, Pen, matrix);
-                    if (Debug)
+                    for (int i = 0; i < p.Points.Count; i++)
                     {
-                        for (int i = 0; i < p.Points.Count; i++)
-                        {
-                            g.DrawString(i.ToString(), font, notSelectedPen.Brush, (p.Points[i] * matrix).ToPointF());
-                        }
+                        g.DrawString(i.ToString(), font, notSelectedPen.Brush, (p.Points[i] * matrix).ToPointF());
                     }
                 }
-                else
-                    p.Draw(g, notSelectedPen);
+            }
+
             var rect = SelectedABBA(matrix);
             if (rect.p1 != rect.p2)
             {
