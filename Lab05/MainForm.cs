@@ -12,7 +12,7 @@ namespace Lab05
 {
     public partial class MainForm : Form
     {
-        public MainForm(IEnumerable<ISolution> solutions)
+        public MainForm(IEnumerable<ISolution> solutions, int startSolution = 0)
         {
             InitializeComponent();
             var tabs = new TabControl
@@ -26,10 +26,12 @@ namespace Lab05
                 {
                     BackColor = Color.White,
                 };
+                tab.SizeChanged += (sender, args) => solution.Size = tab.ClientSize;
                 tab.Controls.AddRange(solution.Controls);
                 return tab;
             }).ToArray());
             Controls.Add(tabs);
+            tabs.SelectedIndex = startSolution;
         }
     }
 }

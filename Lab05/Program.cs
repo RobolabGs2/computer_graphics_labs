@@ -16,12 +16,15 @@ namespace Lab05
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm(new []
+            var commandLineArgs = Environment.GetCommandLineArgs();
+            // Через аргумент можно задать вкладку, открывающуюся по умолчанию
+            var defaultSolution = commandLineArgs.Length < 2 ? 0 : int.Parse(commandLineArgs[1]); 
+            Application.Run(new MainForm(new ISolution[]
             {
-                new StubSolution("L-системы"), 
-                new StubSolution("Midpoint displacement"), 
+                new StubSolution("L-системы"),
+                new MidpointDisplacement.Solution(), 
                 new StubSolution("Кубические сплайны Безье"), 
-            }));
+            }, defaultSolution));
         }
     }
 }

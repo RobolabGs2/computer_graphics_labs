@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System.Drawing;
+using System.Windows.Forms;
 
 namespace Lab05
 {
@@ -6,12 +7,14 @@ namespace Lab05
     {
         string Name { get; }
         Control[] Controls { get; }
+        Size Size { set; }
     }
 
     public abstract class AbstractSolution : ISolution
     {
         public string Name { get; }
         public abstract Control[] Controls { get; }
+        public abstract Size Size { set; }
 
         protected AbstractSolution(string name)
         {
@@ -32,5 +35,6 @@ namespace Lab05
         }
 
         public override Control[] Controls { get; }
+        public override Size Size { set {}  }
     }
 }
