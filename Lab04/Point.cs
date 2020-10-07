@@ -72,5 +72,6 @@ namespace Lab04
                     Math.Max(tuple.Item3, point.X), Math.Max(tuple.Item4, point.Y)));
             return (new Point {X = minX, Y = minY}, new Point {X = maxX, Y = maxY});
         }
+
     }
 }

@@ -1,11 +1,14 @@
-﻿using Lab04.Tools;
+﻿using Lab04;
+using Lab04.Tools;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Lab04
 {
@@ -263,5 +266,21 @@ namespace Lab04
             p.Points = result.ToList();
             return p;
         }
+
+        //Находит ориентацию (p, q, r).
+        // 0, если p, q и r коллинеарны
+        // 1, если справа
+        // 2, если слева 
+        //с какой стороны от вектора pq находится точка r
+        public int Orientation(Point p, Point r)
+        {
+            Point q = Points[0];
+            double val = (q.Y - p.Y) * (r.X - q.X) -
+                      (q.X - p.X) * (r.Y - q.Y);
+            
+            if (val == 0) return 0;  
+            return (val > 0) ? 1 : 2; 
+        }
     }
 }
+
