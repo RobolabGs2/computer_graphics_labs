@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -135,9 +136,8 @@ namespace Lab04
             var triangle = new Polygon {Points = {a.Value, b.Value, c.Value}};
             var ca = new LineSegment(c.Value, a.Value);
             return this.Skip(2).TakeWhile(p => p != a)
-                .Where(p => triangle.IsInternal(p.Value))
-                .Aggregate((Vertex) null,
-                    (v1, v2) => v1 == null ? v2 : (ca.Distance(v1.Value) < ca.Distance(v2.Value) ? v2 : v1));
+                .Where(p => triangle.IsInternal(p.Value)).DefaultIfEmpty(null)
+                .Aggregate((v1, v2) => ca.Distance(v1.Value) < ca.Distance(v2.Value) ? v2 : v1);
         }
 
         public IEnumerable<CycledVertexes> Triangulate()
