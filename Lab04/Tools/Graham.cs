@@ -14,6 +14,18 @@ namespace Lab04.Tools
         public Bitmap image => Properties.Resources.Graham;
         private Context context;
 
+        //с какой стороны от вектора pq находится точка r
+        // 0, если p, q и r коллинеарны
+        // 1, если справа
+        // 2, если слева 
+        public int Side(Point p, Point q, Point r)
+        {
+            double val = (q.Y - p.Y) * (r.X - q.X) -
+                      (q.X - p.X) * (r.Y - q.Y);
+
+            if (val == 0) return 0;
+            return (val > 0) ? 1 : 2;
+        }
         public Polygon NextToTop(ref Stack<Polygon> s)
         {
             Polygon p = s.Peek();
@@ -47,9 +59,8 @@ namespace Lab04.Tools
             var t = points[0];
             points[0] = points[min];
             points[min] = t;
-            var p0 = points[0].Points[0];
             //сортируем в порядке увеличения полярного угла(против часовой) относительно самой левой точки  
-            points = points.OrderBy(p => PolarAngle(p.Points[0].Y - p0.Y, p.Points[0].X - p0.X)).ToList();
+            points = points.OrderBy(p => PolarAngle(p.Points[0].Y - points[0].Points[0].Y, p.Points[0].X - points[0].Points[0].X)).ToList();
 
             Stack<Polygon> S = new Stack<Polygon>();
             S.Push(points[0]); 
@@ -59,7 +70,7 @@ namespace Lab04.Tools
             //Если S_i+1 находится не слева от луча S_i-1 -> S_i, то удаляем из списка S_i точку.
             for (int i = 3; i < points.Count(); i++)
             {
-                while (S.Peek().Orientation(NextToTop(ref S).Points[0], points[i].Points[0]) != 2)
+                while (Side(NextToTop(ref S).Points[0], S.Peek().Points[0], points[i].Points[0]) != 2)
                     S.Pop();
                 S.Push(points[i]);
             }
