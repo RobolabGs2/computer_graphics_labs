@@ -51,7 +51,7 @@ namespace Lab05.LSystem
                     return;
                 }
 
-            float k = depth / (float)maxDepth;
+            float k = maxDepth == 0 ? 1 : depth / (float)maxDepth;
             state.SetRotateError(GetAverageColorC(k, rotations.Item1, rotations.Item2));
             state.SetScaleError(GetAverageColorC(k, scales.Item1, scales.Item2));
             state.SetLine(GetAverageColor(k, depth), GetAverageColorC(k, widths.Item1, widths.Item2));
