@@ -79,7 +79,7 @@ namespace Lab05.BezierCurve
         {
             set
             {
-                set => picture.Width = value.Width;
+                picture.Width = value.Width;
                 bitmap?.Dispose();
                 bitmap = new Bitmap(picture.Width, picture.Height);
             }
