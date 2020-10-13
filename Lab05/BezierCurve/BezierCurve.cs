@@ -5,16 +5,17 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
 using System.Net.NetworkInformation;
+using System.Windows.Forms.VisualStyles;
 
 namespace Lab05.BezierCurve
 {
     class BezierCurve
     {
         public readonly LinkedList<PointF> points;
-        /*private static List<List<int>> matrix = new List<List<int>> {new List<int>{  1, -3,  3,  1 },
-                                                                     new List<int>{  0,  3,  6,  3 },
+        private static List<List<int>> matrix = new List<List<int>> {new List<int>{  1, -3,  3, -1 }, //правый верхний 1 на -1 и 6 на -6
+                                                                     new List<int>{  0,  3, -6,  3 },
                                                                      new List<int>{  0,  0,  3, -3 },
-                                                                     new List<int>{  0,  0,  0,  1 } };*/
+                                                                     new List<int>{  0,  0,  0,  1 } };
         public BezierCurve()
         {
             points = new LinkedList<PointF>();
@@ -35,8 +36,28 @@ namespace Lab05.BezierCurve
         }
         private PointF Bezier3(PointF p0, PointF p1, PointF p2, PointF p3, float t)
         {
-            return new PointF((float)(Math.Pow((1 - t), 3) * p0.X + 3 * t * Math.Pow((1 - t), 2) * p1.X + 3 * (1 - t) * Math.Pow(t, 2) * p2.X + Math.Pow(t, 3) * p3.X),
-            (float)(Math.Pow((1 - t), 3) * p0.Y + 3 * t * Math.Pow((1 - t), 2) * p1.Y + 3 * (1 - t) * Math.Pow(t, 2) * p2.Y + Math.Pow(t, 3) * p3.Y));
+            List<PointF> mt = new List<PointF> { p0, p1, p2, p3 };
+            List<PointF> res = new List<PointF>();
+            PointF r = new PointF();
+            for (int i = 0; i < matrix.Count; i++)
+            {
+                float x = 0;
+                float y = 0;
+                for (int j = 0; j < matrix[i].Count; j++)
+                {
+                    x += mt[j].X * matrix[j][i];
+                    y += mt[j].Y * matrix[j][i];
+                }
+                res.Add(new PointF(x, y));
+            }
+            for (int i = 0; i < res.Count; i++)
+            {
+                r.X += res[i].X * (float)Math.Pow(t, i);
+                r.Y += res[i].Y * (float)Math.Pow(t, i);
+            }
+            return r;
+            /*return new PointF((float)(Math.Pow((1 - t), 3) * p0.X + 3 * t * Math.Pow((1 - t), 2) * p1.X + 3 * (1 - t) * Math.Pow(t, 2) * p2.X + Math.Pow(t, 3) * p3.X),
+            (float)(Math.Pow((1 - t), 3) * p0.Y + 3 * t * Math.Pow((1 - t), 2) * p1.Y + 3 * (1 - t) * Math.Pow(t, 2) * p2.Y + Math.Pow(t, 3) * p3.Y));*/
         }
         public void Draw(Graphics g, Pen pen)
         {
