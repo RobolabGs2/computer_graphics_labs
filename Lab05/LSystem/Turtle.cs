@@ -43,7 +43,7 @@ namespace Lab05.LSystem
 
         private void Parse(Graphics g, char c, int depth)
         {
-            if (depth != 0)
+            if (depth > 0)
                 if (rules.ContainsKey(c))
                 {
                     foreach (char c1 in rules[c])
