@@ -21,7 +21,7 @@ namespace Lab05
             var defaultSolution = commandLineArgs.Length < 2 ? 0 : int.Parse(commandLineArgs[1]); 
             Application.Run(new MainForm(new ISolution[]
             {
-                new StubSolution("L-системы"),
+                new LSystem.Solution(),
                 new MidpointDisplacement.Solution(), 
                 new StubSolution("Кубические сплайны Безье"), 
             }, defaultSolution));
