@@ -22,11 +22,15 @@ namespace Lab05
             };
             tabs.TabPages.AddRange(solutions.Select((solution, i) =>
             {
-                var tab = new TabPage($"{i+1}. {solution.Name}")
+                var tab = new TabPage($"{i + 1}. {solution.Name}")
                 {
                     BackColor = Color.White,
                 };
-                tab.SizeChanged += (sender, args) => solution.Size = tab.ClientSize;
+                tab.SizeChanged += (sender, args) =>
+                {
+                    if (tab.Size.Height != 0 && tab.Size.Width != 0)
+                        solution.Size = tab.ClientSize;
+                };
                 tab.Controls.AddRange(solution.Controls);
                 return tab;
             }).ToArray());
