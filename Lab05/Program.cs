@@ -23,7 +23,7 @@ namespace Lab05
             {
                 new StubSolution("L-системы"),
                 new MidpointDisplacement.Solution(), 
-                new StubSolution("Кубические сплайны Безье"), 
+                new BezierCurve.Solution(), 
             }, defaultSolution));
         }
     }

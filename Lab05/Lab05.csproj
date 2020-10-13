@@ -46,6 +46,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BezierCurve\BezierCurve.cs" />
+    <Compile Include="BezierCurve\Solution.cs" />
     <Compile Include="ISolution.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
