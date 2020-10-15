@@ -26,11 +26,7 @@ namespace Lab06.Graph3D
 
         public void Draw(Bitmap bitmap)
         {
-            cameraMatric = context.drawingMatrix() * Matrix.Move(new Base3D.Point
-            {
-                Z = -bitmap.Height / 2,
-                Y = -bitmap.Width / 2
-            });
+            cameraMatric = context.drawingMatrix();
 
             graphics = Graphics.FromImage(bitmap);
             graphics.Clear(Constants.backColore);

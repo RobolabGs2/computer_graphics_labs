@@ -28,7 +28,11 @@ namespace Lab06.Base3D
 
         public Matrix drawingMatrix()
         {
-            return camera.Location() * projection;
+            return camera.Location() * projection * Matrix.Move(new Base3D.Point
+            {
+                Z = -bitmap.Height / 2,
+                Y = -bitmap.Width / 2
+            }); ;
         }
 
         private void Resize()
