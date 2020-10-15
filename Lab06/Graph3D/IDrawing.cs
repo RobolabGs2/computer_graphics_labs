@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Lab06.Graph3D
 {
-    interface IDrawing
+    public interface IDrawing
     {
         void Draw(Bitmap bitmap);
     }

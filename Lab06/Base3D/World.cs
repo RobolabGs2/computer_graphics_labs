@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Lab06.Base3D
 {
-    class World
+    public class World
     {
         public List<Entity> entities = new List<Entity>();
         public List<Entity> selected = new List<Entity>();

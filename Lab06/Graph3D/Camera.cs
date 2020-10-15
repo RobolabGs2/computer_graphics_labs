@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Lab06.Graph3D
 {
-    class Camera
+    public class Camera
     {
         public double downAngle = 0;
         public double leftAngle = 0;

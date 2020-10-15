@@ -87,6 +87,15 @@ namespace Lab06.Base3D
             return m;
         }
 
+        public static Matrix Projection(double rX, double rY, double rZ)
+        {
+            Matrix m = Matrix.Ident();
+            m[0, 3] = rX;
+            m[1, 3] = rY;
+            m[2, 3] = rZ;
+            return m;
+        }
+
         public static Matrix InPoint(Point p, Matrix modification)
         {
             return Move(-p) * modification * Move(p);

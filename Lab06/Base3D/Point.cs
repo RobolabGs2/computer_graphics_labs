@@ -22,7 +22,7 @@ namespace Lab06.Base3D
 
         public Point Copy()
         {
-            return new Point { X = X, Y = Y, Z = Z };
+            return new Point { X = X, Y = Y, Z = Z, T = T };
         }
 
         public double DistanceTo(Point another)
@@ -72,7 +72,7 @@ namespace Lab06.Base3D
         ///  соответственно, для проецирования на битмап их надо перевернуть
         public System.Drawing.PointF ToPointF()
         {
-            return new System.Drawing.PointF((float)-Y, (float)-Z);
+            return new System.Drawing.PointF((float)(-Y / T), (float)(-Z / T));
         }
 
         public override (Point, Point) ABBA()
@@ -106,11 +106,12 @@ namespace Lab06.Base3D
 
         public override void Apply(Matrix m)
         {
-            (X, Y, Z) =
+            (X, Y, Z, T) =
                 (
                     X * m[0, 0] + Y * m[1, 0] + Z * m[2, 0] + T * m[3, 0],
                     X * m[0, 1] + Y * m[1, 1] + Z * m[2, 1] + T * m[3, 1],
-                    X * m[0, 2] + Y * m[1, 2] + Z * m[2, 2] + T * m[3, 2]
+                    X * m[0, 2] + Y * m[1, 2] + Z * m[2, 2] + T * m[3, 2],
+                    X * m[0, 3] + Y * m[1, 3] + Z * m[2, 3] + T * m[3, 3]
                 );
         }
     }

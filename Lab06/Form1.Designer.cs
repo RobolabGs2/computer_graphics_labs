@@ -70,6 +70,7 @@
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(1099, 724);
             this.Controls.Add(this.splitList);
+            this.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.Name = "MainForm";
             this.Text = "Lab06";
             this.splitList.Panel2.ResumeLayout(false);

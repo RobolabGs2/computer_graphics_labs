@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Lab06.Base3D;
+using Lab06.Tools3D;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,7 +18,10 @@ namespace Lab06
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm());
+            Application.Run(new MainForm(new List<IToolPage> {
+                new Tools3D.Matrixes.Matrixes(),
+                new JustImage(Properties.Resources.Cube),
+                new JustImage(Properties.Resources.Move) }));
         }
     }
 }

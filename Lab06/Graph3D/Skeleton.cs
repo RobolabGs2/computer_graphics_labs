@@ -19,20 +19,18 @@ namespace Lab06.Graph3D
 
         public Skeleton(Context context)
         {
-            selectedPen = new Pen(Constants.borderColore, 2);
-            basePen = new Pen(Constants.textColore, 2);
+            selectedPen = new Pen(Constants.textColore, 2);
+            basePen = new Pen(Constants.borderColore, 2);
             this.context = context;
         }
 
         public void Draw(Bitmap bitmap)
         {
-            cameraMatric = context.camera.Location();
-            var move = Matrix.Move(new Base3D.Point
+            cameraMatric = context.drawingMatrix() * Matrix.Move(new Base3D.Point
             {
                 Z = -bitmap.Height / 2,
                 Y = -bitmap.Width / 2
             });
-            cameraMatric = cameraMatric * move;
 
             graphics = Graphics.FromImage(bitmap);
             graphics.Clear(Constants.backColore);
@@ -63,10 +61,10 @@ namespace Lab06.Graph3D
                 return;
 
             var points = pol.points.Select(p => {
-                var pp = (p * cameraMatric);
-                return pp.ToPointF();
+                var res = p * cameraMatric;
+                return (res.ToPointF(), res.X );
                 });
-            PointF end = points.Aggregate((p1, p2) => { DrawLine(p1, p2, pen); return p2; });
+            var end = points.Aggregate((p1, p2) => { DrawLine(p1, p2, pen); return p2; });
             DrawLine(end, points.First(), pen);
         }
 
@@ -87,13 +85,17 @@ namespace Lab06.Graph3D
                 return;
             }
 
-            s.points.Select(p => (p * cameraMatric).ToPointF()).
+            s.points.Select(p => {
+                var res = p * cameraMatric;
+                return (res.ToPointF(), res.X); }).
                 Aggregate((p1, p2) => { DrawLine(p1, p2, pen); return p2; });
         }
 
-        void DrawLine(PointF p1, PointF p2, Pen pen)
+        void DrawLine((PointF p, double depth) p1, (PointF p, double depth) p2, Pen pen)
         {
-            graphics.DrawLine(pen, p1, p2);
+            if (p1.depth < 0 || p2.depth < 0 || p1.p.X * p1.p.X + p2.p.X * p2.p.X + p1.p.Y * p1.p.Y + p1.p.Y * p1.p.Y > 1e12)
+                return;
+            graphics.DrawLine(pen, p1.p, p2.p);
         }
     }
 }
