@@ -16,7 +16,6 @@ namespace Lab06.Graph3D
         Pen basePen;
         Matrix cameraMatric;
 
-
         public Skeleton(Context context)
         {
             selectedPen = new Pen(Constants.textColore, 2);
@@ -26,7 +25,7 @@ namespace Lab06.Graph3D
 
         public void Draw(Bitmap bitmap)
         {
-            cameraMatric = context.drawingMatrix();
+            cameraMatric = context.DrawingMatrix();
 
             graphics = Graphics.FromImage(bitmap);
             graphics.Clear(Constants.backColore);
@@ -56,19 +55,20 @@ namespace Lab06.Graph3D
             if (pol.points.Count < 3)
                 return;
 
-            var points = pol.points.Select(p => {
-                var res = p * cameraMatric;
-                return (res.ToPointF(), res.X );
-                });
+            var points = pol.points.Select(p => p * cameraMatric);
             var end = points.Aggregate((p1, p2) => { DrawLine(p1, p2, pen); return p2; });
             DrawLine(end, points.First(), pen);
         }
 
         void DrawPoint(Base3D.Point point, Pen pen)
         {
-            PointF p = point.ToPointF();
+            Base3D.Point p = point * cameraMatric;
+            if (!context.BeforeScreen(p.X))
+                return;
+            p = p.FlattenT();
             float r = 3;
-            graphics.DrawEllipse(pen, p.X - r, p.Y - r, p.X + r, p.Y + r);
+            graphics.DrawEllipse(pen, 
+                (float)(p.Y - r), (float)(p.Z - r), r * 2, r * 2);
         }
 
         void DrawSpline(Base3D.Spline s, Pen pen)
@@ -81,17 +81,18 @@ namespace Lab06.Graph3D
                 return;
             }
 
-            s.points.Select(p => {
-                var res = p * cameraMatric;
-                return (res.ToPointF(), res.X); }).
+            s.points.Select(p => p * cameraMatric).
                 Aggregate((p1, p2) => { DrawLine(p1, p2, pen); return p2; });
         }
 
-        void DrawLine((PointF p, double depth) p1, (PointF p, double depth) p2, Pen pen)
+        void DrawLine(Base3D.Point p1, Base3D.Point p2, Pen pen)
         {
-            if (p1.depth < 0 || p2.depth < 0 || p1.p.X * p1.p.X + p2.p.X * p2.p.X + p1.p.Y * p1.p.Y + p1.p.Y * p1.p.Y > 1e12)
+            if (!context.BeforeScreen(p1.X) || !context.BeforeScreen(p2.X))
                 return;
-            graphics.DrawLine(pen, p1.p, p2.p);
+            p1 = p1.Copy().FlattenT();
+            p2 = p2.Copy().FlattenT();
+
+            graphics.DrawLine(pen, (float)p1.Y, (float)p1.Z, (float)p2.Y, (float)p2.Z);
         }
     }
 }

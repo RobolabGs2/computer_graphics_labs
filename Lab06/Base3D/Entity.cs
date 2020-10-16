@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lab06.Materials3D;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,8 @@ namespace Lab06.Base3D
 {
     public abstract class Entity
     {
+        public BaseMaterial Matreial { get; } = new Materials3D.SolidMaterial();
+
         public virtual IEnumerable<Entity> Children()
         {
             yield break;
@@ -25,6 +28,5 @@ namespace Lab06.Base3D
         }
 
         public abstract void Apply(Matrix matrix);
-
     }
 }

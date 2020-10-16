@@ -40,7 +40,7 @@ namespace Lab06.Base3D
             return this / Length();
         }
 
-        /// Ынезапно, унарный минус не переворачивает четвёртую координату, просто потому что.
+        /// Внезапно, унарный минус не переворачивает четвёртую координату, просто потому что.
         public static Point operator -(Point p)
         {
             return new Point { X = -p.X, Y = -p.Y, Z = -p.Z };
@@ -64,15 +64,6 @@ namespace Lab06.Base3D
         public static Point operator +(Point p1, Point p2)
         {
             return new Point { X = p1.X + p2.X, Y = p1.Y + p2.Y, Z = p1.Z + p2.Z, T = p1.T + p2.T };
-        }
-
-        ///  Нужно для проецирования на плоскость экрана, предполагается, что камера смотрит
-        ///  вдоль ось OX, соответственно, плоскость проецирования это YZ, 
-        ///  причём ось Y смотрит влево относительно камеры, а ось Z вверх,
-        ///  соответственно, для проецирования на битмап их надо перевернуть
-        public System.Drawing.PointF ToPointF()
-        {
-            return new System.Drawing.PointF((float)(-Y / T), (float)(-Z / T));
         }
 
         public override (Point, Point) ABBA()
@@ -102,6 +93,13 @@ namespace Lab06.Base3D
                 Z = Math.Min(p1.Z, p2.Z),
                 T = Math.Min(p1.T, p2.T),
             };
+        }
+
+        ///  Возвращает точку, у которой T единица, 
+        ///  применяя его к другим координатам
+        public Point FlattenT()
+        {
+            return this / T;
         }
 
         public override void Apply(Matrix m)

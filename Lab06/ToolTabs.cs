@@ -58,7 +58,8 @@ namespace Lab06
     public class ToolTab : TabPage
     {
         FlowLayoutPanel panel;
-        List<PictureBox> buttons = new List<PictureBox>();
+        List<TabButton> buttons = new List<TabButton>();
+        public Action ClearEvents = () => { };  // TODO: его надо где-то вызвать
 
         public ToolTab()
         {
@@ -69,20 +70,27 @@ namespace Lab06
             };
             Controls.Add(panel);
         }
-
-        public Control AddButton(Bitmap image, bool fixedColor = true)
+    
+        public TabButton AddButton(Bitmap image, bool fixedColor = true)
         {
-            PictureBox p = new PictureBox
+            TabButton p = new TabButton
             {
                 Image = image,
                 Size = image.Size,
                 BackColor = Color.Transparent,
-                    Margin = new Padding(20, 20, 0, 0),
+                Margin = new Padding(20, 20, 0, 0),
             };
 
-            p.MouseDown += (o, s) => { 
-                buttons.ForEach(b => b.BackColor = Color.Transparent);
-                p.BackColor = Constants.borderColore;
+            p.MouseDown += (o, s) => {
+                buttons.ForEach(b => { 
+                    if (b.ButtonEnable) { 
+                        b.BackColor = Color.Transparent;
+                        b.ButtonEnable = false;
+                        b.ButtonDisable(b);
+                    } });
+                p.BackColor = Constants.textColore;
+                p.ButtonEnable = fixedColor;
+                p.ButtonClick(p);
             };
 
             if(!fixedColor)
@@ -91,5 +99,12 @@ namespace Lab06
             buttons.Add(p);
             return p;
         }
+    }
+
+    public class TabButton: PictureBox
+    {
+        public Action<TabButton> ButtonClick = t => { };
+        public Action<TabButton> ButtonDisable = t => { };
+        public bool ButtonEnable { get; set; } = false;
     }
 }

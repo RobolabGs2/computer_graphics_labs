@@ -87,6 +87,13 @@ namespace Lab06.Base3D
             return m;
         }
 
+        public Matrix Copy()
+        {
+            Matrix result = new Matrix();
+            result.data = (double[,])data.Clone();
+            return result;
+        }
+
         public static Matrix Projection(double rX, double rY, double rZ)
         {
             Matrix m = Matrix.Ident();
@@ -94,6 +101,38 @@ namespace Lab06.Base3D
             m[1, 3] = rY;
             m[2, 3] = rZ;
             return m;
+        }
+
+        /// <summary>
+        /// Умножение матриц. Не идеально, может работать не всегда
+        /// (за разъяснением случаев когда не работает можно обращаться комне)
+        /// </summary>
+        public Matrix Invert()
+        {
+            Matrix res = Matrix.Ident();
+            Matrix copy = Copy();
+            for (int i = 0; i < volume; ++i)
+            {
+                double denum = copy[i, i];
+                for (int j = 0; j < volume; ++j)
+                    if (i != j)
+                    {
+                        double current = copy[j, i];
+                        for (int k = 0; k < volume; ++k)
+                        {
+
+                            copy[j, k] -= copy[i, k] * current / denum;
+                            res[j, k] -= res[i, k] * current / denum;
+
+                        }
+                    }
+                for (int k = 0; k < volume; ++k)
+                {
+                    copy[i, k] = copy[i, k] / denum;
+                    res[i, k] = res[i, k] / denum;
+                }
+            }
+            return res;
         }
 
         public static Matrix InPoint(Point p, Matrix modification)
