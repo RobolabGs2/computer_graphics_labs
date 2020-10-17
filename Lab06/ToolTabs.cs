@@ -21,8 +21,16 @@ namespace Lab06
             this.DrawMode = TabDrawMode.OwnerDrawFixed;
             this.DrawItem += tabControlDrawItem;
             this.Images = images.ToArray();
+            this.SelectedIndexChanged += (s, e) => {
+                foreach(var t in this.TabPages)
+                    ((ToolTab)t).ClearEvents();
+                ((ToolTab)this.SelectedTab).TabSelected();
+            };
         }
-
+        private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+        }
+        
         private const int TCM_ADJUSTRECT = 0x1328;
 
         protected override void WndProc(ref Message m)
@@ -59,7 +67,9 @@ namespace Lab06
     {
         FlowLayoutPanel panel;
         List<TabButton> buttons = new List<TabButton>();
-        public Action ClearEvents = () => { };  // TODO: его надо где-то вызвать
+
+        public Action TabSelected = () => { };
+        public Action ClearEvents = () => { };
 
         public ToolTab()
         {
@@ -71,7 +81,7 @@ namespace Lab06
             Controls.Add(panel);
         }
     
-        public TabButton AddButton(Bitmap image, bool fixedColor = true)
+        public TabButton AddButton(Bitmap image, bool fixedButton = true)
         {
             TabButton p = new TabButton
             {
@@ -82,19 +92,12 @@ namespace Lab06
             };
 
             p.MouseDown += (o, s) => {
-                buttons.ForEach(b => { 
-                    if (b.ButtonEnable) { 
-                        b.BackColor = Color.Transparent;
-                        b.ButtonEnable = false;
-                        b.ButtonDisable(b);
-                    } });
-                p.BackColor = Constants.textColore;
-                p.ButtonEnable = fixedColor;
+                buttons.ForEach(b => { if (b.ButtonEnable) b.ButtonDisable(b); });
                 p.ButtonClick(p);
             };
 
-            if(!fixedColor)
-                p.MouseUp += (o, s) => p.BackColor = Color.Transparent;
+            if(!fixedButton)
+                p.MouseUp += (o, s) => p.ButtonDisable(p);
             panel.Controls.Add(p);
             buttons.Add(p);
             return p;
@@ -106,5 +109,11 @@ namespace Lab06
         public Action<TabButton> ButtonClick = t => { };
         public Action<TabButton> ButtonDisable = t => { };
         public bool ButtonEnable { get; set; } = false;
+
+        public TabButton()
+        {
+            ButtonClick += t => { BackColor = Constants.textColore; ButtonEnable = true; };
+            ButtonDisable += t => { BackColor = Color.Transparent; ButtonEnable = false; };
+        }
     }
 }

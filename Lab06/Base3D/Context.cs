@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Security.Permissions;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -15,13 +16,15 @@ namespace Lab06.Base3D
         public Camera camera = new Camera();
         public World world = new World();
         public Matrix projection = Matrix.Projection(0.001, 0, 0);
-        
+
         public IDrawing drawing;
         public PictureBox pictureBox;
         public Bitmap bitmap;
 
         public double scale = 100;
         public bool cutNegative = true;
+
+        public Action<Graphics> Posteffect = g => {};
 
         public Context(PictureBox pictureBox)
         {
@@ -88,7 +91,10 @@ namespace Lab06.Base3D
 
         public void Redraw()
         {
-            drawing.Draw(bitmap);
+            Graphics g = Graphics.FromImage(bitmap);
+            drawing.Draw(g);
+            Posteffect(g);
+            g.Dispose();
             pictureBox.Image = bitmap;
         }
 

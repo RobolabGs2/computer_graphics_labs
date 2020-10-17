@@ -33,7 +33,7 @@ namespace Lab06.Base3D
                 (abba, p) => (Point.Min(abba.Item1, p), Point.Max(abba.Item2, p)));
         }
 
-        public override IEnumerable<Entity> Children()
+        public override IEnumerable<Point> Points()
         {
             return points;
         }

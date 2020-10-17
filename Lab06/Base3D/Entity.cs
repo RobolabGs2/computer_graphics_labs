@@ -11,7 +11,7 @@ namespace Lab06.Base3D
     {
         public BaseMaterial Matreial { get; } = new Materials3D.SolidMaterial();
 
-        public virtual IEnumerable<Entity> Children()
+        public virtual IEnumerable<Point> Points()
         {
             yield break;
         }

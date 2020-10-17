@@ -21,7 +21,9 @@ namespace Lab06
             Application.Run(new MainForm(new List<IToolPage> {
                 new Tools3D.AddItem.AddItem(),
                 new Tools3D.Matrixes.Matrixes(),
-                new JustImage(Properties.Resources.Move) }));
+                new Tools3D.Selection.Selection(),
+                new Tools3D.Transformation.Transformation(),
+            }));
         }
     }
 }

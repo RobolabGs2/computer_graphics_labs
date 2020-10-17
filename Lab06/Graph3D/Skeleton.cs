@@ -23,15 +23,19 @@ namespace Lab06.Graph3D
             this.context = context;
         }
 
-        public void Draw(Bitmap bitmap)
+        public void Draw(Graphics graphics)
         {
             cameraMatric = context.DrawingMatrix();
+            this.graphics = graphics;
 
-            graphics = Graphics.FromImage(bitmap);
             graphics.Clear(Constants.backColore);
             foreach (Entity e in context.world.entities)
-                DrawEntity(e, basePen);
-            graphics.Dispose();
+            {
+                if(context.world.selected.Contains(e))
+                    DrawEntity(e, selectedPen);
+                else
+                    DrawEntity(e, basePen);
+            }
         }
 
         void DrawEntity(Entity entity, Pen pen)

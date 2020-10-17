@@ -73,6 +73,8 @@
     <Compile Include="Materials3D\SolidMaterial.cs" />
     <Compile Include="Tools3D\AddItem\AddItem.cs" />
     <Compile Include="Tools3D\Matrixes\Matrixes.cs" />
+    <Compile Include="Tools3D\Selection\Selection.cs" />
+    <Compile Include="Tools3D\Transformation\Transformation.cs" />
     <Compile Include="ToolTabs.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -133,11 +135,14 @@
   <ItemGroup>
     <Content Include="Resources\Cube.png" />
     <Content Include="Resources\Matrix.png" />
+    <Content Include="Resources\Mouse.png" />
     <Content Include="Resources\Move.png" />
     <Content Include="Resources\Parallel.png" />
     <Content Include="Resources\Point.png" />
     <Content Include="Resources\Projection.png" />
+    <Content Include="Resources\Rectangle.png" />
     <Content Include="Resources\Reverse.png" />
+    <Content Include="Resources\SelectAll.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -9,6 +9,6 @@ namespace Lab06.Graph3D
 {
     public interface IDrawing
     {
-        void Draw(Bitmap bitmap);
+        void Draw(Graphics graphics);
     }
 }

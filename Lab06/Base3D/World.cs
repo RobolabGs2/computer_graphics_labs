@@ -8,8 +8,8 @@ namespace Lab06.Base3D
 {
     public class World
     {
-        public List<Entity> entities = new List<Entity>();
-        public List<Entity> selected = new List<Entity>();
+        public HashSet<Entity> entities = new HashSet<Entity>();
+        public HashSet<Entity> selected = new HashSet<Entity>();
         
 
     }
