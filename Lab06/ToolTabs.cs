@@ -79,6 +79,7 @@ namespace Lab06
                 Dock = DockStyle.Fill
             };
             Controls.Add(panel);
+            ClearEvents += () => buttons.ForEach(b => { if (b.ButtonEnable) b.ButtonDisable(b); });
         }
     
         public TabButton AddButton(Bitmap image, bool fixedButton = true)

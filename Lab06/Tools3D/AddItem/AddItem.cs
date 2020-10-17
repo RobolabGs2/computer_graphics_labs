@@ -18,8 +18,6 @@ namespace Lab06.Tools3D.AddItem
         {
             this.context = context;
 
-            tab.AddButton(Properties.Resources.Reverse, true);
-
             var pontButton = tab.AddButton(Properties.Resources.Point, true);
 
 
@@ -33,6 +31,8 @@ namespace Lab06.Tools3D.AddItem
                 context.pictureBox.MouseMove -= MovePoint;
             };
 
+            pontButton.ButtonDisable += b => context.Redraw();
+
             var cubeButton = tab.AddButton(Properties.Resources.Cube, true);
 
             cubeButton.ButtonClick += t => {
@@ -44,6 +44,8 @@ namespace Lab06.Tools3D.AddItem
                 context.pictureBox.MouseClick -= AddCube;
                 context.pictureBox.MouseMove -= MoveCube;
             };
+
+            cubeButton.ButtonDisable += b => context.Redraw();
         }
 
         private void AddPoint(object sender, MouseEventArgs e)
