@@ -89,6 +89,29 @@ namespace Lab06.Base3D
             bmp?.Dispose();
         }
 
+        public bool ScreenPointInPolytope(int x, int y, Polytope poly)
+        {
+            return poly.polygons.Any(polygon =>
+            {
+                var points = polygon.points.Select(p => p * DrawingMatrix()).ToList();
+                if (!points.All(p => BeforeScreen(p.X)))
+                    return false;
+                points = points.Select(p => p.FlattenT()).ToList();
+                int count = 0;
+                for (int i = 0; i < points.Count; ++i)
+                {
+                    var p1 = points[i];
+                    var p2 = points[(i + 1) % points.Count];
+
+                    if (!(x < Math.Max(p1.Y, p2.Y)
+                          && x >= Math.Min(p1.Y, p2.Y)))
+                        continue;
+                    count += Math.Sign(x * (p2.Z - p1.Z) + y * (-p2.Y + p1.Y) + p2.Y * p1.Z - p1.Y * p2.Z);
+                }
+                return count != 0;
+            });
+        }
+
         public void Redraw()
         {
             Graphics g = Graphics.FromImage(bitmap);

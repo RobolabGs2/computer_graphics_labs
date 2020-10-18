@@ -95,6 +95,12 @@ namespace Lab06.Base3D
             };
         }
 
+        public override IEnumerable<Point> Points()
+        {
+            yield return this;
+            yield break;
+        }
+
         ///  Возвращает точку, у которой T единица, 
         ///  применяя его к другим координатам
         public Point FlattenT()

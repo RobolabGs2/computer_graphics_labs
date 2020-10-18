@@ -17,6 +17,8 @@ namespace Lab06.Tools3D.Selection
         System.Drawing.Point rectEnd;
         Context context;
 
+        bool cursorActive = false;
+
         public void Init(ToolTab tab, Context context)
         {
             this.context = context;
@@ -27,7 +29,9 @@ namespace Lab06.Tools3D.Selection
                     context.world.selected.Clear();
                 context.Redraw();
             };
-            tab.AddButton(Properties.Resources.Mouse);
+            var cursorButton = tab.AddButton(Properties.Resources.Mouse);
+            cursorButton.ButtonClick += b => cursorActive = true;
+            cursorButton.ButtonDisable += b => cursorActive = false;
             var rectButton = tab.AddButton(Properties.Resources.Rectangle);
             rectButton.ButtonClick += b => rectActive = true;
             rectButton.ButtonDisable += b => rectActive = false;
@@ -46,16 +50,25 @@ namespace Lab06.Tools3D.Selection
 
         private void MouseDown(object sender, MouseEventArgs e)
         {
-            if(rectActive && e.Button == MouseButtons.Left)
+            if (e.Button != MouseButtons.Left)
+                return;
+            if (rectActive)
             {
                 context.Posteffect += DrawRectangle;
                 rectStart = new System.Drawing.Point(e.X, e.Y);
+            }
+            if(cursorActive)
+            {
+                CursorClick(e.X, e.Y);
+                context.Redraw();
             }
         }
 
         private void MouseMove(object sender, MouseEventArgs e)
         {
-            if (rectActive && e.Button == MouseButtons.Left)
+            if (e.Button != MouseButtons.Left)
+                return;
+            if (rectActive)
             {
                 rectEnd = new System.Drawing.Point(e.X, e.Y);
                 context.world.selected.Clear();
@@ -78,15 +91,31 @@ namespace Lab06.Tools3D.Selection
                 }
                 context.Redraw();
             }
+            if (cursorActive)
+            {
+                CursorClick(e.X, e.Y);
+                context.Redraw();
+            }
         }
 
         private void MouseUp(object sender, MouseEventArgs e)
         {
-            if (rectActive && e.Button == MouseButtons.Left)
+            if (e.Button != MouseButtons.Left)
+                return;
+            if (rectActive)
             {
                 context.Posteffect -= DrawRectangle;
                 context.Redraw();
             }
+        }
+
+        private void CursorClick(int x, int y)
+        {
+            context.world.selected.Clear();
+            foreach (var entity in context.world.entities)
+                if (entity is Polytope poly)
+                    if(context.ScreenPointInPolytope(x, y, poly))
+                        context.world.selected.Add(entity);
         }
     }
 }
