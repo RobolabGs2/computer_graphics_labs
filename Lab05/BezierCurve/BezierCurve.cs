@@ -59,7 +59,7 @@ namespace Lab05.BezierCurve
             /*return new PointF((float)(Math.Pow((1 - t), 3) * p0.X + 3 * t * Math.Pow((1 - t), 2) * p1.X + 3 * (1 - t) * Math.Pow(t, 2) * p2.X + Math.Pow(t, 3) * p3.X),
             (float)(Math.Pow((1 - t), 3) * p0.Y + 3 * t * Math.Pow((1 - t), 2) * p1.Y + 3 * (1 - t) * Math.Pow(t, 2) * p2.Y + Math.Pow(t, 3) * p3.Y));*/
         }
-        public void Draw(Graphics g, Pen pen)
+        public void Draw(Graphics g, Pen pen, bool ellipse = false)
         {
             var copypoints = new LinkedList<PointF>();
             int count = (points.Count + 1) / 2 - 1;
@@ -76,11 +76,18 @@ namespace Lab05.BezierCurve
                 p2 = p1.Next;
                 if (flag && count == 1)
                     p3 = p2;
-                /*else if (!flag && count == 1)
+                else if (!flag && count == 1 && !ellipse)
                 {
                     p2 = p2.Next;
                     p3 = p2;
-                }*/
+                }
+                else if (!flag && count == 1 && ellipse)
+                {
+                    p2 = p1;
+                    p3 = p2.Next;
+                    count++;
+                    flag = true;
+                }
                 else p3 = p2.Next;
                 var p = new PointF((p2.Value.X + p3.Value.X) / 2, (p2.Value.Y + p3.Value.Y) / 2); //p'
 
