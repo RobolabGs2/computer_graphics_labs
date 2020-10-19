@@ -40,7 +40,7 @@ namespace Lab06.Tools3D.Transformation
         /// </summary>
         public bool OnlyGizmo { get; set; } = false;
 
-
+        Matrix Invert;
         Context context;
         double lastDistance = 0;
         bool xMoving = false;
@@ -74,7 +74,7 @@ namespace Lab06.Tools3D.Transformation
         {
             xDirection = new Base3D.Point { X = 1 };
             yDirection = new Base3D.Point { Y = 1 };
-            zDirection = new Base3D.Point { X = 1 };
+            zDirection = new Base3D.Point { Z = 1 };
             location = context.SeletedPivot();
         }
 
@@ -94,6 +94,7 @@ namespace Lab06.Tools3D.Transformation
             context.world.control.Add(zView);
             context.Redraw();
 
+            Invert = Matrix.Ident();
             context.pictureBox.MouseMove += Rotate;
             context.pictureBox.MouseUp += MouseUp;
         }
@@ -114,6 +115,7 @@ namespace Lab06.Tools3D.Transformation
             context.world.control.Add(zView);
             context.Redraw();
 
+            Invert = Matrix.Ident();
             context.pictureBox.MouseMove += Scale;
             context.pictureBox.MouseUp += MouseUp;
         }
@@ -134,6 +136,7 @@ namespace Lab06.Tools3D.Transformation
             context.world.control.Add(zView);
             context.Redraw();
 
+            Invert = Matrix.Ident();
             context.pictureBox.MouseMove += Move;
             context.pictureBox.MouseUp += MouseUp;
         }
@@ -236,10 +239,21 @@ namespace Lab06.Tools3D.Transformation
             return triangle;
         }
 
-        private double Distance(MouseEventArgs e, Base3D.Point vector)
+        private double Distance(MouseEventArgs e, Matrix vMatrix)
         {
-            //  TODO
-            return 0;
+            Base3D.Point p0 = (new Base3D.Point { Y = e.X, Z = e.Y } * context.InvertDrawingMatrix()).FlattenT();
+            Base3D.Point p1 = (new Base3D.Point { Y = e.X, Z = e.Y, X = 1 } * context.InvertDrawingMatrix()).FlattenT();
+            Matrix deMove = Matrix.Move(-location);
+            p0 = p0 * deMove * vMatrix;
+            p1 = p1 * deMove * vMatrix;
+            double A = p1.X - p0.X;
+            double B = p1.Y - p0.Y;
+            double C = p1.Z - p0.Z;
+            double x = p0.X;
+            double y = p0.Y;
+            double z = p0.Z;
+            return ((C * x - A * y) * (B * z - C  * y) + (B * x - A * y) * (C * y - B * z)) / 
+                (B * C * (z + y) - B * B * z - C * C * y);
         }
 
         private bool NowMoving(MouseEventArgs e)
@@ -251,41 +265,111 @@ namespace Lab06.Tools3D.Transformation
 
             if (context.ScreenPointInGroup(e.X, e.Y, xView))
             {
-                lastDistance = Distance(e, xDirection);
+                lastDistance = Distance(e, Matrix.Ident());
                 xMoving = true;
             }
             else if (context.ScreenPointInGroup(e.X, e.Y, yView))
             {
-                lastDistance = Distance(e, yDirection);
+                lastDistance = Distance(e, Matrix.ZRotation(-Math.PI / 2));
                 yMoving = true;
             }
             else if (context.ScreenPointInGroup(e.X, e.Y, zView))
             {
-                lastDistance = Distance(e, zDirection);
+                lastDistance = Distance(e, Matrix.YRotation(Math.PI / 2));
                 zMoving = true;
             }
             return false;
-        }
-
-        private void Rotate(object s, MouseEventArgs e)
-        {
-            if (!NowMoving(e))
-                return;
-            //  TODO
         }
 
         private void Move(object s, MouseEventArgs e)
         {
             if (!NowMoving(e))
                 return;
-            //  TODO
+            Matrix movingMatrix = Matrix.Ident();
+            if (xMoving)
+            {
+                double dist = Distance(e, Matrix.Ident());
+                movingMatrix = Matrix.Move(xDirection.vectorMult((dist - lastDistance)));
+                location.Apply(movingMatrix);
+                lastDistance = Distance(e, Matrix.Ident());
+            }
+            else
+            if (yMoving)
+            {
+                double dist = Distance(e, Matrix.ZRotation(-Math.PI / 2));
+                movingMatrix = Matrix.Move(yDirection.vectorMult((dist - lastDistance)));
+                location.Apply(movingMatrix);
+                lastDistance = Distance(e, Matrix.ZRotation(-Math.PI / 2));
+            }
+            else
+            if (zMoving)
+            {
+                double dist = Distance(e, Matrix.YRotation(Math.PI / 2));
+                movingMatrix = Matrix.Move(zDirection.vectorMult((dist - lastDistance)));
+                location.Apply(movingMatrix);
+                lastDistance = Distance(e, Matrix.YRotation(Math.PI / 2));
+            }
+            else
+                return;
+            xView.Apply(movingMatrix);
+            yView.Apply(movingMatrix);
+            zView.Apply(movingMatrix);
+            if (!OnlyGizmo)
+                context.world.SelectedApply(movingMatrix);
+            context.Redraw();
+        }
+
+        private void Rotate(object s, MouseEventArgs e)
+        {
+            if (!NowMoving(e))
+                return;
         }
 
         private void Scale(object s, MouseEventArgs e)
         {
             if (!NowMoving(e))
                 return;
-            //  TODO
+            Matrix movingMatrix = Matrix.Ident();
+            if (xMoving)
+            {
+                double dist = Distance(e, Matrix.Ident());
+                movingMatrix = Matrix.Move(-location) * Matrix.Scale(
+                    new Base3D.Point { X = 1, Y = 1, Z = 1}.vectorAdd(
+                    xDirection.vectorMult((dist - lastDistance)))) *
+                    Matrix.Move(location);
+                location.Apply(movingMatrix);
+                lastDistance = Distance(e, Matrix.Ident());
+            }
+            else
+            if (yMoving)
+            {
+                double dist = Distance(e, Matrix.ZRotation(-Math.PI / 2));
+                movingMatrix = Matrix.Move(-location) * Matrix.Scale(
+                    new Base3D.Point { X = 1, Y = 1, Z = 1 }.vectorAdd(
+                    yDirection.vectorMult((dist - lastDistance)))) *
+                    Matrix.Move(location);
+                location.Apply(movingMatrix);
+                lastDistance = Distance(e, Matrix.ZRotation(-Math.PI / 2));
+            }
+            else
+            if (zMoving)
+            {
+                double dist = Distance(e, Matrix.YRotation(Math.PI / 2));
+                movingMatrix = Matrix.Move(-location) * Matrix.Scale(
+                    new Base3D.Point { X = 1, Y = 1, Z = 1 }.vectorAdd(
+                    zDirection.vectorMult((dist - lastDistance)))) * 
+                    Matrix.Move(location);
+                location.Apply(movingMatrix);
+                lastDistance = Distance(e, Matrix.YRotation(Math.PI / 2));
+            }
+            else
+                return;
+            xView.Apply(movingMatrix);
+            yView.Apply(movingMatrix);
+            zView.Apply(movingMatrix);
+            if (!OnlyGizmo)
+                context.world.SelectedApply(movingMatrix);
+            context.Redraw();
         }
 
         private void MouseUp(object s, MouseEventArgs e)
