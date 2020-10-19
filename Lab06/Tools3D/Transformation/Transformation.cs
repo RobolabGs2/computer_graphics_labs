@@ -85,9 +85,9 @@ namespace Lab06.Tools3D.Transformation
             yView = Rotator(Color.DarkBlue);
             zView = Rotator(Color.DarkGreen);
 
-            xView.Apply(Matrix.Move(location));
-            yView.Apply(Matrix.ZRotation(Math.PI / 2) * Matrix.Move(location));
-            zView.Apply(Matrix.YRotation(-Math.PI / 2) * Matrix.Move(location));
+            xView.Apply(Matrix.YRotation(-Math.PI / 2) * Matrix.ZRotation(Math.PI / 2) * Matrix.Move(location));
+            yView.Apply(Matrix.Move(location));
+            zView.Apply(Matrix.ZRotation(Math.PI / 2) * Matrix.YRotation(Math.PI / 2) * Matrix.Move(location));
 
             context.world.control.Add(xView);
             context.world.control.Add(yView);
@@ -186,9 +186,6 @@ namespace Lab06.Tools3D.Transformation
             rotator.Matreial = new SolidMaterial(color);
 
             rotator.Add(Circle());
-            var triangle = Circle();
-            triangle.Apply(Matrix.XRotation(Math.PI / 2));
-            rotator.Add(triangle);
 
             Spline spline = new Spline();
             spline.Matreial = new SolidMaterial();
@@ -206,8 +203,8 @@ namespace Lab06.Tools3D.Transformation
             triangle.Matreial = new SolidMaterial();
 
             triangle.Add(new Base3D.Point { X = 3 });
-            triangle.Add(new Base3D.Point { X = 2, Y = 0.5 });
-            triangle.Add(new Base3D.Point { X = 2, Y = -0.5 });
+            triangle.Add(new Base3D.Point { X = 2, Y = 0 });
+            triangle.Add(new Base3D.Point { X = 2, Y = 1 });
             triangle.polygons.Add(new Polygon(new Base3D.Point[] { triangle.points[0], triangle.points[1], triangle.points[2] }));
             triangle.polygons.Add(new Polygon(new Base3D.Point[] { triangle.points[0], triangle.points[2], triangle.points[1] }));
             return triangle;
@@ -243,7 +240,7 @@ namespace Lab06.Tools3D.Transformation
         {
             Base3D.Point p0 = (new Base3D.Point { Y = e.X, Z = e.Y } * context.InvertDrawingMatrix()).FlattenT();
             Base3D.Point p1 = (new Base3D.Point { Y = e.X, Z = e.Y, X = 1 } * context.InvertDrawingMatrix()).FlattenT();
-            Matrix deMove = Matrix.Move(-location);
+            Matrix deMove = Matrix.Move(-location) * Invert;
             p0 = p0 * deMove * vMatrix;
             p1 = p1 * deMove * vMatrix;
             double A = p1.X - p0.X;
@@ -319,12 +316,6 @@ namespace Lab06.Tools3D.Transformation
             context.Redraw();
         }
 
-        private void Rotate(object s, MouseEventArgs e)
-        {
-            if (!NowMoving(e))
-                return;
-        }
-
         private void Scale(object s, MouseEventArgs e)
         {
             if (!NowMoving(e))
@@ -367,6 +358,55 @@ namespace Lab06.Tools3D.Transformation
             xView.Apply(movingMatrix);
             yView.Apply(movingMatrix);
             zView.Apply(movingMatrix);
+            if (!OnlyGizmo)
+                context.world.SelectedApply(movingMatrix);
+            context.Redraw();
+        }
+
+        private void Rotate(object s, MouseEventArgs e)
+        {
+            if (!NowMoving(e))
+                return;
+
+            Matrix movingMatrix = Matrix.Ident();
+            Matrix rotateMatrix = Matrix.Ident();
+            if (xMoving)
+            {
+                double dist = Distance(e, Matrix.Ident());
+                rotateMatrix = Matrix.Rotation(yDirection, dist - lastDistance);
+                movingMatrix = Matrix.Move(-location) * rotateMatrix * Matrix.Move(location);
+                Invert *= Matrix.Rotation(yDirection, lastDistance - dist);
+                location.Apply(movingMatrix);
+                lastDistance = Distance(e, Matrix.Ident());
+            }
+            else
+            if (yMoving)
+            {
+                double dist = Distance(e, Matrix.ZRotation(-Math.PI / 2));
+                rotateMatrix = Matrix.Rotation(zDirection, dist - lastDistance);
+                movingMatrix = Matrix.Move(-location) * rotateMatrix * Matrix.Move(location);
+                Invert *= Matrix.Rotation(zDirection, lastDistance - dist);
+                location.Apply(movingMatrix);
+                lastDistance = Distance(e, Matrix.ZRotation(-Math.PI / 2));
+            }
+            else
+            if (zMoving)
+            {
+                double dist = Distance(e, Matrix.YRotation(Math.PI / 2));
+                rotateMatrix = Matrix.Rotation(xDirection, dist - lastDistance);
+                movingMatrix = Matrix.Move(-location) * rotateMatrix * Matrix.Move(location);
+                Invert *= Matrix.Rotation(xDirection, lastDistance - dist);
+                location.Apply(movingMatrix);
+                lastDistance = Distance(e, Matrix.YRotation(Math.PI / 2));
+            }
+            else
+                return;
+            xView.Apply(movingMatrix);
+            yView.Apply(movingMatrix);
+            zView.Apply(movingMatrix);
+            xDirection.Apply(rotateMatrix);
+            yDirection.Apply(rotateMatrix);
+            zDirection.Apply(rotateMatrix);
             if (!OnlyGizmo)
                 context.world.SelectedApply(movingMatrix);
             context.Redraw();
