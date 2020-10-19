@@ -9,10 +9,11 @@ namespace Lab06.Materials3D
 {
     public class SolidMaterial: BaseMaterial
     {
-        public override Color Color { get; } = Constants.textColore;
+        public override Color Color { get; }
      
         public SolidMaterial()
         {
+            Color = base.Color;
         }
 
         public SolidMaterial(Color color)

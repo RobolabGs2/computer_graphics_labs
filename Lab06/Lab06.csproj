@@ -65,6 +65,7 @@
   <ItemGroup>
     <Compile Include="Base3D\Context.cs" />
     <Compile Include="Base3D\Entity.cs" />
+    <Compile Include="Base3D\Group.cs" />
     <Compile Include="IToolPage.cs" />
     <Compile Include="Base3D\Polygon.cs" />
     <Compile Include="Base3D\Polytope.cs" />
@@ -142,6 +143,8 @@
     <Content Include="Resources\Projection.png" />
     <Content Include="Resources\Rectangle.png" />
     <Content Include="Resources\Reverse.png" />
+    <Content Include="Resources\Rotate.png" />
+    <Content Include="Resources\Scale.png" />
     <Content Include="Resources\SelectAll.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

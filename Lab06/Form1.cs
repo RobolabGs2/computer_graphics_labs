@@ -1,5 +1,6 @@
 ﻿using Lab06.Base3D;
 using Lab06.Graph3D;
+using Lab06.Materials3D;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,7 +17,7 @@ namespace Lab06
 {
     public partial class MainForm : Form
     {
-        Context context ;
+        Context context;
 
         public MainForm(List<IToolPage> tools)
         {
@@ -34,11 +35,6 @@ namespace Lab06
 
 
             context.camera.Move(Matrix.Move(new Base3D.Point { X = -1 }));
-            for (int i = -3; i < 3; ++i)
-                for (int j = -3; j < 3; ++j)
-                    context.world.entities.Add(GenerateCube(new Base3D.Point { X = 6 * i, Y = 6 * j, Z = (i + j == 2) ? 1 : 0, T = 0 }));
-
-
 
             List<ToolTab> tabList = tools.Select((tool, i) => new ToolTab { ImageIndex = i }).ToList();
             ToolTabs tabs = new ToolTabs(tabList, tools.Select(t => t.Image));
@@ -48,6 +44,7 @@ namespace Lab06
             splitTools.Panel2.Controls.Add(tabs);
 
             AddMoveEvents();
+            InitContext();
             context.Redraw();
         }
 
@@ -126,25 +123,37 @@ namespace Lab06
             };
         }
 
-        Polytope GenerateCube(Base3D.Point location)
+        void InitContext()
         {
 
-            Polytope cube = new Polytope();
-            cube.Add(new Base3D.Point { X = 1, Y = 1, Z = 1 } + location);
-            cube.Add(new Base3D.Point { X = -1, Y = 1, Z = 1 } + location);
-            cube.Add(new Base3D.Point { X = -1, Y = -1, Z = 1 } + location);
-            cube.Add(new Base3D.Point { X = 1, Y = -1, Z = 1 } + location);
-            cube.Add(new Base3D.Point { X = 1, Y = 1, Z = -1 } + location);
-            cube.Add(new Base3D.Point { X = -1, Y = 1, Z = -1 } + location);
-            cube.Add(new Base3D.Point { X = -1, Y = -1, Z = -1 } + location);
-            cube.Add(new Base3D.Point { X = 1, Y = -1, Z = -1 } + location);
+            for (int i = -5; i <= 5; ++i)
+            {
+                Spline spline1 = new Spline();
+                spline1.Add(new Base3D.Point { X = 5, Y = i, Z = 0 });
+                spline1.Add(new Base3D.Point { X = -5, Y = i, Z = 0 });
+                context.world.control.Add(spline1);
+                Spline spline2 = new Spline();
+                spline2.Add(new Base3D.Point { X = i, Y = 5, Z = 0 });
+                spline2.Add(new Base3D.Point { X = i, Y = -5, Z = 0 });
+                context.world.control.Add(spline2);
+            }
+            Spline xSpline = new Spline();
+            xSpline.Matreial = new SolidMaterial(Color.DarkRed);
+            xSpline.Add(new Base3D.Point { X = 0 });
+            xSpline.Add(new Base3D.Point { X = 1 });
+            context.world.control.Add(xSpline);
 
-            cube.Add(new Polygon(new Base3D.Point[] { cube.points[0], cube.points[1], cube.points[2], cube.points[3] }));
-            cube.Add(new Polygon(new Base3D.Point[] { cube.points[4], cube.points[5], cube.points[6], cube.points[7] }));
-            cube.Add(new Polygon(new Base3D.Point[] { cube.points[0], cube.points[1], cube.points[5], cube.points[4] }));
-            cube.Add(new Polygon(new Base3D.Point[] { cube.points[2], cube.points[3], cube.points[7], cube.points[6] }));
+            Spline ySpline = new Spline();
+            ySpline.Matreial = new SolidMaterial(Color.DarkBlue);
+            ySpline.Add(new Base3D.Point { Y = 0 });
+            ySpline.Add(new Base3D.Point { Y = 1 });
+            context.world.control.Add(ySpline);
 
-            return cube;
+            Spline zSpline = new Spline();
+            zSpline.Matreial = new SolidMaterial(Color.DarkGreen);
+            zSpline.Add(new Base3D.Point { Z = 0 });
+            zSpline.Add(new Base3D.Point { Z = 1 });
+            context.world.control.Add(zSpline);
         }
     }
 }

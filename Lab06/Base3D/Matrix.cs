@@ -55,6 +55,24 @@ namespace Lab06.Base3D
         {
             double sin = Math.Sin(angle);
             double cos = Math.Cos(angle);
+            return XRotation(sin, cos);
+        }
+
+        public static Matrix YRotation(double angle)
+        {
+            double sin = Math.Sin(angle);
+            double cos = Math.Cos(angle);
+            return YRotation(sin, cos);
+        }
+
+        public static Matrix ZRotation(double angle)
+        {
+            double sin = Math.Sin(angle);
+            double cos = Math.Cos(angle);
+            return ZRotation(sin, cos);
+        }
+        public static Matrix XRotation(double sin, double cos)
+        {
             Matrix m = Matrix.Ident();
             m[1, 1] = cos;
             m[1, 2] = sin;
@@ -62,11 +80,9 @@ namespace Lab06.Base3D
             m[2, 2] = cos;
             return m;
         }
-        
-        public static Matrix YRotation(double angle)
+
+        public static Matrix YRotation(double sin, double cos)
         {
-            double sin = Math.Sin(angle);
-            double cos = Math.Cos(angle);
             Matrix m = Matrix.Ident();
             m[0, 0] = cos;
             m[0, 2] = -sin;
@@ -75,10 +91,8 @@ namespace Lab06.Base3D
             return m;
         }
 
-        public static Matrix ZRotation(double angle)
+        public static Matrix ZRotation(double sin, double cos)
         {
-            double sin = Math.Sin(angle);
-            double cos = Math.Cos(angle);
             Matrix m = Matrix.Ident();
             m[0, 0] = cos;
             m[0, 1] = sin;

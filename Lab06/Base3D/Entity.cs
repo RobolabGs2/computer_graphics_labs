@@ -9,7 +9,7 @@ namespace Lab06.Base3D
 {
     public abstract class Entity
     {
-        public BaseMaterial Matreial { get; } = new Materials3D.SolidMaterial();
+        public BaseMaterial Matreial { get; set; } = new Materials3D.SolidMaterial();
 
         public virtual IEnumerable<Point> Points()
         {

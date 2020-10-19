@@ -31,11 +31,13 @@ namespace Lab06.Graph3D
             graphics.Clear(Constants.backColore);
             foreach (Entity e in context.world.entities)
             {
-                if(context.world.selected.Contains(e))
+                if (context.world.selected.Contains(e))
                     DrawEntity(e, selectedPen);
                 else
-                    DrawEntity(e, basePen);
+                    DrawEntity(e, new Pen(e.Matreial.Color, 2));
             }
+            foreach (Entity e in context.world.control)
+                    DrawEntity(e, new Pen(e.Matreial.Color, 2));
         }
 
         void DrawEntity(Entity entity, Pen pen)
@@ -46,6 +48,14 @@ namespace Lab06.Graph3D
                 DrawSpline(s, pen);
             if (entity is Base3D.Polytope pol)
                 DrawPolytope(pol, pen);
+            if (entity is Base3D.Group group)
+                DrawGroup(group, pen);
+        }
+
+        void DrawGroup(Base3D.Group p, Pen pen)
+        {
+            foreach (Entity e in p.entities)
+                DrawEntity(e, pen);
         }
 
         void DrawPolytope(Base3D.Polytope p, Pen pen)

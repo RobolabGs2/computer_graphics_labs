@@ -1,4 +1,5 @@
 ﻿using Lab06.Graph3D;
+using Lab06.Materials3D;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -32,7 +33,7 @@ namespace Lab06.Base3D
             pictureBox.SizeChanged += (o, s) => Resize();
             bitmap = new Bitmap(pictureBox.Width, pictureBox.Height);
         }
-        
+
         public Matrix DrawingMatrix()
         {
             return
@@ -87,6 +88,20 @@ namespace Lab06.Base3D
             Redraw();
             pictureBox.Image = bitmap;
             bmp?.Dispose();
+        }
+
+        public Base3D.Point SeletedPivot()
+        {
+            return new Group(world.selected).Pivot();
+        }
+
+        public bool ScreenPointInGroup(int x, int y, Group group)
+        {
+            return group.entities.Any(e => {
+                if (e is Polytope p)
+                    return ScreenPointInPolytope(x, y, p);
+                return false;
+            });
         }
 
         public bool ScreenPointInPolytope(int x, int y, Polytope poly)

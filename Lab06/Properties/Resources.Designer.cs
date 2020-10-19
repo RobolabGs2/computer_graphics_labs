@@ -153,6 +153,26 @@ namespace Lab06.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Rotate {
+            get {
+                object obj = ResourceManager.GetObject("Rotate", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Scale {
+            get {
+                object obj = ResourceManager.GetObject("Scale", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap SelectAll {
             get {
                 object obj = ResourceManager.GetObject("SelectAll", resourceCulture);
