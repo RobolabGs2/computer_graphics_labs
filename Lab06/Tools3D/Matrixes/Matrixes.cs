@@ -22,7 +22,7 @@ namespace Lab06.Tools3D.Matrixes
                 ("XY", Math.PI / 2, 0),
                 ("XZ", 0, Math.PI / 2),
                 ("YZ", 0, 0),
-                ("Isometric", Math.PI / 5, Math.PI+Math.PI / 4),
+                ("Isometric", 0.6154797087, Math.PI+Math.PI / 4),
             }.Select(tuple =>
             {
                 var (name, downAngle, leftAngle) = tuple;
@@ -53,13 +53,6 @@ namespace Lab06.Tools3D.Matrixes
                     (o, s) =>
                     {
                         context.projection = Matrix.Projection(0.001, 0, 0);
-                        context.cutNegative = true;
-                        context.Redraw();
-                    };
-            tab.AddButton(Properties.Resources.Reverse, false).Click +=
-                    (o, s) =>
-                    {
-                        context.projection = Matrix.Projection(-0.001, 0, 0);
                         context.cutNegative = true;
                         context.Redraw();
                     };
