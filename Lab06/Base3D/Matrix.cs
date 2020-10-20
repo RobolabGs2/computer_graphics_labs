@@ -86,7 +86,26 @@ namespace Lab06.Base3D
             result *= Matrix.YRotation(-sin2, cos2);
             result *= Matrix.ZRotation(angle);
             result *= Matrix.YRotation(sin2, cos2);
-            if(length1 != 0)
+            if (length1 != 0)
+                result *= Matrix.ZRotation(sin1, cos1);
+            return result;
+        }
+        public static Matrix Scale(Point vector, double scale)
+        {
+            double length1 = Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y);
+            double sin1 = vector.Y / length1;
+            double cos1 = vector.X / length1;
+            Matrix result = Matrix.Ident();
+            if (length1 != 0)
+                result = Matrix.ZRotation(-sin1, cos1);
+            vector = vector * result;
+            double length2 = Math.Sqrt(vector.X * vector.X + vector.Z * vector.Z);
+            double sin2 = vector.X / length2;
+            double cos2 = vector.Z / length2;
+            result *= Matrix.YRotation(-sin2, cos2);
+            result *= Matrix.Scale(new Point {X = 1, Y = 1, Z = scale});
+            result *= Matrix.YRotation(sin2, cos2);
+            if (length1 != 0)
                 result *= Matrix.ZRotation(sin1, cos1);
             return result;
         }
