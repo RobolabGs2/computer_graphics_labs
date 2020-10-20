@@ -135,6 +135,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\Cube.png" />
+    <Content Include="Resources\Trash.png" />
     <None Include="Resources\Tetrahedron.png" />
     <Content Include="Resources\Matrix.png" />
     <Content Include="Resources\Mouse.png" />

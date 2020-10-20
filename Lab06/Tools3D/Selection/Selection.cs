@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -22,13 +23,6 @@ namespace Lab06.Tools3D.Selection
         public void Init(ToolTab tab, Context context)
         {
             this.context = context;
-            tab.AddButton(Properties.Resources.SelectAll, false).ButtonClick += b => {
-                if (context.world.entities.Count != context.world.selected.Count)
-                    context.world.selected.UnionWith(context.world.entities);
-                else
-                    context.world.selected.Clear();
-                context.Redraw();
-            };
             var cursorButton = tab.AddButton(Properties.Resources.Mouse);
             cursorButton.ButtonClick += b => cursorActive = true;
             cursorButton.ButtonDisable += b => cursorActive = false;
@@ -38,6 +32,20 @@ namespace Lab06.Tools3D.Selection
             context.pictureBox.MouseDown += MouseDown;
             context.pictureBox.MouseMove += MouseMove;
             context.pictureBox.MouseUp += MouseUp;
+
+            tab.AddButton(Properties.Resources.SelectAll, false).ButtonClick += b => {
+                if (context.world.entities.Count != context.world.selected.Count)
+                    context.world.selected.UnionWith(context.world.entities);
+                else
+                    context.world.selected.Clear();
+                context.Redraw();
+            };
+
+            tab.AddButton(Properties.Resources.Trash, false).ButtonClick += b => { 
+                context.world.entities.ExceptWith(context.world.selected);
+                context.world.selected.Clear();
+                context.Redraw();
+            };
         }
 
         private void DrawRectangle(Graphics g)

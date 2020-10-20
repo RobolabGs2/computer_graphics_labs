@@ -120,8 +120,8 @@ namespace Lab06.Tools3D.Transformation
             yView = Rotator(Color.DarkBlue);
             zView = Rotator(Color.DarkGreen);
 
-            xView.Apply(Matrix.YRotation(-Math.PI / 2) * Deformations);
-            yView.Apply(Matrix.XRotation(Math.PI / 2) * Deformations);
+            xView.Apply(Matrix.YRotation(-Math.PI / 2) * Matrix.ZRotation(Math.PI) * Matrix.XRotation(-Math.PI / 2) * Deformations);
+            yView.Apply(Matrix.XRotation(Math.PI / 2) * Matrix.ZRotation(Math.PI) * Matrix.YRotation(Math.PI / 2) * Deformations);
             zView.Apply(Deformations);
 
             context.world.control.Add(xView);
@@ -223,8 +223,9 @@ namespace Lab06.Tools3D.Transformation
             Spline spline = new Spline();
             spline.Matreial = new SolidMaterial();
             spline.Add(new Base3D.Point { });
-            spline.Add(new Base3D.Point { X = 2 });
+            spline.Add(new Base3D.Point { Z = 2 });
             rotator.Add(spline);
+
             rotator.Apply(Matrix.Scale(new Base3D.Point { X = 0.3, Y = 0.3, Z = 0.3 }));
 
             return rotator;
@@ -261,9 +262,9 @@ namespace Lab06.Tools3D.Transformation
             Polytope triangle = new Polytope();
             triangle.Matreial = new SolidMaterial();
 
-            triangle.Add(new Base3D.Point { });
-            triangle.Add(new Base3D.Point { X = 3});
-            triangle.Add(new Base3D.Point { Y = 3});
+            triangle.Add(new Base3D.Point { X = 1, Y = 1 });
+            triangle.Add(new Base3D.Point { X = 3, Y = 1});
+            triangle.Add(new Base3D.Point { X = 1, Y = 3});
             triangle.polygons.Add(new Polygon(new Base3D.Point[] { triangle.points[0], triangle.points[1], triangle.points[2] }));
             triangle.polygons.Add(new Polygon(new Base3D.Point[] { triangle.points[0], triangle.points[2], triangle.points[1] }));
             return triangle;
