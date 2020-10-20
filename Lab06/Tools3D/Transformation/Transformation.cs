@@ -122,6 +122,7 @@ namespace Lab06.Tools3D.Transformation
             Invert = Matrix.Ident();
             context.pictureBox.MouseMove += Scale;
             context.pictureBox.MouseUp += MouseUp;
+            isRotation = false;
         }
 
         public void InitMove()
@@ -143,6 +144,7 @@ namespace Lab06.Tools3D.Transformation
             Invert = Matrix.Ident();
             context.pictureBox.MouseMove += Move;
             context.pictureBox.MouseUp += MouseUp;
+            isRotation = false;
         }
 
         private Group Arrow(Color color)
