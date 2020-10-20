@@ -72,6 +72,11 @@
     <Compile Include="Base3D\Spline.cs" />
     <Compile Include="Materials3D\BaseMaterial.cs" />
     <Compile Include="Materials3D\SolidMaterial.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Tools3D\AddItem\AddItem.cs" />
     <Compile Include="Tools3D\Matrixes\Matrixes.cs" />
     <Compile Include="Tools3D\Selection\Selection.cs" />
@@ -100,14 +105,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -135,9 +135,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\Cube.png" />
+    <None Include="Resources\Tetrahedron.png" />
     <Content Include="Resources\Matrix.png" />
     <Content Include="Resources\Mouse.png" />
     <Content Include="Resources\Move.png" />
+    <Content Include="Resources\Octahedron.png" />
     <Content Include="Resources\Parallel.png" />
     <Content Include="Resources\Point.png" />
     <Content Include="Resources\Projection.png" />
