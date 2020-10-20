@@ -42,6 +42,19 @@ namespace Lab06.Tools3D.Transformation
             {
                 // TODO
                 gizmo.RestartDirection();
+                gizmo.Delete();
+                if (moveButton.ButtonEnable)
+                {
+                    gizmo.InitMove();
+                }
+                if (rotateButton.ButtonEnable)
+                {
+                    gizmo.InitRotation();
+                }
+                if (scaleButton.ButtonEnable)
+                {
+                    gizmo.InitScale();
+                }
                 context.Redraw();
             };
             tab.Settings.Controls.Add(resetGizmo);
@@ -63,7 +76,7 @@ namespace Lab06.Tools3D.Transformation
         bool xMoving = false;
         bool yMoving = false;
         bool zMoving = false;
-
+        private Matrix Deformations = Matrix.Ident();
         public Base3D.Point location = new Base3D.Point { };
         /// <summary>
         /// Это всегда единичный вектор вдоль лькальной оси X
@@ -93,6 +106,8 @@ namespace Lab06.Tools3D.Transformation
             yDirection = new Base3D.Point { Y = 1 };
             zDirection = new Base3D.Point { Z = 1 };
             location = context.SeletedPivot();
+            Deformations = Matrix.Move(location);
+            Invert = Matrix.Ident();
         }
 
         public void InitRotation()
@@ -101,16 +116,15 @@ namespace Lab06.Tools3D.Transformation
             yView = Rotator(Color.DarkBlue);
             zView = Rotator(Color.DarkGreen);
 
-            xView.Apply(Matrix.YRotation(-Math.PI / 2) * Matrix.ZRotation(Math.PI / 2) * Matrix.Move(location));
-            yView.Apply(Matrix.Move(location));
-            zView.Apply(Matrix.ZRotation(Math.PI / 2) * Matrix.YRotation(Math.PI / 2) * Matrix.Move(location));
+            xView.Apply(Matrix.YRotation(-Math.PI / 2) * Matrix.ZRotation(Math.PI / 2) * Deformations);
+            yView.Apply(Deformations);
+            zView.Apply(Matrix.ZRotation(Math.PI / 2) * Matrix.YRotation(Math.PI / 2) * Deformations);
 
             context.world.control.Add(xView);
             context.world.control.Add(yView);
             context.world.control.Add(zView);
             context.Redraw();
 
-            Invert = Matrix.Ident();
             context.pictureBox.MouseMove += Rotate;
             context.pictureBox.MouseUp += MouseUp;
         }
@@ -121,16 +135,15 @@ namespace Lab06.Tools3D.Transformation
             yView = Scelator(Color.DarkBlue);
             zView = Scelator(Color.DarkGreen);
 
-            xView.Apply(Matrix.Move(location));
-            yView.Apply(Matrix.ZRotation(Math.PI / 2) * Matrix.Move(location));
-            zView.Apply(Matrix.YRotation(-Math.PI / 2) * Matrix.Move(location));
+            xView.Apply(Deformations);
+            yView.Apply(Matrix.ZRotation(Math.PI / 2) * Deformations);
+            zView.Apply(Matrix.YRotation(-Math.PI / 2) * Deformations);
 
             context.world.control.Add(xView);
             context.world.control.Add(yView);
             context.world.control.Add(zView);
             context.Redraw();
 
-            Invert = Matrix.Ident();
             context.pictureBox.MouseMove += Scale;
             context.pictureBox.MouseUp += MouseUp;
         }
@@ -141,16 +154,15 @@ namespace Lab06.Tools3D.Transformation
             yView = Arrow(Color.DarkBlue);
             zView = Arrow(Color.DarkGreen);
 
-            xView.Apply(Matrix.Move(location));
-            yView.Apply(Matrix.ZRotation(Math.PI / 2) * Matrix.Move(location));
-            zView.Apply(Matrix.YRotation(-Math.PI / 2) * Matrix.Move(location));
+            xView.Apply(Deformations);
+            yView.Apply(Matrix.ZRotation(Math.PI / 2) * Deformations);
+            zView.Apply(Matrix.YRotation(-Math.PI / 2) * Deformations);
 
             context.world.control.Add(xView);
             context.world.control.Add(yView);
             context.world.control.Add(zView);
             context.Redraw();
 
-            Invert = Matrix.Ident();
             context.pictureBox.MouseMove += Move;
             context.pictureBox.MouseUp += MouseUp;
         }
@@ -325,6 +337,7 @@ namespace Lab06.Tools3D.Transformation
             xView.Apply(movingMatrix);
             yView.Apply(movingMatrix);
             zView.Apply(movingMatrix);
+            Deformations = Deformations * movingMatrix;
             if (!OnlyGizmo)
                 context.world.SelectedApply(movingMatrix);
             context.Redraw();
@@ -372,6 +385,7 @@ namespace Lab06.Tools3D.Transformation
             xView.Apply(movingMatrix);
             yView.Apply(movingMatrix);
             zView.Apply(movingMatrix);
+            Deformations = Deformations * movingMatrix;
             if (!OnlyGizmo)
                 context.world.SelectedApply(movingMatrix);
             context.Redraw();
@@ -421,6 +435,7 @@ namespace Lab06.Tools3D.Transformation
             xDirection.Apply(rotateMatrix);
             yDirection.Apply(rotateMatrix);
             zDirection.Apply(rotateMatrix);
+            Deformations = Deformations * movingMatrix;
             if (!OnlyGizmo)
                 context.world.SelectedApply(movingMatrix);
             context.Redraw();
