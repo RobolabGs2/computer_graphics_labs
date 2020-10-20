@@ -103,6 +103,16 @@ namespace Lab06.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Octahedron {
+            get {
+                object obj = ResourceManager.GetObject("Octahedron", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Parallel {
             get {
                 object obj = ResourceManager.GetObject("Parallel", resourceCulture);
@@ -176,6 +186,16 @@ namespace Lab06.Properties {
         internal static System.Drawing.Bitmap SelectAll {
             get {
                 object obj = ResourceManager.GetObject("SelectAll", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Tetrahedron {
+            get {
+                object obj = ResourceManager.GetObject("Tetrahedron", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
