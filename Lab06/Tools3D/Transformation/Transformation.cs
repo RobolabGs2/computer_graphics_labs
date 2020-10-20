@@ -394,33 +394,27 @@ namespace Lab06.Tools3D.Transformation
             if (xMoving)
             {
                 double dist = Distance(e, Matrix.Ident());
-                movingMatrix = Matrix.Move(-location) * Matrix.Scale(
-                    new Base3D.Point { X = 1, Y = 1, Z = 1}.vectorAdd(
-                    xDirection.vectorMult((dist - lastDistance)))) *
+                movingMatrix = Matrix.Move(-location) *
+                    Matrix.Scale(xDirection, dist / lastDistance) *
                     Matrix.Move(location);
-                location.Apply(movingMatrix);
                 lastDistance = Distance(e, Matrix.Ident());
             }
             else
             if (yMoving)
             {
                 double dist = Distance(e, Matrix.ZRotation(-Math.PI / 2));
-                movingMatrix = Matrix.Move(-location) * Matrix.Scale(
-                    new Base3D.Point { X = 1, Y = 1, Z = 1 }.vectorAdd(
-                    yDirection.vectorMult((dist - lastDistance)))) *
+                movingMatrix = Matrix.Move(-location) *
+                    Matrix.Scale(yDirection, dist / lastDistance) *
                     Matrix.Move(location);
-                location.Apply(movingMatrix);
                 lastDistance = Distance(e, Matrix.ZRotation(-Math.PI / 2));
             }
             else
             if (zMoving)
             {
                 double dist = Distance(e, Matrix.YRotation(Math.PI / 2));
-                movingMatrix = Matrix.Move(-location) * Matrix.Scale(
-                    new Base3D.Point { X = 1, Y = 1, Z = 1 }.vectorAdd(
-                    zDirection.vectorMult((dist - lastDistance)))) * 
+                movingMatrix = Matrix.Move(-location) *
+                    Matrix.Scale(zDirection, dist / lastDistance) *
                     Matrix.Move(location);
-                location.Apply(movingMatrix);
                 lastDistance = Distance(e, Matrix.YRotation(Math.PI / 2));
             }
             else
