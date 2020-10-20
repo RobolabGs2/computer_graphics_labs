@@ -22,7 +22,7 @@ namespace Lab06.Tools3D.Matrixes
                 ("XY", Math.PI / 2, 0),
                 ("XZ", 0, Math.PI / 2),
                 ("YZ", 0, 0),
-                ("Isometric", Math.PI / 4, Math.PI+Math.PI / 4),
+                ("Isometric", Math.PI / 5, Math.PI+Math.PI / 4),
             }.Select(tuple =>
             {
                 var (name, downAngle, leftAngle) = tuple;

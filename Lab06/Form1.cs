@@ -27,7 +27,7 @@ namespace Lab06
 
             BackColor = Constants.backColore;
             splitList.BackColor = Constants.borderColore;
-            
+            splitList.Panel1Collapsed = true;
             PictureBox pictureBox = new PictureBox { Dock = DockStyle.Fill };
             splitTools.Panel1.Controls.Add(pictureBox);
             context = new Context(pictureBox);
