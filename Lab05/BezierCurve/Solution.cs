@@ -30,6 +30,11 @@ namespace Lab05.BezierCurve
 
         public Solution() : base("Составные кривые Безье")
         {
+            panel = new Panel()
+            {
+                Dock = DockStyle.Bottom,
+                Height = 60
+            };
             bcurve = new BezierCurve();
             var draw = new Button { Text = "Нарисовать", Dock = DockStyle.Bottom, Height = 30 };
             var clear = new Button { Text = "Очистить", Dock = DockStyle.Bottom, Height = 30 };
