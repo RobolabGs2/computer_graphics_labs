@@ -253,10 +253,10 @@ namespace Lab06.Tools3D.AddItem
 
             foreach(var edge in cube.polygons)
             {
-                var sump = new Base3D.Point();
+                var sump = new Base3D.Point() * move;
                 foreach (var p in edge.points)
                     sump += p;
-                octa.Add((sump / 4) * move);
+                octa.Add(sump / 4);
             }
 
             octa.Add(new Polygon(new Base3D.Point[] { octa.points[0], octa.points[1], octa.points[2], octa.points[3] }));
