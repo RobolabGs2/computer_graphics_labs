@@ -22,7 +22,7 @@ namespace Lab06
             this.DrawItem += tabControlDrawItem;
             this.Images = images.ToArray();
             this.SelectedIndexChanged += (s, e) => {
-                foreach(var t in this.TabPages)
+                foreach (var t in this.TabPages)
                     ((ToolTab)t).ClearEvents();
                 ((ToolTab)this.SelectedTab).TabSelected();
             };
@@ -30,7 +30,7 @@ namespace Lab06
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
         {
         }
-        
+
         private const int TCM_ADJUSTRECT = 0x1328;
 
         protected override void WndProc(ref Message m)
@@ -52,7 +52,7 @@ namespace Lab06
         {
             using (Brush br = new SolidBrush(Constants.backColore))
                 e.Graphics.FillRectangle(br, e.Bounds);
-            
+
             var bmp = Images[e.Index];
             e.Graphics.DrawImage(bmp, e.Bounds, new Rectangle(0, 0, bmp.Width, bmp.Height), GraphicsUnit.Pixel);
         }
@@ -65,23 +65,32 @@ namespace Lab06
 
     public class ToolTab : TabPage
     {
-        FlowLayoutPanel panel;
+        FlowLayoutPanel panel = new FlowLayoutPanel
+        {
+            Dock = DockStyle.Fill,
+            BackColor = Constants.backColore,
+        };
         List<TabButton> buttons = new List<TabButton>();
+        SplitContainer mainContainer = new SplitContainer
+        {
+            Orientation = Orientation.Horizontal,
+            Dock = DockStyle.Fill,
+            BackColor = Constants.backColore,
+        };
 
+        public Control Settings => mainContainer.Panel2;
         public Action TabSelected = () => { };
         public Action ClearEvents = () => { };
 
         public ToolTab()
         {
             BackColor = Constants.backColore;
-            panel = new FlowLayoutPanel
-            {
-                Dock = DockStyle.Fill
-            };
-            Controls.Add(panel);
+            Controls.Add(mainContainer);
+            mainContainer.Panel1.Controls.Add(panel);
             ClearEvents += () => buttons.ForEach(b => { if (b.ButtonEnable) b.ButtonDisable(b); });
+            mainContainer.Panel2.Padding = new Padding(10);
         }
-    
+
         public TabButton AddButton(Bitmap image, bool fixedButton = true)
         {
             TabButton p = new TabButton
@@ -97,7 +106,7 @@ namespace Lab06
                 p.ButtonClick(p);
             };
 
-            if(!fixedButton)
+            if (!fixedButton)
                 p.MouseUp += (o, s) => p.ButtonDisable(p);
             panel.Controls.Add(p);
             buttons.Add(p);
@@ -105,7 +114,7 @@ namespace Lab06
         }
     }
 
-    public class TabButton: PictureBox
+    public class TabButton : PictureBox
     {
         public Action<TabButton> ButtonClick = t => { };
         public Action<TabButton> ButtonDisable = t => { };

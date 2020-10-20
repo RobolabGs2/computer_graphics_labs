@@ -30,6 +30,23 @@ namespace Lab06.Tools3D.Transformation
             var rotateButton = tab.AddButton(Properties.Resources.Rotate);
             rotateButton.ButtonClick += b => gizmo.InitRotation();
             rotateButton.ButtonDisable += b => gizmo.Delete();
+
+            var onlyGizmo = new CheckBox{Text = "Move gizmo", ForeColor = Constants.textColore, Font = Constants.font, Dock = DockStyle.Top};
+            onlyGizmo.CheckStateChanged += (sender, args) =>
+            {
+                gizmo.OnlyGizmo = onlyGizmo.Checked;
+            };
+            tab.Settings.Controls.Add(onlyGizmo);
+            var resetGizmo = new Button() { Text = "Reset gizmo", ForeColor = Constants.textColore, Font = Constants.font, Dock = DockStyle.Top, AutoSize = true};
+            resetGizmo.Click += (sender, args) =>
+            {
+                // TODO
+                gizmo.RestartDirection();
+                context.Redraw();
+            };
+            tab.Settings.Controls.Add(resetGizmo);
+
+            tab.TabSelected += () => gizmo.RestartDirection();
         }
     }
 
@@ -70,7 +87,7 @@ namespace Lab06.Tools3D.Transformation
             this.context = context;
         }
 
-        private void RestartDirection()
+        public void RestartDirection()
         {
             xDirection = new Base3D.Point { X = 1 };
             yDirection = new Base3D.Point { Y = 1 };
@@ -80,7 +97,6 @@ namespace Lab06.Tools3D.Transformation
 
         public void InitRotation()
         {
-            RestartDirection();
             xView = Rotator(Color.DarkRed);
             yView = Rotator(Color.DarkBlue);
             zView = Rotator(Color.DarkGreen);
@@ -101,7 +117,6 @@ namespace Lab06.Tools3D.Transformation
 
         public void InitScale()
         {
-            RestartDirection();
             xView = Scelator(Color.DarkRed);
             yView = Scelator(Color.DarkBlue);
             zView = Scelator(Color.DarkGreen);
@@ -122,7 +137,6 @@ namespace Lab06.Tools3D.Transformation
 
         public void InitMove()
         {
-            RestartDirection();
             xView = Arrow(Color.DarkRed);
             yView = Arrow(Color.DarkBlue);
             zView = Arrow(Color.DarkGreen);
