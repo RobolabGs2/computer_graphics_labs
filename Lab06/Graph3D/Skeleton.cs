@@ -18,8 +18,8 @@ namespace Lab06.Graph3D
 
         public Skeleton(Context context)
         {
-            selectedPen = new Pen(Constants.textColore, 2);
-            basePen = new Pen(Constants.borderColore, 2);
+            selectedPen = new Pen(Constants.textColore, 4);
+            basePen = new Pen(Constants.borderColore, 4);
             this.context = context;
         }
 
@@ -34,10 +34,10 @@ namespace Lab06.Graph3D
                 if (context.world.selected.Contains(e))
                     DrawEntity(e, selectedPen);
                 else
-                    DrawEntity(e, new Pen(e.Matreial.Color, 2));
+                    DrawEntity(e, new Pen(e.Matreial.Color, 4));
             }
             foreach (Entity e in context.world.control)
-                    DrawEntity(e, new Pen(e.Matreial.Color, 2));
+                    DrawEntity(e, new Pen(e.Matreial.Color, 4));
         }
 
         void DrawEntity(Entity entity, Pen pen)

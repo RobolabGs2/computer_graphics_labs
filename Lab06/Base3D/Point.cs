@@ -110,6 +110,13 @@ namespace Lab06.Base3D
             };
         }
 
+        public double Angle(Point p)
+        {
+            return Math.Acos((p.X * X + p.Y * Y + p.Z * Z) /
+                Math.Sqrt(X * X + Y * Y + Z * Z) / 
+                Math.Sqrt(p.X * p.X + p.Y * p.Y + p.Z * p.Z) );
+        }
+
         public override IEnumerable<Point> Points()
         {
             yield return this;
