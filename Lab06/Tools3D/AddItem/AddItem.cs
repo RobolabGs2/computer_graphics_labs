@@ -100,6 +100,8 @@ namespace Lab06.Tools3D.AddItem
             if (point.front)
             {
                 context.world.entities.Add(point.p);
+                context.world.selected.Clear();
+                context.world.selected.Add(point.p);
                 context.Redraw();
             }
         }
@@ -179,6 +181,8 @@ namespace Lab06.Tools3D.AddItem
             {
                 var tetra = GenerateTetra(point.p);
                 context.world.entities.Add(tetra);
+                context.world.selected.Clear();
+                context.world.selected.Add(tetra);
                 context.Redraw();
             }
         }
@@ -225,8 +229,10 @@ namespace Lab06.Tools3D.AddItem
             var point = context.ScreenToXY(e.X, e.Y);
             if (point.front)
             {
-                var tetra = GenerateOcta(point.p);
-                context.world.entities.Add(tetra);
+                var octa = GenerateOcta(point.p);
+                context.world.entities.Add(octa);
+                context.world.selected.Clear();
+                context.world.selected.Add(octa);
                 context.Redraw();
             }
         }
@@ -238,10 +244,10 @@ namespace Lab06.Tools3D.AddItem
             var point = context.ScreenToXY(e.X, e.Y);
             if (point.front)
             {
-                var tetra = GenerateOcta(point.p);
-                context.world.entities.Add(tetra);
+                var octa = GenerateOcta(point.p);
+                context.world.entities.Add(octa);
                 context.Redraw();
-                context.world.entities.Remove(tetra);
+                context.world.entities.Remove(octa);
             }
         }
 
