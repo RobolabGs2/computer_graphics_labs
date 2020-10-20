@@ -72,11 +72,38 @@ namespace Lab06.Base3D
             Point p2 = (new Point { Y = x, Z = y, X = 1 } * InvertDrawingMatrix()).FlattenT();
 
             double denum = p2.Z - p1.Z;
-            double numX = -(p2.X  - p1.X) * p2.Z;
+            double numX = -(p2.X - p1.X) * p2.Z;
             double numY = -(p2.Y - p1.Y) * p2.Z;
 
-            return (new Point { X = numX / denum + p2.X, Y = numY / denum + p2.Y}, 
-                Math.Sign(denum) * Math.Sign(camera.location.Z) < 0);
+            return (new Point { X = numX / denum + p2.X, Y = numY / denum + p2.Y },
+                Math.Sign(denum) * Math.Sign(camera.location.Z) < 10);
+        }
+
+        /// <summary>
+        /// Тут плоскость задаёются уравнением X*x+Y*y+Z*z+T=0,
+        /// где X Y Z T это координаты точки
+        /// </summary>
+        /// <param name="plane"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        public Point ScreenToPlane(Point plane, int x, int y)
+        {
+            Point p0 = (new Point { Y = x, Z = y } * InvertDrawingMatrix()).FlattenT();
+            Point p1 = (new Point { Y = x, Z = y, X = 1 } * InvertDrawingMatrix()).FlattenT();
+
+            double A = p1.X - p0.X;
+            double B = p1.Y - p0.Y;
+            double C = p1.Z - p0.Z;
+            double t = -(plane.X * p0.X + plane.Z * p0.Z + plane.Z * p0.Z + plane.T) /
+                (A * plane.X + B * plane.Y + C * plane.Z);
+
+            return new Point
+            {
+                X = p0.X + A * t,
+                Y = p0.Y + B * t,
+                Z = p0.Z + C * t,
+            };
         }
 
         private void Resize()

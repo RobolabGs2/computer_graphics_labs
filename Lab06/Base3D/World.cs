@@ -22,5 +22,15 @@ namespace Lab06.Base3D
         /// </summary>
         public HashSet<Entity> control = new HashSet<Entity>();
 
+        public void Apply(Matrix matrix)
+        {
+            foreach (var e in entities)
+                e.Apply(matrix);
+        }
+        public void SelectedApply(Matrix matrix)
+        {
+            foreach (var e in selected)
+                e.Apply(matrix);
+        }
     }
 }

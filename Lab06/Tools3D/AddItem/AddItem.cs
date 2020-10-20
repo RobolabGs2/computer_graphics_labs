@@ -126,6 +126,8 @@ namespace Lab06.Tools3D.AddItem
             {
                 var cube = GenerateCube(point.p);
                 context.world.entities.Add(cube);
+                context.world.selected.Clear();
+                context.world.selected.Add(cube);
                 context.Redraw();
             }
         }

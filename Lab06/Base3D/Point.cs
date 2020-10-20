@@ -71,6 +71,21 @@ namespace Lab06.Base3D
             return (Copy(), Copy());
         }
 
+        /// <summary>
+        /// Умножение как вектора, то есть не трогая T
+        /// </summary>
+        /// <param name="v"></param>
+        /// <returns></returns>
+        public Point vectorMult(double v)
+        {
+            return new Point { X = X * v, Y = Y * v, Z = Z * v, T = T };
+        }
+
+        public Point vectorAdd(Point p)
+        {
+            return new Point { X = X + p.X, Y = Y + p.Y, Z = Z + p.Z, T = (T + p.T) / 2};
+        }
+
         ///  Выдаёт максимальную по каждой координате
         public static Point Max(Point p1, Point p2)
         {
@@ -93,6 +108,13 @@ namespace Lab06.Base3D
                 Z = Math.Min(p1.Z, p2.Z),
                 T = Math.Min(p1.T, p2.T),
             };
+        }
+
+        public double Angle(Point p)
+        {
+            return Math.Acos((p.X * X + p.Y * Y + p.Z * Z) /
+                Math.Sqrt(X * X + Y * Y + Z * Z) / 
+                Math.Sqrt(p.X * p.X + p.Y * p.Y + p.Z * p.Z) );
         }
 
         public override IEnumerable<Point> Points()
