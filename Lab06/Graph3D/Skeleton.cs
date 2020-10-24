@@ -16,6 +16,7 @@ namespace Lab06.Graph3D
         Pen basePen;
         Matrix cameraMatric;
 
+
         public Skeleton(Context context)
         {
             selectedPen = new Pen(Constants.textColore, 4);
@@ -23,10 +24,10 @@ namespace Lab06.Graph3D
             this.context = context;
         }
 
-        public void Draw(Graphics graphics)
+        public void Draw(Bitmap bitmap)
         {
             cameraMatric = context.DrawingMatrix();
-            this.graphics = graphics;
+            this.graphics = Graphics.FromImage(bitmap);
 
             graphics.Clear(Constants.backColore);
             foreach (Entity e in context.world.entities)
@@ -38,12 +39,11 @@ namespace Lab06.Graph3D
             }
             foreach (Entity e in context.world.control)
                     DrawEntity(e, new Pen(e.Matreial.Color, 4));
+            graphics.Dispose();
         }
 
         void DrawEntity(Entity entity, Pen pen)
         {
-            if (entity is Base3D.Point p)
-                DrawPoint(p, pen);
             if (entity is Base3D.Spline s)
                 DrawSpline(s, pen);
             if (entity is Base3D.Polytope pol)
@@ -60,18 +60,19 @@ namespace Lab06.Graph3D
 
         void DrawPolytope(Base3D.Polytope p, Pen pen)
         {
+            var points = p.points.Select(point => point * cameraMatric).ToList();
             foreach (Polygon polygon in p.polygons)
-                Drawpolygon(polygon, pen);
+                DrawPolygon(polygon, points, pen);
         }
 
-        void Drawpolygon(Base3D.Polygon pol, Pen pen)
+        void DrawPolygon(Base3D.Polygon pol, List<Base3D.Point> points, Pen pen)
         {
-            if (pol.points.Count < 3)
+            if (points.Count < 3)
                 return;
 
-            var points = pol.points.Select(p => p * cameraMatric);
-            var end = points.Aggregate((p1, p2) => { DrawLine(p1, p2, pen); return p2; });
-            DrawLine(end, points.First(), pen);
+            var polyPoints = pol.Points(points);
+            var end = polyPoints.Aggregate((p1, p2) => { DrawLine(p1, p2, pen); return p2; });
+            DrawLine(end, polyPoints.First(), pen);
         }
 
         void DrawPoint(Base3D.Point point, Pen pen)
@@ -79,7 +80,6 @@ namespace Lab06.Graph3D
             Base3D.Point p = point * cameraMatric;
             if (!context.BeforeScreen(p.X))
                 return;
-            p = p.FlattenT();
             float r = 3;
             graphics.DrawEllipse(pen, 
                 (float)(p.Y - r), (float)(p.Z - r), r * 2, r * 2);
@@ -103,9 +103,6 @@ namespace Lab06.Graph3D
         {
             if (!context.BeforeScreen(p1.X) || !context.BeforeScreen(p2.X))
                 return;
-            p1 = p1.Copy().FlattenT();
-            p2 = p2.Copy().FlattenT();
-
             graphics.DrawLine(pen, (float)p1.Y, (float)p1.Z, (float)p2.Y, (float)p2.Z);
         }
     }

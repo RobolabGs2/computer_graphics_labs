@@ -39,7 +39,6 @@ namespace Lab06.Base3D
             m[3, 0] = delta.X;
             m[3, 1] = delta.Y;
             m[3, 2] = delta.Z;
-            m[3, 3] = delta.T;
             return m;
         }
         public static Matrix Scale(Point scale)
@@ -48,7 +47,6 @@ namespace Lab06.Base3D
             m[0, 0] = scale.X;
             m[1, 1] = scale.Y;
             m[2, 2] = scale.Z;
-            m[3, 3] = scale.T;
             return m;
         }
         public static Matrix XRotation(double angle)
@@ -214,9 +212,13 @@ namespace Lab06.Base3D
 
         public static Point operator *(Point p, Matrix m)
         {
-            Point result = p.Copy();
-            result.Apply(m);
-            return result;
+            double T = p.X * m[0, 3] + p.Y * m[1, 3] + p.Z * m[2, 3] + m[3, 3];
+            return new Point
+            {
+                X = (p.X * m[0, 0] + p.Y * m[1, 0] + p.Z * m[2, 0] + m[3, 0]) / T,
+                Y = (p.X * m[0, 1] + p.Y * m[1, 1] + p.Z * m[2, 1] + m[3, 1]) / T,
+                Z = (p.X * m[0, 2] + p.Y * m[1, 2] + p.Z * m[2, 2] + m[3, 2]) / T
+            };
         }
     }
 }

@@ -239,8 +239,8 @@ namespace Lab06.Tools3D.Transformation
             triangle.Add(new Base3D.Point { X = 3 });
             triangle.Add(new Base3D.Point { X = 2, Y = 0.5 });
             triangle.Add(new Base3D.Point { X = 2, Y = -0.5 });
-            triangle.polygons.Add(new Polygon(new Base3D.Point[] { triangle.points[0], triangle.points[1], triangle.points[2] }));
-            triangle.polygons.Add(new Polygon(new Base3D.Point[] { triangle.points[0], triangle.points[2], triangle.points[1] }));
+            triangle.polygons.Add(new Polygon(new int[] {0, 1, 2 }));
+            triangle.polygons.Add(new Polygon(new int[] { 0, 2, 1 }));
             return triangle;
         }
 
@@ -253,8 +253,8 @@ namespace Lab06.Tools3D.Transformation
             triangle.Add(new Base3D.Point { X = 2, Y = 0.5 });
             triangle.Add(new Base3D.Point { X = 3, Y = 0.5 });
             triangle.Add(new Base3D.Point { X = 3, Y = -0.5 });
-            triangle.polygons.Add(new Polygon(new Base3D.Point[] { triangle.points[0], triangle.points[1], triangle.points[2], triangle.points[3] }));
-            triangle.polygons.Add(new Polygon(new Base3D.Point[] { triangle.points[3], triangle.points[2], triangle.points[1], triangle.points[0] }));
+            triangle.polygons.Add(new Polygon(new int[] { 0, 1, 2, 3 }));
+            triangle.polygons.Add(new Polygon(new int[] { 3, 2, 1, 0 } ));
             return triangle;
         }
         private Polytope Circle()
@@ -265,15 +265,15 @@ namespace Lab06.Tools3D.Transformation
             triangle.Add(new Base3D.Point { X = 1, Y = 1 });
             triangle.Add(new Base3D.Point { X = 3, Y = 1});
             triangle.Add(new Base3D.Point { X = 1, Y = 3});
-            triangle.polygons.Add(new Polygon(new Base3D.Point[] { triangle.points[0], triangle.points[1], triangle.points[2] }));
-            triangle.polygons.Add(new Polygon(new Base3D.Point[] { triangle.points[0], triangle.points[2], triangle.points[1] }));
+            triangle.polygons.Add(new Polygon(new int[] { 0, 1, 2 }));
+            triangle.polygons.Add(new Polygon(new int[] { 0, 2, 1 }));
             return triangle;
         }
 
         private double Distance(MouseEventArgs e, Matrix vMatrix)
         {
-            Base3D.Point p0 = (new Base3D.Point { Y = e.X, Z = e.Y } * context.InvertDrawingMatrix()).FlattenT();
-            Base3D.Point p1 = (new Base3D.Point { Y = e.X, Z = e.Y, X = 1 } * context.InvertDrawingMatrix()).FlattenT();
+            Base3D.Point p0 = (new Base3D.Point { Y = e.X, Z = e.Y } * context.InvertDrawingMatrix());
+            Base3D.Point p1 = (new Base3D.Point { Y = e.X, Z = e.Y, X = 1 } * context.InvertDrawingMatrix());
             Matrix deMove = Matrix.Move(-location) * Invert;
             p0 = p0 * deMove * vMatrix;
             p1 = p1 * deMove * vMatrix;
@@ -289,8 +289,8 @@ namespace Lab06.Tools3D.Transformation
 
         private (Base3D.Point p, double angle) RotationPoint(MouseEventArgs e, Matrix vMatrix)
         {
-            Base3D.Point p1 = (new Base3D.Point { Y = e.X, Z = e.Y } * context.InvertDrawingMatrix()).FlattenT();
-            Base3D.Point p2 = (new Base3D.Point { Y = e.X, Z = e.Y, X = 1 } * context.InvertDrawingMatrix()).FlattenT();
+            Base3D.Point p1 = (new Base3D.Point { Y = e.X, Z = e.Y } * context.InvertDrawingMatrix());
+            Base3D.Point p2 = (new Base3D.Point { Y = e.X, Z = e.Y, X = 1 } * context.InvertDrawingMatrix());
             Matrix deMove = Matrix.Move(-location) * Invert;
             p1 = p1 * deMove * vMatrix * Matrix.YRotation(Math.PI / 2);
             p2 = p2 * deMove * vMatrix * Matrix.YRotation(Math.PI / 2);
@@ -299,8 +299,7 @@ namespace Lab06.Tools3D.Transformation
             double numX = -(p2.X - p1.X) * p2.Z;
             double numY = -(p2.Y - p1.Y) * p2.Z;
             Base3D.Point newPoint = new Base3D.Point { X = numX / denum + p2.X, Y = numY / denum + p2.Y };
-            if(lastRotation == null)
-                return (newPoint, 0);
+
             double len = Math.Sqrt(newPoint.Y * newPoint.Y + newPoint.X * newPoint.X) * 
                 Math.Sqrt(lastRotation.Y * lastRotation.Y + lastRotation.X * lastRotation.X);
             if (len == 0)
@@ -357,7 +356,7 @@ namespace Lab06.Tools3D.Transformation
             {
                 double dist = Distance(e, Matrix.Ident());
                 movingMatrix = Matrix.Move(xDirection.vectorMult((dist - lastDistance)));
-                location.Apply(movingMatrix);
+                location = location * movingMatrix;
                 lastDistance = Distance(e, Matrix.Ident());
             }
             else
@@ -365,7 +364,7 @@ namespace Lab06.Tools3D.Transformation
             {
                 double dist = Distance(e, Matrix.ZRotation(-Math.PI / 2));
                 movingMatrix = Matrix.Move(yDirection.vectorMult((dist - lastDistance)));
-                location.Apply(movingMatrix);
+                location = location * movingMatrix;
                 lastDistance = Distance(e, Matrix.ZRotation(-Math.PI / 2));
             }
             else
@@ -373,7 +372,7 @@ namespace Lab06.Tools3D.Transformation
             {
                 double dist = Distance(e, Matrix.YRotation(Math.PI / 2));
                 movingMatrix = Matrix.Move(zDirection.vectorMult((dist - lastDistance)));
-                location.Apply(movingMatrix);
+                location = location * movingMatrix;
                 lastDistance = Distance(e, Matrix.YRotation(Math.PI / 2));
             }
             else
@@ -470,9 +469,9 @@ namespace Lab06.Tools3D.Transformation
             xView.Apply(movingMatrix);
             yView.Apply(movingMatrix);
             zView.Apply(movingMatrix);
-            xDirection.Apply(rotateMatrix);
-            yDirection.Apply(rotateMatrix);
-            zDirection.Apply(rotateMatrix);
+            xDirection = xDirection * rotateMatrix;
+            yDirection = yDirection * rotateMatrix;
+            zDirection = zDirection * rotateMatrix;
             Deformations = Deformations * movingMatrix;
             if (!OnlyGizmo)
                 context.world.SelectedApply(movingMatrix);

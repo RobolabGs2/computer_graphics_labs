@@ -112,13 +112,31 @@ namespace Lab06
 
             context.pictureBox.MouseWheel += (o, s) =>
             {
-                double d = s.Delta / 40.0;
-                double a = context.camera.leftAngle;
-                double b = context.camera.downAngle;
-                context.camera.Move(Matrix.Move(new Base3D.Point { 
-                    X = Math.Cos(b) * Math.Cos(a) * d,
-                    Y = Math.Cos(b) * Math.Sin(a) * d,
-                    Z = -Math.Sin(b) * d}));
+                if (Control.ModifierKeys == Keys.Control)
+                {
+                    context.camera.interval += s.Delta / 100.0;
+                    if (context.camera.interval <= 0)
+                        context.camera.interval = 1;
+                }
+                else
+                if (Control.ModifierKeys == Keys.Shift)
+                {
+                    context.scale += s.Delta / 10.0;
+                    if (context.scale <= 0)
+                        context.scale = 1;
+                }
+                else
+                {
+                    double d = s.Delta / 40.0;
+                    double a = context.camera.leftAngle;
+                    double b = context.camera.downAngle;
+                    context.camera.Move(Matrix.Move(new Base3D.Point
+                    {
+                        X = Math.Cos(b) * Math.Cos(a) * d,
+                        Y = Math.Cos(b) * Math.Sin(a) * d,
+                        Z = -Math.Sin(b) * d
+                    }));
+                }
                 context.Redraw();
             };
         }

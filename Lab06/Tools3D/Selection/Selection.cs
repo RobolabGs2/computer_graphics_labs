@@ -88,7 +88,6 @@ namespace Lab06.Tools3D.Selection
                         var screenPoint = p * drawingMatrix;
                         if (!context.BeforeScreen(screenPoint.X))
                             return false;
-                        screenPoint = screenPoint.FlattenT();
                         return 
                             screenPoint.Y > Math.Min(rectStart.X, rectEnd.X) &&
                             screenPoint.Y < Math.Max(rectStart.X, rectEnd.X) && 

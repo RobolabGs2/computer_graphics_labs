@@ -45,15 +45,13 @@ namespace Lab06.Tools3D.Matrixes
             tab.AddButton(Properties.Resources.Parallel, false).Click +=
                     (o, s) =>
                     {
-                        context.projection = Matrix.Ident();
-                        context.cutNegative = false;
+                        context.camera.interval = double.PositiveInfinity;
                         context.Redraw();
                     };
             tab.AddButton(Properties.Resources.Projection, false).Click +=
                     (o, s) =>
                     {
-                        context.projection = Matrix.Projection(0.001, 0, 0);
-                        context.cutNegative = true;
+                        context.camera.interval = 10;
                         context.Redraw();
                     };
         }

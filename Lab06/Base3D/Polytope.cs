@@ -29,7 +29,7 @@ namespace Lab06.Base3D
         {
             if (points.Count == 0)
                 return (new Point(), new Point());
-            return points.Skip(1).Aggregate(points[0].ABBA(),
+            return points.Skip(1).Aggregate((points[0], points[0]),
                 (abba, p) => (Point.Min(abba.Item1, p), Point.Max(abba.Item2, p)));
         }
 
@@ -40,8 +40,8 @@ namespace Lab06.Base3D
 
         public override void Apply(Matrix matrix)
         {
-            foreach (Point p in points)
-                p.Apply(matrix);
+            for(int i = 0; i < points.Count; ++i)
+                points[i] = points[i] * (matrix);
         }
     }
 }

@@ -9,6 +9,7 @@ using System.Security.Permissions;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml;
 
 namespace Lab06.Base3D
 {
@@ -16,14 +17,12 @@ namespace Lab06.Base3D
     {
         public Camera camera = new Camera();
         public World world = new World();
-        public Matrix projection = Matrix.Projection(0.001, 0, 0);
 
         public IDrawing drawing;
         public PictureBox pictureBox;
         public Bitmap bitmap;
 
         public double scale = 100;
-        public bool cutNegative = true;
 
         public Action<Graphics> Posteffect = g => {};
 
@@ -39,7 +38,6 @@ namespace Lab06.Base3D
             return
                 camera.Projection() *
                 Matrix.Scale(new Point { X = scale, Y = scale, Z = scale }) *
-                projection *
                 Matrix.Move(new Base3D.Point
                 {
                     Y = -bitmap.Width / 2,
@@ -57,7 +55,6 @@ namespace Lab06.Base3D
                     Y = bitmap.Width / 2,
                     Z = bitmap.Height / 2
                 }) *
-                projection.Invert() *
                 Matrix.Scale(new Point { X = 1 / scale, Y = 1 / scale, Z = 1 / scale }) *
                 camera.InvertProjection();
         }
@@ -68,8 +65,8 @@ namespace Lab06.Base3D
         /// </summary>
         public (Base3D.Point p, bool front) ScreenToXY(int x, int y)
         {
-            Point p1 = (new Point { Y = x, Z = y } * InvertDrawingMatrix()).FlattenT();
-            Point p2 = (new Point { Y = x, Z = y, X = 1 } * InvertDrawingMatrix()).FlattenT();
+            Point p1 = (new Point { Y = x, Z = y } * InvertDrawingMatrix());
+            Point p2 = (new Point { Y = x, Z = y, X = 1 } * InvertDrawingMatrix());
 
             double denum = p2.Z - p1.Z;
             double numX = -(p2.X - p1.X) * p2.Z;
@@ -77,33 +74,6 @@ namespace Lab06.Base3D
 
             return (new Point { X = numX / denum + p2.X, Y = numY / denum + p2.Y },
                 Math.Sign(denum) * Math.Sign(camera.location.Z) < 10);
-        }
-
-        /// <summary>
-        /// Тут плоскость задаёются уравнением X*x+Y*y+Z*z+T=0,
-        /// где X Y Z T это координаты точки
-        /// </summary>
-        /// <param name="plane"></param>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <returns></returns>
-        public Point ScreenToPlane(Point plane, int x, int y)
-        {
-            Point p0 = (new Point { Y = x, Z = y } * InvertDrawingMatrix()).FlattenT();
-            Point p1 = (new Point { Y = x, Z = y, X = 1 } * InvertDrawingMatrix()).FlattenT();
-
-            double A = p1.X - p0.X;
-            double B = p1.Y - p0.Y;
-            double C = p1.Z - p0.Z;
-            double t = -(plane.X * p0.X + plane.Z * p0.Z + plane.Z * p0.Z + plane.T) /
-                (A * plane.X + B * plane.Y + C * plane.Z);
-
-            return new Point
-            {
-                X = p0.X + A * t,
-                Y = p0.Y + B * t,
-                Z = p0.Z + C * t,
-            };
         }
 
         private void Resize()
@@ -133,12 +103,14 @@ namespace Lab06.Base3D
 
         public bool ScreenPointInPolytope(int x, int y, Polytope poly)
         {
+            var dravingMatrix = DrawingMatrix();
+            List<Base3D.Point> polyPoints = poly.points.Select(p => p * dravingMatrix).ToList();
+
             return poly.polygons.Any(polygon =>
             {
-                var points = polygon.points.Select(p => p * DrawingMatrix()).ToList();
+                var points = polygon.Points(polyPoints);
                 if (!points.All(p => BeforeScreen(p.X)))
                     return false;
-                points = points.Select(p => p.FlattenT()).ToList();
                 int count = 0;
                 for (int i = 0; i < points.Count; ++i)
                 {
@@ -156,16 +128,16 @@ namespace Lab06.Base3D
 
         public void Redraw()
         {
+            drawing.Draw(bitmap);
             Graphics g = Graphics.FromImage(bitmap);
-            drawing.Draw(g);
             Posteffect(g);
             g.Dispose();
             pictureBox.Image = bitmap;
         }
 
-        public bool BeforeScreen(double depth)
+        public bool BeforeScreen(double t)
         {
-            return !cutNegative || depth > -1000;
+            return camera.BeforeScreen(t / scale);
         }
     }
 }

@@ -3,43 +3,46 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace Lab06.Base3D
 {
-    public class Polygon : Entity
+    public class Polygon
     {
-        public List<Point> points = new List<Point>();
+        public List<int> indexes;
 
         public Polygon()
-        { }
-
-        public Polygon(IEnumerable<Point> points)
         {
-            this.points = points.ToList();
+            indexes = new List<int>();
         }
 
-        public void Add(Point p)
+        public Polygon(IEnumerable<int> indexes)
         {
-            points.Add(p);
+            this.indexes = indexes.ToList();
         }
 
-        public override (Point pMin, Point pMax) ABBA()
+        public List<Point> Points(List<Point> points)
         {
-            if (points.Count == 0)
+            List<Point> result = new List<Point>(indexes.Count);
+            for (int i = 0; i < indexes.Count; ++i)
+                result.Add(points[indexes[i]]);
+            return result;
+        }
+
+        public List<Point> Points(Polytope parent)
+        {
+            return Points(parent.points);
+        }
+
+        public (Point pMin, Point pMax) ABBA(Polytope parent)
+        {
+            if (indexes.Count == 0)
                 return (new Point(), new Point());
-            return points.Skip(1).Aggregate(points[0].ABBA(),
+            
+            var points = Points(parent);
+            
+            return points.Skip(1).Aggregate((points[0], points[0]),
                 (abba, p) => (Point.Min(abba.Item1, p), Point.Max(abba.Item2, p)));
-        }
-
-        public override IEnumerable<Point> Points()
-        {
-            return points;
-        }
-
-        public override void Apply(Matrix matrix)
-        {
-            foreach (Point p in points)
-                p.Apply(matrix);
         }
     }
 }

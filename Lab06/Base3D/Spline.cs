@@ -19,8 +19,7 @@ namespace Lab06.Base3D
 
         public override void Apply(Matrix matrix)
         {
-            foreach (Point p in points)
-                p.Apply(matrix);
+            points = points.Select(p => p * matrix).ToList();
         }
     }
 }

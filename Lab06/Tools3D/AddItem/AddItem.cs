@@ -99,9 +99,11 @@ namespace Lab06.Tools3D.AddItem
             var point = context.ScreenToXY(e.X, e.Y);
             if (point.front)
             {
-                context.world.entities.Add(point.p);
+                Spline spline = new Spline();
+                spline.Add(point.p);
+                context.world.entities.Add(spline);
                 context.world.selected.Clear();
-                context.world.selected.Add(point.p);
+                context.world.selected.Add(spline);
                 context.Redraw();
             }
         }
@@ -113,11 +115,14 @@ namespace Lab06.Tools3D.AddItem
             var point = context.ScreenToXY(e.X, e.Y);
             if (point.front)
             {
-                context.world.entities.Add(point.p);
+                Spline spline = new Spline();
+                spline.Add(point.p);
+                context.world.entities.Add(spline);
                 context.Redraw();
-                context.world.entities.Remove(point.p);
+                context.world.entities.Remove(spline);
             }
         }
+
         private void AddCube(object sender, MouseEventArgs e)
         {
             if (e.Button != MouseButtons.Left)
@@ -133,6 +138,8 @@ namespace Lab06.Tools3D.AddItem
                 context.Redraw();
             }
         }
+
+
 
         private void MoveCube(object sender, MouseEventArgs e)
         {
@@ -161,12 +168,12 @@ namespace Lab06.Tools3D.AddItem
             cube.Add(new Base3D.Point { X = -1, Y = -1, Z = -1 } * move);
             cube.Add(new Base3D.Point { X = 1, Y = -1, Z = -1 } * move);
 
-            cube.Add(new Polygon(new Base3D.Point[] { cube.points[0], cube.points[1], cube.points[2], cube.points[3] }));
-            cube.Add(new Polygon(new Base3D.Point[] { cube.points[4], cube.points[0], cube.points[3], cube.points[7] }));
-            cube.Add(new Polygon(new Base3D.Point[] { cube.points[5], cube.points[4], cube.points[7], cube.points[6] }));
-            cube.Add(new Polygon(new Base3D.Point[] { cube.points[1], cube.points[5], cube.points[6], cube.points[2] }));
-            cube.Add(new Polygon(new Base3D.Point[] { cube.points[0], cube.points[1], cube.points[5], cube.points[4] }));
-            cube.Add(new Polygon(new Base3D.Point[] { cube.points[3], cube.points[2], cube.points[6], cube.points[7] }));
+            cube.Add(new Polygon(new int[] { 0, 1, 2, 3 }));
+            cube.Add(new Polygon(new int[] { 4, 0, 3, 7 }));
+            cube.Add(new Polygon(new int[] { 5, 4, 7, 6 }));
+            cube.Add(new Polygon(new int[] { 1, 5, 6, 2 }));
+            cube.Add(new Polygon(new int[] { 0, 1, 5, 4 }));
+            cube.Add(new Polygon(new int[] { 3, 2, 6, 7 }));
 
             return cube;
         }
@@ -212,10 +219,13 @@ namespace Lab06.Tools3D.AddItem
             tetra.Add(cube.points[5]);
             tetra.Add(cube.points[7]);
             var count = cube.polygons.Count - 2;
+
+            //  TODO: надо пофиксить
+            var костыль = new int[]{ 0, 5, 1, 2, -3, 2, 7, 3};
             for (int i = 0; i < count; i+=2)
             {
-                tetra.Add(new Polygon(new Base3D.Point[] { cube.polygons[i].points[0], cube.polygons[4].points[2], cube.polygons[count - 1 - i].points[3] }));
-                tetra.Add(new Polygon(new Base3D.Point[] { cube.polygons[i].points[0], cube.polygons[5].points[1], cube.polygons[i + 1].points[3] }));
+                tetra.Add(new Polygon(new int[] { костыль[cube.polygons[i].indexes[0]], костыль[cube.polygons[4].indexes[2]], костыль[cube.polygons[count - 1 - i].indexes[3]] }));
+                tetra.Add(new Polygon(new int[] { костыль[cube.polygons[i].indexes[0]], костыль[cube.polygons[5].indexes[1]], костыль[cube.polygons[i + 1].indexes[3]] }));
             }
 
             return tetra;
@@ -260,17 +270,17 @@ namespace Lab06.Tools3D.AddItem
             foreach(var edge in cube.polygons)
             {
                 var sump = new Base3D.Point() * move;
-                foreach (var p in edge.points)
+                foreach (var p in edge.Points(cube))
                     sump += p;
                 octa.Add(sump / 4);
             }
 
-            octa.Add(new Polygon(new Base3D.Point[] { octa.points[0], octa.points[1], octa.points[2], octa.points[3] }));
+            octa.Add(new Polygon(new int[] { 0, 1, 2, 3 }));
 
             for (int i = 0; i < octa.points.Count - 2; i++)
             {
-                octa.Add(new Polygon(new Base3D.Point[] { octa.points[i], octa.points[(i + 1) % 4], octa.points[4] }));
-                octa.Add(new Polygon(new Base3D.Point[] { octa.points[i], octa.points[5], octa.points[(i + 1) % 4] }));
+                octa.Add(new Polygon(new int[] { i, (i + 1) % 4, 4 }));
+                octa.Add(new Polygon(new int[] { i, 5, (i + 1) % 4 }));
             }
 
             return octa;
@@ -322,7 +332,7 @@ namespace Lab06.Tools3D.AddItem
                 //for (int angle = 0; angle < 360; angle += 3)
                 circle.Add(nextCirclePoint(a.X, a.Y, -1, angle) * move);
             }
-            circle.Add(new Polygon(circle.points));
+            circle.Add(new Polygon(circle.points.Select((p, i) => i).ToList()));
 
             icosa.Add(circle.points[circle.points.Count / 20]);
 
@@ -334,12 +344,13 @@ namespace Lab06.Tools3D.AddItem
             icosa.Add(new Base3D.Point { X = 0, Y = 0, Z = -iz } * move);
             for (int i = 0; i < 10; i+=5)
             {
-                icosa.Add(new Polygon(new Base3D.Point[] { icosa.points[i], icosa.points[i + 1], icosa.points[i + 2], icosa.points[i + 3], icosa.points[i + 4] })); //пятигранник на окружности
+                //  Зачем тебе пятигранники, икосаэдр же из треугольничков сделан?
+                icosa.Add(new Polygon(new int[] { i, i + 1, i + 2, i + 3, i + 4 })); //пятигранник на окружности
                 //шапочка и барабан
                 for (int j = 0; j < 5; j++)
                 {
-                    icosa.Add(new Polygon(new Base3D.Point[] { icosa.points[i + j], icosa.points[(i + j + 1) % 5], icosa.points[i % 5] }));
-                    icosa.Add(new Polygon(new Base3D.Point[] { icosa.points[i + j], icosa.points[i + 1], icosa.points[i + 2], icosa.points[i + 3], icosa.points[i + 4] })); 
+                    icosa.Add(new Polygon(new int[] { i + j, (i + j + 1) % 5, i % 5 }));
+                    icosa.Add(new Polygon(new int[] { i + j, i + 1, i + 2, i + 3, i + 4 })); 
                 }
             }
 
