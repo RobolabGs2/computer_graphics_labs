@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -13,160 +14,65 @@ namespace Lab06.Tools3D.AddItem
     class AddItem : IToolPage
     {
         Context context;
+        OpenFileDialog openFileDialog = new OpenFileDialog();
         public Bitmap Image => Properties.Resources.Cube;
+
+        string filePath;
 
         public void Init(ToolTab tab, Context context)
         {
             this.context = context;
+            openFileDialog.InitialDirectory = Directory.GetCurrentDirectory();
+            openFileDialog.Filter = "obj files (*.obj)|*.obj";
+            openFileDialog.RestoreDirectory = true;
 
-            var pontButton = tab.AddButton(Properties.Resources.Point, true);
-
-
-            pontButton.ButtonClick += t => {
-                context.pictureBox.MouseClick += AddPoint;
-                context.pictureBox.MouseMove += MovePoint;
-            };
-
-            pontButton.ButtonDisable += t => {
-                context.pictureBox.MouseClick -= AddPoint;
-                context.pictureBox.MouseMove -= MovePoint;
-            };
-
-            pontButton.ButtonDisable += b => context.Redraw();
-
-            var cubeButton = tab.AddButton(Properties.Resources.Cube, true);
-
-            cubeButton.ButtonClick += t => {
-                context.pictureBox.MouseClick += AddCube;
-                context.pictureBox.MouseMove += MoveCube;
-            };
-
-            cubeButton.ButtonDisable += t => {
-                context.pictureBox.MouseClick -= AddCube;
-                context.pictureBox.MouseMove -= MoveCube;
-            };
-
-            cubeButton.ButtonDisable += b => context.Redraw();
-
-            var tetraButton = tab.AddButton(Properties.Resources.Tetrahedron, true);
-
-            tetraButton.ButtonClick += t => {
-                context.pictureBox.MouseClick += AddTetra;
-                context.pictureBox.MouseMove += MoveTetra;
-            };
-
-            tetraButton.ButtonDisable += t => {
-                context.pictureBox.MouseClick -= AddTetra;
-                context.pictureBox.MouseMove -= MoveTetra;
-            };
-
-            tetraButton.ButtonDisable += b => context.Redraw();
-
-            var octaButton = tab.AddButton(Properties.Resources.Octahedron, true);
-
-            octaButton.ButtonClick += t => {
-                context.pictureBox.MouseClick += AddOcta;
-                context.pictureBox.MouseMove += MoveOcta;
-            };
-
-            octaButton.ButtonDisable += t => {
-                context.pictureBox.MouseClick -= AddOcta;
-                context.pictureBox.MouseMove -= MoveOcta;
-            };
-
-            octaButton.ButtonDisable += b => context.Redraw();
-
-            /*var icosaButton = tab.AddButton(Properties.Resources.Tetrahedron, true);
-
-            icosaButton.ButtonClick += t => {
-                context.pictureBox.MouseClick += AddIcosa;
-                context.pictureBox.MouseMove += MoveIcosa;
-            };
-
-            icosaButton.ButtonDisable += t => {
-                context.pictureBox.MouseClick -= AddIcosa;
-                context.pictureBox.MouseMove -= MoveIcosa;
-            };
-
-            icosaButton.ButtonDisable += b => context.Redraw();*/
+            Item.AddButton(tab.AddButton(Properties.Resources.Point, true), GeneratePoint, context);
+            Item.AddButton(tab.AddButton(Properties.Resources.Cube, true), GenerateCube, context);
+            Item.AddButton(tab.AddButton(Properties.Resources.Octahedron, true), GenerateOcta, context);
+            Item.AddButton(tab.AddButton(Properties.Resources.Tetrahedron, true), GenerateTetra, context);
+            var load = tab.AddButton(Properties.Resources.Load, true);
+            load.ButtonClick += b => ChangeFile();
+            Item.AddButton(load, GenerateObj, context);
         }
 
-        private void AddPoint(object sender, MouseEventArgs e)
+        void ChangeFile()
         {
-            if (e.Button != MouseButtons.Left)
-                return;
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+                filePath = openFileDialog.FileName;
+        }
 
-            var point = context.ScreenToXY(e.X, e.Y);
-            if (point.front)
+        Entity GenerateObj()
+        {
+            try
             {
-                Spline spline = new Spline();
-                spline.Add(point.p);
-                context.world.entities.Add(spline);
-                context.world.selected.Clear();
-                context.world.selected.Add(spline);
-                context.Redraw();
+                return Obj.Parse(filePath);
+            }
+            catch
+            {
+                MessageBox.Show("Не вышло загрузить файл", "Окошко-всплывашка", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+                return new Group();
             }
         }
 
-        private void MovePoint(object sender, MouseEventArgs e)
+        Spline GeneratePoint()
         {
-            if (e.Button != MouseButtons.None)
-                return;
-            var point = context.ScreenToXY(e.X, e.Y);
-            if (point.front)
-            {
-                Spline spline = new Spline();
-                spline.Add(point.p);
-                context.world.entities.Add(spline);
-                context.Redraw();
-                context.world.entities.Remove(spline);
-            }
+            Spline spline = new Spline();
+            spline.Add(new Base3D.Point());
+            return spline;
         }
 
-        private void AddCube(object sender, MouseEventArgs e)
+        Polytope GenerateCube()
         {
-            if (e.Button != MouseButtons.Left)
-                return;
-
-            var point = context.ScreenToXY(e.X, e.Y);
-            if (point.front)
-            {
-                var cube = GenerateCube(point.p);
-                context.world.entities.Add(cube);
-                context.world.selected.Clear();
-                context.world.selected.Add(cube);
-                context.Redraw();
-            }
-        }
-
-
-
-        private void MoveCube(object sender, MouseEventArgs e)
-        {
-            if (e.Button != MouseButtons.None)
-                return;
-            var point = context.ScreenToXY(e.X, e.Y);
-            if (point.front)
-            {
-                var cube = GenerateCube(point.p);
-                context.world.entities.Add(cube);
-                context.Redraw();
-                context.world.entities.Remove(cube);
-            }
-        }
-
-        Polytope GenerateCube(Base3D.Point location)
-        {
-            Matrix move = Matrix.Move(location);
             Polytope cube = new Polytope();
-            cube.Add(new Base3D.Point { X = 1, Y = 1, Z = 1 } * move);
-            cube.Add(new Base3D.Point { X = -1, Y = 1, Z = 1 } * move);
-            cube.Add(new Base3D.Point { X = -1, Y = -1, Z = 1 } * move);
-            cube.Add(new Base3D.Point { X = 1, Y = -1, Z = 1 } * move);
-            cube.Add(new Base3D.Point { X = 1, Y = 1, Z = -1 } * move);
-            cube.Add(new Base3D.Point { X = -1, Y = 1, Z = -1 } * move);
-            cube.Add(new Base3D.Point { X = -1, Y = -1, Z = -1 } * move);
-            cube.Add(new Base3D.Point { X = 1, Y = -1, Z = -1 } * move);
+            cube.Add(new Base3D.Point { X = 1, Y = 1, Z = 1 });
+            cube.Add(new Base3D.Point { X = -1, Y = 1, Z = 1 });
+            cube.Add(new Base3D.Point { X = -1, Y = -1, Z = 1 });
+            cube.Add(new Base3D.Point { X = 1, Y = -1, Z = 1 });
+            cube.Add(new Base3D.Point { X = 1, Y = 1, Z = -1 });
+            cube.Add(new Base3D.Point { X = -1, Y = 1, Z = -1 });
+            cube.Add(new Base3D.Point { X = -1, Y = -1, Z = -1 });
+            cube.Add(new Base3D.Point { X = 1, Y = -1, Z = -1 });
 
             cube.Add(new Polygon(new int[] { 0, 1, 2, 3 }));
             cube.Add(new Polygon(new int[] { 4, 0, 3, 7 }));
@@ -178,40 +84,9 @@ namespace Lab06.Tools3D.AddItem
             return cube;
         }
 
-        private void AddTetra(object sender, MouseEventArgs e)
+        Polytope GenerateTetra()
         {
-            if (e.Button != MouseButtons.Left)
-                return;
-
-            var point = context.ScreenToXY(e.X, e.Y);
-            if (point.front)
-            {
-                var tetra = GenerateTetra(point.p);
-                context.world.entities.Add(tetra);
-                context.world.selected.Clear();
-                context.world.selected.Add(tetra);
-                context.Redraw();
-            }
-        }
-
-        private void MoveTetra(object sender, MouseEventArgs e)
-        {
-            if (e.Button != MouseButtons.None)
-                return;
-            var point = context.ScreenToXY(e.X, e.Y);
-            if (point.front)
-            {
-                var tetra = GenerateTetra(point.p);
-                context.world.entities.Add(tetra);
-                context.Redraw();
-                context.world.entities.Remove(tetra);
-            }
-        }
-
-        Polytope GenerateTetra(Base3D.Point location)
-        {
-            Matrix move = Matrix.Move(location);
-            Polytope cube = GenerateCube(location);
+            Polytope cube = GenerateCube();
             Polytope tetra = new Polytope();
 
             tetra.Add(cube.points[0]);
@@ -231,45 +106,15 @@ namespace Lab06.Tools3D.AddItem
             return tetra;
         }
 
-        private void AddOcta(object sender, MouseEventArgs e)
-        {
-            if (e.Button != MouseButtons.Left)
-                return;
 
-            var point = context.ScreenToXY(e.X, e.Y);
-            if (point.front)
-            {
-                var octa = GenerateOcta(point.p);
-                context.world.entities.Add(octa);
-                context.world.selected.Clear();
-                context.world.selected.Add(octa);
-                context.Redraw();
-            }
-        }
-
-        private void MoveOcta(object sender, MouseEventArgs e)
+        Polytope GenerateOcta()
         {
-            if (e.Button != MouseButtons.None)
-                return;
-            var point = context.ScreenToXY(e.X, e.Y);
-            if (point.front)
-            {
-                var octa = GenerateOcta(point.p);
-                context.world.entities.Add(octa);
-                context.Redraw();
-                context.world.entities.Remove(octa);
-            }
-        }
-
-        Polytope GenerateOcta(Base3D.Point location)
-        {
-            Matrix move = Matrix.Move(location);
-            Polytope cube = GenerateCube(location);
+            Polytope cube = GenerateCube();
             Polytope octa = new Polytope();
 
             foreach(var edge in cube.polygons)
             {
-                var sump = new Base3D.Point() * move;
+                var sump = new Base3D.Point();
                 foreach (var p in edge.Points(cube))
                     sump += p;
                 octa.Add(sump / 4);
@@ -286,51 +131,23 @@ namespace Lab06.Tools3D.AddItem
             return octa;
         }
 
-        private void AddIcosa(object sender, MouseEventArgs e)
-        {
-            if (e.Button != MouseButtons.Left)
-                return;
-
-            var point = context.ScreenToXY(e.X, e.Y);
-            if (point.front)
-            {
-                var tetra = GenerateIcosa(point.p);
-                context.world.entities.Add(tetra);
-                context.Redraw();
-            }
-        }
-
-        private void MoveIcosa(object sender, MouseEventArgs e)
-        {
-            if (e.Button != MouseButtons.None)
-                return;
-            var point = context.ScreenToXY(e.X, e.Y);
-            if (point.front)
-            {
-                var tetra = GenerateIcosa(point.p);
-                context.world.entities.Add(tetra);
-                context.Redraw();
-                context.world.entities.Remove(tetra);
-            }
-        }
-
         private Base3D.Point nextCirclePoint(double x, double y,double z, double angle)
         {
             double a = Math.Cos(Math.PI * angle / 180);
             return new Base3D.Point { X = x + Math.Sin(Math.PI * angle / 180), Y = y + Math.Cos(Math.PI * angle / 180),  Z =z };
         }
-        Polytope GenerateIcosa(Base3D.Point location)
+
+        Polytope GenerateIcosa()
         {
-            Matrix move = Matrix.Move(location);
             Polytope circle = new Polytope();
             Polytope icosa = new Polytope();
             Base3D.Point a = new Base3D.Point { X = 0, Y = 0, Z = 0};
 
             for (int angle = 0; angle < 360; angle += 3)
             {
-                circle.Add(nextCirclePoint(a.X, a.Y, 1, angle) * move);
+                circle.Add(nextCirclePoint(a.X, a.Y, 1, angle));
                 //for (int angle = 0; angle < 360; angle += 3)
-                circle.Add(nextCirclePoint(a.X, a.Y, -1, angle) * move);
+                circle.Add(nextCirclePoint(a.X, a.Y, -1, angle));
             }
             circle.Add(new Polygon(circle.points.Select((p, i) => i).ToList()));
 
@@ -340,8 +157,8 @@ namespace Lab06.Tools3D.AddItem
                 icosa.Add(circle.points[circle.points.Count / 20 + i * 24]); //120/5
 
             double iz = 1 + Math.Sqrt(5) / 2;
-            icosa.Add(new Base3D.Point { X = 0, Y = 0, Z = iz } * move);
-            icosa.Add(new Base3D.Point { X = 0, Y = 0, Z = -iz } * move);
+            icosa.Add(new Base3D.Point { X = 0, Y = 0, Z = iz });
+            icosa.Add(new Base3D.Point { X = 0, Y = 0, Z = -iz });
             for (int i = 0; i < 10; i+=5)
             {
                 //  Зачем тебе пятигранники, икосаэдр же из треугольничков сделан?

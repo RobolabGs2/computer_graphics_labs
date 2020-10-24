@@ -78,6 +78,8 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Tools3D\AddItem\AddItem.cs" />
+    <Compile Include="Tools3D\AddItem\Item.cs" />
+    <Compile Include="Tools3D\AddItem\Obj.cs" />
     <Compile Include="Tools3D\Matrixes\Matrixes.cs" />
     <Compile Include="Tools3D\Selection\Selection.cs" />
     <Compile Include="Tools3D\Transformation\Transformation.cs" />
@@ -135,7 +137,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\Cube.png" />
+    <Content Include="Resources\Load.png" />
     <Content Include="Resources\Trash.png" />
+    <None Include="Resources\icosahedron.obj" />
+    <None Include="Resources\Skull.obj" />
     <None Include="Resources\Tetrahedron.png" />
     <Content Include="Resources\Matrix.png" />
     <Content Include="Resources\Mouse.png" />
