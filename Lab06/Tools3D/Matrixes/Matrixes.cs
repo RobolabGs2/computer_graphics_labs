@@ -45,7 +45,7 @@ namespace Lab06.Tools3D.Matrixes
             tab.AddButton(Properties.Resources.Parallel, false).Click +=
                     (o, s) =>
                     {
-                        context.camera.interval = double.PositiveInfinity;
+                        context.camera.interval = 1e10;
                         context.Redraw();
                     };
             tab.AddButton(Properties.Resources.Projection, false).Click +=

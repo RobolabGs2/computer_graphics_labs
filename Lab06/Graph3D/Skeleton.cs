@@ -13,15 +13,14 @@ namespace Lab06.Graph3D
         Context context;
         Graphics graphics;
         Pen selectedPen;
-        Pen basePen;
         Matrix cameraMatric;
+        bool hideInvisible;
 
-
-        public Skeleton(Context context)
+        public Skeleton(Context context, bool hideInvisible = false)
         {
             selectedPen = new Pen(Constants.textColore, 4);
-            basePen = new Pen(Constants.borderColore, 4);
             this.context = context;
+            this.hideInvisible = hideInvisible;
         }
 
         public void Draw(Bitmap bitmap)
@@ -67,10 +66,22 @@ namespace Lab06.Graph3D
 
         void DrawPolygon(Base3D.Polygon pol, List<Base3D.Point> points, Pen pen)
         {
-            if (points.Count < 3)
+            if (pol.indexes.Count < 3)
                 return;
 
             var polyPoints = pol.Points(points);
+            if (hideInvisible)
+            {
+                double area = 0;
+                for (int i = 0; i < pol.indexes.Count; ++i)
+                {
+                    area +=
+                        polyPoints[i].Z * polyPoints[(i + 1) % polyPoints.Count].Y -
+                        polyPoints[i].Y * polyPoints[(i + 1) % polyPoints.Count].Z;
+                }
+                if (area < 0)
+                    return;
+            }
             var end = polyPoints.Aggregate((p1, p2) => { DrawLine(p1, p2, pen); return p2; });
             DrawLine(end, polyPoints.First(), pen);
         }

@@ -163,6 +163,16 @@ namespace Lab06.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Render {
+            get {
+                object obj = ResourceManager.GetObject("Render", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Reverse {
             get {
                 object obj = ResourceManager.GetObject("Reverse", resourceCulture);
@@ -196,6 +206,16 @@ namespace Lab06.Properties {
         internal static System.Drawing.Bitmap SelectAll {
             get {
                 object obj = ResourceManager.GetObject("SelectAll", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Skeleton {
+            get {
+                object obj = ResourceManager.GetObject("Skeleton", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
