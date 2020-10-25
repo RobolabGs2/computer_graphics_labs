@@ -6,12 +6,14 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.Win32;
 
 namespace Lab06
 {
     public class ToolTabs : TabControl
     {
         Bitmap[] Images { get; }
+
         public ToolTabs(IEnumerable<ToolTab> tabs, IEnumerable<Bitmap> images)
         {
             TabPages.AddRange(tabs.ToArray());
@@ -21,14 +23,17 @@ namespace Lab06
             this.DrawMode = TabDrawMode.OwnerDrawFixed;
             this.DrawItem += tabControlDrawItem;
             this.Images = images.ToArray();
-            this.SelectedIndexChanged += (s, e) => {
-                foreach (var t in this.TabPages)
-                    ((ToolTab)t).ClearEvents();
-                ((ToolTab)this.SelectedTab).TabSelected();
+            this.Deselected += (sender, args) =>
+            {
+                var toolTab = (ToolTab) args.TabPage;
+                toolTab.TabDeselected();
+                toolTab.ClearEvents();
             };
-        }
-        private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
-        {
+            this.Selecting += (sender, args) =>
+            {
+                var toolTab = (ToolTab) args.TabPage;
+                toolTab.TabSelected();
+            };
         }
 
         private const int TCM_ADJUSTRECT = 0x1328;
@@ -37,7 +42,7 @@ namespace Lab06
         {
             if (m.Msg == TCM_ADJUSTRECT)
             {
-                RECT rect = (RECT)(m.GetLParam(typeof(RECT)));
+                RECT rect = (RECT) (m.GetLParam(typeof(RECT)));
                 rect.Left = Left - Margin.Left;
                 rect.Right = Right + Margin.Right;
                 rect.Top = Top - Margin.Top;
@@ -70,7 +75,9 @@ namespace Lab06
             Dock = DockStyle.Fill,
             BackColor = Constants.backColore,
         };
+
         List<TabButton> buttons = new List<TabButton>();
+
         SplitContainer mainContainer = new SplitContainer
         {
             Orientation = Orientation.Horizontal,
@@ -80,6 +87,7 @@ namespace Lab06
 
         public Control Settings => mainContainer.Panel2;
         public Action TabSelected = () => { };
+        public Action TabDeselected = () => { };
         public Action ClearEvents = () => { };
 
         public ToolTab()
@@ -87,7 +95,10 @@ namespace Lab06
             BackColor = Constants.backColore;
             Controls.Add(mainContainer);
             mainContainer.Panel1.Controls.Add(panel);
-            ClearEvents += () => buttons.ForEach(b => { if (b.ButtonEnable) b.ButtonDisable(b); });
+            ClearEvents += () => buttons.ForEach(b =>
+            {
+                if (b.ButtonEnable) b.ButtonDisable(b);
+            });
             mainContainer.Panel2.Padding = new Padding(10);
         }
 
@@ -101,9 +112,16 @@ namespace Lab06
                 Margin = new Padding(20, 20, 0, 0),
             };
 
-            p.MouseDown += (o, s) => {
-                buttons.ForEach(b => { if (b.ButtonEnable) b.ButtonDisable(b); });
-                p.ButtonClick(p);
+            p.MouseDown += (o, s) =>
+            {
+                buttons.ForEach(b =>
+                {
+                    if (b.ButtonEnable) b.ButtonDisable(b);
+                });
+                if (s.Button.HasFlag(MouseButtons.Right) && p.ButtonEnable)
+                    p.ButtonDisable(p);
+                if (s.Button.HasFlag(MouseButtons.Left))
+                    p.ButtonClick(p);
             };
 
             if (!fixedButton)
@@ -122,8 +140,16 @@ namespace Lab06
 
         public TabButton()
         {
-            ButtonClick += t => { BackColor = Constants.textColore; ButtonEnable = true; };
-            ButtonDisable += t => { BackColor = Color.Transparent; ButtonEnable = false; };
+            ButtonClick += t =>
+            {
+                BackColor = Constants.textColore;
+                ButtonEnable = true;
+            };
+            ButtonDisable += t =>
+            {
+                BackColor = Color.Transparent;
+                ButtonEnable = false;
+            };
         }
     }
 }
