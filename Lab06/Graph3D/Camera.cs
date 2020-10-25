@@ -17,11 +17,19 @@ namespace Lab06.Graph3D
 
         public Matrix Projection()
         {
-            return 
+            return
                 Matrix.Move(-location) *
                 Matrix.ZRotation(-leftAngle) *
                 Matrix.YRotation(-downAngle) *
                 Matrix.Projection(1 / interval, 0, 0);
+        }
+
+        public Matrix Rotation()
+        {
+            return
+                Matrix.Move(-location) *
+                Matrix.ZRotation(-leftAngle) *
+                Matrix.YRotation(-downAngle);
         }
 
         public Matrix InvertProjection()

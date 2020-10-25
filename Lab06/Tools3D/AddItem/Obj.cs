@@ -24,14 +24,30 @@ namespace Lab06.Tools3D.AddItem
                 {
                     current.Add(new Point
                     {
-                        X = double.Parse(lines[1].Replace(".", ",")) ,
-                        Y = double.Parse(lines[2].Replace(".", ",")) ,
+                        X = double.Parse(lines[1].Replace(".", ",")),
+                        Y = double.Parse(lines[2].Replace(".", ",")),
                         Z = double.Parse(lines[3].Replace(".", ","))
                     });
-                }else
-                if(flag == "f")
+                }
+                else
+                if (flag == "vn")
                 {
-                    current.Add(new Polygon(lines.Skip(1).Select(l => Int32.Parse(l.Split('/')[0]) - 1).ToList()));
+                    current.AddNormal(new Point
+                    {
+                        X = double.Parse(lines[1].Replace(".", ",")),
+                        Y = double.Parse(lines[2].Replace(".", ",")),
+                        Z = double.Parse(lines[3].Replace(".", ","))
+                    });
+                }
+                else
+                if (flag == "f")
+                {
+                    if(lines[1].Split('/').Length  == 3)
+                        current.Add(new Polygon(
+                            lines.Skip(1).Select(l => Int32.Parse(l.Split('/')[0]) - 1).ToList(),
+                            lines.Skip(1).Select(l => Int32.Parse(l.Split('/')[2]) - 1).ToList()));
+                    else
+                        current.Add(new Polygon(lines.Skip(1).Select(l => Int32.Parse(l.Split('/')[0]) - 1).ToList()));
                 }
             }
             return current;

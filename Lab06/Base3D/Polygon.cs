@@ -10,6 +10,7 @@ namespace Lab06.Base3D
     public class Polygon
     {
         public List<int> indexes;
+        public List<int> normals;
 
         public Polygon()
         {
@@ -19,6 +20,12 @@ namespace Lab06.Base3D
         public Polygon(IEnumerable<int> indexes)
         {
             this.indexes = indexes.ToList();
+        }
+
+        public Polygon(IEnumerable<int> indexes, List<int> normals)
+        {
+            this.indexes = indexes.ToList();
+            this.normals = normals;
         }
 
         public List<Point> Points(List<Point> points)

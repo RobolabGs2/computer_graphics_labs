@@ -1,9 +1,11 @@
 ﻿using Lab06.Base3D;
+using Lab06.Materials3D;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,6 +15,7 @@ namespace Lab06.Graph3D
     {
         Context context;
         Matrix cameraMatric;
+        Matrix rotationCamera;
         FastBitmap fastBitmap;
         double[,] buffer;
         double interval;
@@ -35,16 +38,20 @@ namespace Lab06.Graph3D
             buffer = new double[bitmap.Width, bitmap.Height];
             fastBitmap = new FastBitmap(bitmap, System.Drawing.Imaging.ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
             cameraMatric = context.DrawingMatrix();
+            rotationCamera = context.camera.Rotation();
             interval = context.camera.interval * context.scale;
             foreach (Entity e in context.world.entities)
+                DrawEntity(e);
+            buffer = new double[bitmap.Width, bitmap.Height];
+            foreach (Entity e in context.world.control)
                 DrawEntity(e);
             fastBitmap.Dispose();
         }
 
-        void DrawEntity(Entity entity)
+        void DrawEntity(Entity entity, BaseMaterial material = null)
         {
             if (entity is Base3D.Polytope pol)
-                DrawPolytope(pol);
+                DrawPolytope(pol, material == null ? pol.Matreial : material);
             if (entity is Base3D.Group group)
                 DrawGroup(group);
         }
@@ -52,18 +59,21 @@ namespace Lab06.Graph3D
         void DrawGroup(Base3D.Group p)
         {
             foreach (Entity e in p.entities)
-                DrawEntity(e);
+                DrawEntity(e, e.Matreial);
         }
 
-        void DrawPolytope(Base3D.Polytope p)
+        void DrawPolytope(Base3D.Polytope p, BaseMaterial material)
         {
             var points = p.points.Select(point => point * cameraMatric).ToList();
+            var rotating = p.points.Select(point => point * rotationCamera).ToList();
+            Base3D.Point zero = new Base3D.Point() * rotationCamera;
+            var normals = p.normals.Select(point => point * rotationCamera - zero).ToList();
             foreach (Polygon polygon in p.polygons)
-                DrawPolygon(polygon, points, p.Matreial.Color);
+                DrawPolygon(polygon, points, rotating, normals, material.Color);
         }
 
         Random r = new Random();
-        void DrawPolygon(Base3D.Polygon pol, List<Base3D.Point> points, Color color)
+        void DrawPolygon(Base3D.Polygon pol, List<Base3D.Point> points, List<Base3D.Point> rotated, List<Base3D.Point> normals, Color color)
         {
             if (pol.indexes.Count < 3)
                 return;
@@ -84,75 +94,146 @@ namespace Lab06.Graph3D
                 return;
             if (prod.Length() == 0)
                 return;
-            double cos = - prod.X / prod.Length();
+
+            Base3D.Point zero = new Base3D.Point() * cameraMatric;
             for (int i = 0; i < polyPoints.Count - 2; ++i)
-                DrawTriangle(polyPoints[0], polyPoints[i + 1], polyPoints[i + 2], 
-                    Color.FromArgb(0, 
-                        (int)(cos * color.R), 
-                        (int)(cos * color.G), 
-                        (int)(cos * color.B)));
+            {
+                Base3D.Point p1 = polyPoints[0];
+                Base3D.Point p2 = polyPoints[i + 1];
+                Base3D.Point p3 = polyPoints[i + 2];
+                if (pol.normals == null)
+                    DrawTriangle(p1.Y, p1.Z, p2.Y, p2.Z, p3.Y, p3.Z,
+                        new Stuff { Z = interval - p1.X, Normal = prod },
+                        new Stuff { Z = interval - p2.X, Normal = prod },
+                        new Stuff { Z = interval - p3.X, Normal = prod }, color);
+                else
+                    DrawTriangle(p1.Y, p1.Z, p2.Y, p2.Z, p3.Y, p3.Z,
+                        new Stuff { Z = interval - p1.X, Normal = normals[pol.normals[0]]  },
+                        new Stuff { Z = interval - p2.X, Normal = normals[pol.normals[i + 1]] },
+                        new Stuff { Z = interval - p3.X, Normal = normals[pol.normals[i + 2]] }, color);
+            }
         }
 
-        void TrySet(double x, double y, double z, Color color)
+        int colorScheme(double cos, int C)
         {
-            int ix = (int)x;
-            int iy = (int)y;
+            cos = Math.Min((Math.Pow(cos, 1000) + 0.1 + cos) * C, 255);
+            return (int) cos;
+        }
+
+        void TrySet(double x, double y, Stuff s, Color color)
+        {
+            int ix = (int)Math.Round(x);
+            int iy = (int)Math.Round(y);
             if (ix < 0 || iy < 0 || ix >= width || iy >= height)
                 return;
-            z = interval - z;
-            if (z <= buffer[ix, iy])
+            if (s.Z <= buffer[ix, iy])
                 return;
-            buffer[ix, iy] = z;
-            fastBitmap.SetPixel(ix, iy, color);
+            buffer[ix, iy] = s.Z;
+            double cos = -s.Normal.X / s.Normal.Length();
+            if (cos < 0)
+                cos = 0;
+
+            fastBitmap.SetPixel(ix, iy, Color.FromArgb(0,
+                        colorScheme(cos, color.R),
+                        colorScheme(cos, color.G),
+                        colorScheme(cos, color.B)));
         }
 
-        void DrawTriangle(Base3D.Point p1, Base3D.Point p2, Base3D.Point p3, Color color)
+        void DrawTriangle(double x1, double y1, double x2, double y2, double x3, double y3,
+            Stuff s1, Stuff s2, Stuff s3, Color color)
         {
-            if (p2.Z < p1.Z)
-                (p1, p2) = (p2, p1);
-            if (p3.Z < p1.Z)
-                (p1, p3) = (p3, p1);
-            if (p3.Z < p2.Z)
-                (p2, p3) = (p3, p2);
+            if (y2 < y1)
+                (x1, y1, x2, y2, s1, s2) = (x2, y2, x1, y1, s2, s1);
+            if (y3 < y1)
+                (x1, y1, x3, y3, s1, s3) = (x3, y3, x1, y1, s3, s1);
+            if (y3 < y2)
+                (x2, y2, x3, y3, s2, s3) = (x3, y3, x2, y2, s3, s2);
 
-            double startY = (p2.Z - p1.Z) * (p3.Y - p1.Y) / (p3.Z - p1.Z) + p1.Y;
-            double startX = (p2.Z - p1.Z) * (p3.X - p1.X) / (p3.Z - p1.Z) + p1.X;
-            double endY = p2.Y;
-            double endX = p2.X;
+            double startX = (y2 - y1) * (x3 - x1) / (y3 - y1) + x1;
+            double endX = x2;
+            Stuff startStuff = (y2 - y1) * (s3 - s1) / (y3 - y1) + s1;
+            Stuff endStuff = s2;
             
-            if (startY > endY)
+            if (startX > endX)
             {
-                (startY, endY) = (endY, startY);
                 (startX, endX) = (endX, startX);
+                (startStuff, endStuff) = (endStuff, startStuff);
             }
 
-            for (double i = p1.Z; i <= p2.Z; ++i)
+            for (double i = y1; i <= y2; i += 0.5)
             {
-                double startJ = ((p2.Z - i) * p1.Y + (i - p1.Z) * startY) / (p2.Z - p1.Z);
-                double endJ = ((p2.Z - i) * p1.Y + (i - p1.Z) * endY) / (p2.Z - p1.Z);
-                double x1 = ((p2.Z - i) * p1.X + (i - p1.Z) * startX) / (p2.Z - p1.Z);
-                double x2 = ((p2.Z - i) * p1.X + (i - p1.Z) * endX) / (p2.Z - p1.Z);
+                double startJ = ((y2 - i) * x1 + (i - y1) * startX) / (y2 - y1);
+                double endJ = ((y2 - i) * x1 + (i - y1) * endX) / (y2 - y1);
+                Stuff stf1 = ((y2 - i) * s1 + (i - y1) * startStuff) / (y2 - y1);
+                Stuff stf2 = ((y2 - i) * s1 + (i - y1) * endStuff) / (y2 - y1);
 
-                for (double j = startJ; j < endJ; ++j)
+                for (double j = startJ; j < endJ; j += 0.5)
                 {
-                    double x = ((endJ - j) * x1 + (j - startJ) * x2) / (endJ - startJ);
+                    Stuff x = ((endJ - j) * stf1 + (j - startJ) * stf2) / (endJ - startJ);
                     TrySet(j, i, x, color);
                 }
             }
 
-            for (double i = p2.Z; i <= p3.Z; ++i)
+            for (double i = y2; i <= y3; i += 0.5)
             {
-                double startJ = ((p3.Z - i) * startY + (i - p2.Z) * p3.Y) / (p3.Z - p2.Z);
-                double endJ = ((p3.Z - i) * endY + (i - p2.Z) * p3.Y) / (p3.Z - p2.Z);
-                double x1 = ((p3.Z - i) * startX + (i - p2.Z) * p3.X) / (p3.Z - p2.Z);
-                double x2 = ((p3.Z - i) * endX + (i - p2.Z) * p3.X) / (p3.Z - p2.Z);
+                double startJ = ((y3 - i) * startX + (i - y2) * x3) / (y3 - y2);
+                double endJ = ((y3 - i) * endX + (i - y2) * x3) / (y3 - y2);
+                Stuff stf1 = ((y3 - i) * startStuff + (i - y2) * s3) / (y3 - y2);
+                Stuff stf2 = ((y3 - i) * endStuff + (i - y2) * s3) / (y3 - y2);
 
-                for (double j = startJ; j < endJ; ++j)
+                for (double j = startJ; j < endJ; j += 0.5)
                 {
-                    double x = ((endJ - j) * x1 + (j - startJ) * x2) / (endJ - startJ);
+                    Stuff x = ((endJ - j) * stf1 + (j - startJ) * stf2) / (endJ - startJ);
                     TrySet(j, i, x, color);
                 }
             }
+        }
+
+        struct Stuff
+        {
+            public Base3D.Point Normal { get; set; }
+            public double Z { get; set; }
+
+            public static Stuff operator +(Stuff s1, Stuff s2)
+            {
+                return new Stuff
+                {
+                    Normal = s1.Normal + s2.Normal,
+                    Z = s1.Z + s2.Z
+                };
+            }
+            
+            public static Stuff operator -(Stuff s1, Stuff s2)
+            {
+                return new Stuff
+                {
+                    Normal = s1.Normal - s2.Normal,
+                    Z = s1.Z - s2.Z
+                };
+            }
+
+            public static Stuff operator *(Stuff s, double c)
+            {
+                return new Stuff
+                {
+                    Normal = s.Normal * c,
+                    Z = s.Z * c
+                };
+            }
+            public static Stuff operator *(double c, Stuff s)
+            {
+                return s * c;
+            }
+
+            public static Stuff operator /(Stuff s, double c)
+            {
+                return new Stuff
+                {
+                    Normal = s.Normal / c,
+                    Z = s.Z / c
+                };
+            }
+
         }
     }
 }
