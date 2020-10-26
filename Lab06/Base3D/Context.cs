@@ -25,6 +25,8 @@ namespace Lab06.Base3D
         public double scale = 100;
 
         public Action<Graphics> Posteffect = g => {};
+        public KeyEventHandler KeyUp = (sender, args) => {};
+        public KeyEventHandler KeyDown = (sender, args) => { };
 
         public Context(PictureBox pictureBox)
         {

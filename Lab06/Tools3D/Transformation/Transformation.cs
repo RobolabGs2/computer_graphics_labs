@@ -22,7 +22,7 @@ namespace Lab06.Tools3D.Transformation
         public void Init(ToolTab tab, Context context)
         {
             gizmo = new Gizmo(context);
-            foreach (var (icon, state) in new []
+            foreach (var (icon, state) in new[]
             {
                 (Properties.Resources.Move, Gizmo.State.Move),
                 (Properties.Resources.Scale, Gizmo.State.Scale),
@@ -33,7 +33,7 @@ namespace Lab06.Tools3D.Transformation
                 button.ButtonClick += b => gizmo.CurrentState = state;
                 button.ButtonDisable += b => gizmo.CurrentState = Gizmo.State.Unset;
             }
-            
+
             var onlyGizmo = new CheckBox
                 {Text = "Change gizmo", ForeColor = Constants.textColore, Font = Constants.font, Dock = DockStyle.Top};
             onlyGizmo.CheckStateChanged += (sender, args) => { gizmo.OnlyGizmo = onlyGizmo.Checked; };
@@ -46,6 +46,21 @@ namespace Lab06.Tools3D.Transformation
             {
                 gizmo.RestartDirection();
                 gizmo.CurrentState = gizmo.CurrentState;
+            };
+
+            // TODO: по-очереди перебирать точки
+            var moveGizmoToPoint = new Button
+            {
+                Text = "Gizmo to first point", ForeColor = Constants.textColore, Font = Constants.font,
+                Dock = DockStyle.Top,
+                AutoSize = true
+            };
+            gizmo.CurrentStateChanged += state => moveGizmoToPoint.Enabled = state != Gizmo.State.Unset && context.world.selected.Count == 1;
+            moveGizmoToPoint.Click += (sender, args) =>
+            {
+                gizmo.RestartDirection(context.world.selected.First().Points().First());
+                gizmo.CurrentState = gizmo.CurrentState;
+                context.Redraw();
             };
             var xyzSettings = new TableLayoutPanel
             {
@@ -116,7 +131,7 @@ namespace Lab06.Tools3D.Transformation
                         MessageBoxIcon.Information);
                 }
             };
-            tab.Settings.Controls.AddRange(new Control[] {applyXYZ, xyzSettings, onlyGizmo, resetGizmo}.Select(
+            tab.Settings.Controls.AddRange(new Control[] {applyXYZ, xyzSettings, moveGizmoToPoint, onlyGizmo, resetGizmo}.Select(
                 control =>
                 {
                     control.Margin = new Padding(0, 8, 0, 8);
@@ -276,13 +291,13 @@ namespace Lab06.Tools3D.Transformation
             this.context = context;
         }
 
-        public void RestartDirection()
+        public void RestartDirection(Base3D.Point? location = null)
         {
             xDirection = new Base3D.Point {X = 1};
             yDirection = new Base3D.Point {Y = 1};
             zDirection = new Base3D.Point {Z = 1};
-            location = context.SeletedPivot();
-            Deformations = Matrix.Move(location);
+            this.location = location ?? context.SeletedPivot();
+            Deformations = Matrix.Move(this.location);
             Invert = Matrix.Ident();
         }
 
