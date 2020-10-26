@@ -164,14 +164,15 @@ namespace Lab06.Tools3D.AddItem
             {
                 if (i % 2 == 0)
                 {
-                    icosa.Add(new Polygon(new int[] { (i + 2) % 10, 10, i }));
-                    icosa.Add(new Polygon(new int[] { i, (i + 1) % 10, (i + 2) % 10 }));
+                    icosa.Add(new Polygon(new int[] { i, 10, (i + 2) % 10 }));
+                    icosa.Add(new Polygon(new int[] { (i + 2) % 10, (i + 1) % 10, i }));
                 }
                 else
                 {
-                    icosa.Add(new Polygon(new int[] { i, 11, (i + 2) % 10 }));
-                    icosa.Add(new Polygon(new int[] { (i + 2) % 10, (i + 1) % 10, i }));
-                }
+                    icosa.Add(new Polygon(new int[] { (i + 2) % 10, 11, i }));
+                    icosa.Add(new Polygon(new int[] { i, (i + 1) % 10, (i + 2) % 10}));
+                }   
+
 
             }
             return icosa;
