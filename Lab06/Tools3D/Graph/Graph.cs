@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Dynamic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -18,17 +19,50 @@ namespace Lab06.Tools3D.Graph
         public void Init(ToolTab tab, Context context)
         {
             Parser p = new Parser();
+            var panel = new TableLayoutPanel
+            {
+                ColumnCount = 2,
+                RowCount = 7,
+                Dock = DockStyle.Top,
+                ForeColor = Constants.borderColore,
+                AutoSize = true,
+                CellBorderStyle = TableLayoutPanelCellBorderStyle.Single,
+                Font = new Font("Consalas", 12)
+            };
+
+            var funcText = new TextBox { Dock = DockStyle.Fill, Text = "(x *x + sin(y) *  y) / 5"};
+            panel.Controls.AddRange(new Control[] { new Label { Text = "Z = " }, funcText });
+            var XStart = new TextBox { Dock = DockStyle.Fill, Text = "-5" };
+            panel.Controls.AddRange(new Control[] { new Label { Text = "X от" }, XStart });
+            var XEnd = new TextBox { Dock = DockStyle.Fill, Text = "5" };
+            panel.Controls.AddRange(new Control[] { new Label { Text = "X до" }, XEnd });
+            var XStep = new TextBox { Dock = DockStyle.Fill, Text = "1" };
+            panel.Controls.AddRange(new Control[] { new Label { Text = "X Шаг" }, XStep });
+            var YStart = new TextBox { Dock = DockStyle.Fill, Text = "-5" };
+            panel.Controls.AddRange(new Control[] { new Label { Text = "Y от" }, YStart });
+            var YEnd = new TextBox { Dock = DockStyle.Fill, Text = "5" };
+            panel.Controls.AddRange(new Control[] { new Label { Text = "Y до" }, YEnd });
+            var YStep = new TextBox { Dock = DockStyle.Fill, Text = "1" };
+            panel.Controls.AddRange(new Control[] { new Label { Text = "Y Шаг" }, YStep });
+            tab.Settings.Controls.Add(panel);
+
             tab.AddButton(Properties.Resources.Graph, false).ButtonClick +=
-                b => {
+                b =>
+                {
                     try
                     {
-                        context.world.entities.Add(MakeGraph(p.Parse("  ( x   * x + sin   (  y ) * y) / 5.5 "),
-                            -5, 5, 1, -5, 5, 1));
+                        context.world.entities.Add(MakeGraph(p.Parse(funcText.Text),
+                            double.Parse(XStart.Text.Replace(".", ",")),
+                            double.Parse(XEnd.Text.Replace(".", ",")),
+                            double.Parse(XStep.Text.Replace(".", ",")),
+                            double.Parse(YStart.Text.Replace(".", ",")),
+                            double.Parse(YEnd.Text.Replace(".", ",")),
+                            double.Parse(YStep.Text.Replace(".", ","))));
                         context.Redraw();
                     }
-                    catch(Exception e)
+                    catch (Exception e)
                     {
-                        MessageBox.Show($"Ошибка парсера: \"{e.Message}\"", "Окошко-всплывашка", MessageBoxButtons.OK,
+                        MessageBox.Show($"Ошибка: \"{e.Message}\"", "Окошко-всплывашка", MessageBoxButtons.OK,
                             MessageBoxIcon.Information);
                     }
                 };
@@ -94,9 +128,15 @@ namespace Lab06.Tools3D.Graph
 
             INode ParseCos()
             {
-                Pass("sin");
+                Pass("cos");
                 var value = Brackets();
-                return new Sin(value);
+                return new Cos(value);
+            }
+            INode ParseExp()
+            {
+                Pass("exp");
+                var value = Brackets();
+                return new Exp(value);
             }
 
             INode ParseX()
@@ -109,6 +149,12 @@ namespace Lab06.Tools3D.Graph
             {
                 Pass("y");
                 return new YValue();
+            }
+
+            INode UnaryMinus()
+            {
+                Pass("-");
+                return new Number(-1) * Term();
             }
 
             INode ParseNumber()
@@ -132,12 +178,14 @@ namespace Lab06.Tools3D.Graph
                     return ParseSin();
                 if (char.ToLower(Get()) == 'c')
                     return ParseCos();
+                if (char.ToLower(Get()) == 'e')
+                    return ParseExp();
                 if (char.ToLower(Get()) == 'x')
                     return ParseX();
                 if (char.ToLower(Get()) == 'y')
                     return ParseY();
                 if (char.ToLower(Get()) == '-')
-                    return new Number(-1) * Term();
+                    return UnaryMinus();
                 if (char.ToLower(Get()) == '+')
                     return Term();
                 if (char.IsDigit(Get()))
@@ -402,16 +450,16 @@ namespace Lab06.Tools3D.Graph
 
         public override INode Dx()
         {
-            return new Cos(node.Dx());
+            return new Cos(node) * node.Dx();
         }
 
         public override INode Dy()
         {
-            return new Cos(node.Dy());
+            return new Cos(node) * node.Dy();
         }
     }
 
-    class Cos: INode
+    class Cos : INode
     {
         INode node;
 
@@ -424,12 +472,34 @@ namespace Lab06.Tools3D.Graph
 
         public override INode Dx()
         {
-            return new Sin(node.Dx()) * new Number(-1);
+            return new Sin(node) * new Number(-1) * node.Dx();
         }
 
         public override INode Dy()
         {
-            return new Sin(node.Dy()) * new Number(-1);
+            return new Sin(node) * new Number(-1) * node.Dy();
+        }
+    }
+
+    class Exp : INode
+    {
+        INode node;
+
+        public Exp(INode node)
+        {
+            this.node = node;
+        }
+
+        public override double Get(double x, double y) => Math.Exp(node.Get(x, y));
+
+        public override INode Dx()
+        {
+            return this * node.Dx();
+        }
+
+        public override INode Dy()
+        {
+            return this * node.Dy();
         }
     }
 
