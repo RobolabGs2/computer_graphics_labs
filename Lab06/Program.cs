@@ -23,6 +23,7 @@ namespace Lab06
                 new Tools3D.Matrixes.Matrixes(),
                 new Tools3D.Selection.Selection(),
                 new Tools3D.Transformation.Transformation(),
+                new Tools3D.Graph.Graph(),
                 new Tools3D.Render.Render(),
             }));
         }

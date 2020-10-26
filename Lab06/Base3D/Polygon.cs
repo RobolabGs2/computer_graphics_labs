@@ -22,10 +22,10 @@ namespace Lab06.Base3D
             this.indexes = indexes.ToList();
         }
 
-        public Polygon(IEnumerable<int> indexes, List<int> normals)
+        public Polygon(IEnumerable<int> indexes, IEnumerable<int> normals)
         {
             this.indexes = indexes.ToList();
-            this.normals = normals;
+            this.normals = normals.ToList();
         }
 
         public List<Point> Points(List<Point> points)
