@@ -143,6 +143,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\Cube.png" />
+    <None Include="Resources\Dodecahedron.png" />
+    <None Include="Resources\Icosahedron.png" />
     <Content Include="Resources\Load.png" />
     <Content Include="Resources\Render.png" />
     <Content Include="Resources\Skeleton.png" />

@@ -73,9 +73,29 @@ namespace Lab06.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Dodecahedron {
+            get {
+                object obj = ResourceManager.GetObject("Dodecahedron", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Graph {
             get {
                 object obj = ResourceManager.GetObject("Graph", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Icosahedron {
+            get {
+                object obj = ResourceManager.GetObject("Icosahedron", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

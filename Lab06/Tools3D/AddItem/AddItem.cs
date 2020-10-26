@@ -31,6 +31,9 @@ namespace Lab06.Tools3D.AddItem
             Item.AddButton(tab.AddButton(Properties.Resources.Cube, true), GenerateCube, context);
             Item.AddButton(tab.AddButton(Properties.Resources.Octahedron, true), GenerateOcta, context);
             Item.AddButton(tab.AddButton(Properties.Resources.Tetrahedron, true), GenerateTetra, context);
+            Item.AddButton(tab.AddButton(Properties.Resources.Icosahedron, true), GenerateIcosa, context);
+            Item.AddButton(tab.AddButton(Properties.Resources.Dodecahedron, true), GenerateDodeca, context);
+
             MultiItem<Spline, Spline>.AddButton(tab.AddButton(Properties.Resources.Mouse), 
                 () => new Spline(), 
                 (total, partial) => total.Add(partial.points.First()),
@@ -85,7 +88,7 @@ namespace Lab06.Tools3D.AddItem
             cube.Add(new Polygon(new int[] { 4, 0, 3, 7 }));
             cube.Add(new Polygon(new int[] { 5, 4, 7, 6 }));
             cube.Add(new Polygon(new int[] { 1, 5, 6, 2 }));
-            cube.Add(new Polygon(new int[] { 0, 1, 5, 4 }));
+            cube.Add(new Polygon(new int[] { 0, 4, 5, 1 }));
             cube.Add(new Polygon(new int[] { 3, 2, 6, 7 }));
 
             return cube;
@@ -100,15 +103,11 @@ namespace Lab06.Tools3D.AddItem
             tetra.Add(cube.points[2]);
             tetra.Add(cube.points[5]);
             tetra.Add(cube.points[7]);
-            var count = cube.polygons.Count - 2;
 
-            //  TODO: надо пофиксить
-            var костыль = new int[]{ 0, 5, 1, 2, -3, 2, 7, 3};
-            for (int i = 0; i < count; i+=2)
-            {
-                tetra.Add(new Polygon(new int[] { костыль[cube.polygons[i].indexes[0]], костыль[cube.polygons[4].indexes[2]], костыль[cube.polygons[count - 1 - i].indexes[3]] }));
-                tetra.Add(new Polygon(new int[] { костыль[cube.polygons[i].indexes[0]], костыль[cube.polygons[5].indexes[1]], костыль[cube.polygons[i + 1].indexes[3]] }));
-            }
+            tetra.Add(new Polygon(new int[] { 0, 2, 1 }));
+            tetra.Add(new Polygon(new int[] { 0, 1, 3 }));
+            tetra.Add(new Polygon(new int[] { 0, 3, 2 }));
+            tetra.Add(new Polygon(new int[] { 1, 2, 3 }));
 
             return tetra;
         }
@@ -121,64 +120,80 @@ namespace Lab06.Tools3D.AddItem
 
             foreach(var edge in cube.polygons)
             {
-                var sump = new Base3D.Point();
+                var sump = new Point();
                 foreach (var p in edge.Points(cube))
                     sump += p;
-                octa.Add(sump / 4);
+                sump /= 4;
+                octa.Add(new Point { X = sump.X, Y = sump.Y, Z = sump.Z });
             }
 
-            octa.Add(new Polygon(new int[] { 0, 1, 2, 3 }));
+            octa.Add(new Polygon(new int[] { 0, 5, 1 }));
+            octa.Add(new Polygon(new int[] { 2, 1, 5 }));
 
-            for (int i = 0; i < octa.points.Count - 2; i++)
-            {
-                octa.Add(new Polygon(new int[] { i, (i + 1) % 4, 4 }));
-                octa.Add(new Polygon(new int[] { i, 5, (i + 1) % 4 }));
-            }
+            octa.Add(new Polygon(new int[] { 0, 3, 5 }));
+            octa.Add(new Polygon(new int[] { 2, 5, 3 }));
+
+            octa.Add(new Polygon(new int[] { 0, 4, 3 }));
+            octa.Add(new Polygon(new int[] { 2, 3, 4 }));
+
+            octa.Add(new Polygon(new int[] { 0, 1, 4 }));
+            octa.Add(new Polygon(new int[] { 2, 4, 1 }));
+
 
             return octa;
         }
 
-        private Base3D.Point nextCirclePoint(double x, double y,double z, double angle)
+        private Point nextCirclePoint(double z, double angle)
         {
-            double a = Math.Cos(Math.PI * angle / 180);
-            return new Base3D.Point { X = x + Math.Sin(Math.PI * angle / 180), Y = y + Math.Cos(Math.PI * angle / 180),  Z =z };
+            return new Point { X = Math.Sin(Math.PI * angle / 180), Y = Math.Cos(Math.PI * angle / 180), Z = z };
         }
-
         Polytope GenerateIcosa()
         {
-            Polytope circle = new Polytope();
             Polytope icosa = new Polytope();
-            Base3D.Point a = new Base3D.Point { X = 0, Y = 0, Z = 0};
 
-            for (int angle = 0; angle < 360; angle += 3)
+            for (int angle = 0; angle < 360; angle += 72)
             {
-                circle.Add(nextCirclePoint(a.X, a.Y, 1, angle));
-                //for (int angle = 0; angle < 360; angle += 3)
-                circle.Add(nextCirclePoint(a.X, a.Y, -1, angle));
+                icosa.Add(nextCirclePoint(0.5, angle));
+                icosa.Add(nextCirclePoint(-0.5, angle + 36));
             }
-            circle.Add(new Polygon(circle.points.Select((p, i) => i).ToList()));
 
-            icosa.Add(circle.points[circle.points.Count / 20]);
-
-            for (int i = 1; i < 10; i++)
-                icosa.Add(circle.points[circle.points.Count / 20 + i * 24]); //120/5
-
-            double iz = 1 + Math.Sqrt(5) / 2;
-            icosa.Add(new Base3D.Point { X = 0, Y = 0, Z = iz });
-            icosa.Add(new Base3D.Point { X = 0, Y = 0, Z = -iz });
-            for (int i = 0; i < 10; i+=5)
+            icosa.Add(new Base3D.Point { X = 0, Y = 0, Z = Math.Sqrt(5) / 2 });
+            icosa.Add(new Base3D.Point { X = 0, Y = 0, Z = -Math.Sqrt(5) / 2 });
+            //конусы снизу и сверху и треугольнки внутри
+            for (int i = 0; i < 10; i++)
             {
-                //  Зачем тебе пятигранники, икосаэдр же из треугольничков сделан?
-                icosa.Add(new Polygon(new int[] { i, i + 1, i + 2, i + 3, i + 4 })); //пятигранник на окружности
-                //шапочка и барабан
-                for (int j = 0; j < 5; j++)
+                if (i % 2 == 0)
                 {
-                    icosa.Add(new Polygon(new int[] { i + j, (i + j + 1) % 5, i % 5 }));
-                    icosa.Add(new Polygon(new int[] { i + j, i + 1, i + 2, i + 3, i + 4 })); 
+                    icosa.Add(new Polygon(new int[] { (i + 2) % 10, 10, i }));
+                    icosa.Add(new Polygon(new int[] { i, (i + 1) % 10, (i + 2) % 10 }));
                 }
-            }
+                else
+                {
+                    icosa.Add(new Polygon(new int[] { i, 11, (i + 2) % 10 }));
+                    icosa.Add(new Polygon(new int[] { (i + 2) % 10, (i + 1) % 10, i }));
+                }
 
+            }
             return icosa;
+        }
+
+        Polytope GenerateDodeca()
+        {
+            Polytope icosa = GenerateIcosa();
+            Polytope dodeca = new Polytope();
+
+            foreach (var edge in icosa.polygons)
+                 dodeca.Add(new Point { X = edge.Points(icosa).Sum(p => p.X) / 3, Y = edge.Points(icosa).Sum(p => p.Y) / 3, Z = edge.Points(icosa).Sum(p => p.Z) / 3 });
+
+            dodeca.Add(new Polygon(new int[] { 16, 12, 8, 4, 0 }));
+            for (int i = 0, j = 3; i < dodeca.points.Count; i += 4, j += 4)
+            {
+                    dodeca.Add(new Polygon(new int[] { (i + 4) % 20, (i + 5) % 20, i + 3, i + 1, i }));
+                    dodeca.Add(new Polygon(new int[] { j, j - 1, (20 + j - 4) % 20 - 1, (20 + j - 4) % 20, i + 1 }));
+            }
+            dodeca.Add(new Polygon(new int[] { 2, 6, 10, 14, 18 }));
+            
+            return dodeca;
         }
     }
 }
