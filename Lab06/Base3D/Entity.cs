@@ -18,7 +18,8 @@ namespace Lab06.Base3D
 
         public virtual (Point pMin, Point pMax) ABBA()
         {
-            return (new Point { }, new Point { });
+            var start = Points().FirstOrDefault();
+            return Points().Aggregate((start, start), (abba, p) => (Point.Min(abba.Item1, p), Point.Max(abba.Item2, p)));
         }
 
         public virtual Point Pivot()

@@ -86,6 +86,7 @@
     <Compile Include="Tools3D\AddItem\Obj.cs" />
     <Compile Include="Tools3D\Matrixes\Matrixes.cs" />
     <Compile Include="Tools3D\Render\Render.cs" />
+    <Compile Include="Tools3D\Graph\Graph.cs" />
     <Compile Include="Tools3D\Selection\Selection.cs" />
     <Compile Include="Tools3D\Transformation\Transformation.cs" />
     <Compile Include="ToolTabs.cs">

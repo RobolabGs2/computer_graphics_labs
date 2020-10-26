@@ -8,6 +8,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Point = Lab06.Base3D.Point;
 
 namespace Lab06.Tools3D.AddItem
 {
@@ -30,6 +31,12 @@ namespace Lab06.Tools3D.AddItem
             Item.AddButton(tab.AddButton(Properties.Resources.Cube, true), GenerateCube, context);
             Item.AddButton(tab.AddButton(Properties.Resources.Octahedron, true), GenerateOcta, context);
             Item.AddButton(tab.AddButton(Properties.Resources.Tetrahedron, true), GenerateTetra, context);
+            MultiItem<Spline, Spline>.AddButton(tab.AddButton(Properties.Resources.Mouse), 
+                () => new Spline(), 
+                (total, partial) => total.Add(partial.points.First()),
+                GeneratePoint,
+                context
+            );
             var load = tab.AddButton(Properties.Resources.Load, true);
             load.ButtonClick += b => ChangeFile();
             Item.AddButton(load, GenerateObj, context);

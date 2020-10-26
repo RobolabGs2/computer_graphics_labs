@@ -30,15 +30,7 @@ namespace Lab06.Base3D
         {
             normals.Add(n);
         }
-
-        public override (Point pMin, Point pMax) ABBA()
-        {
-            if (points.Count == 0)
-                return (new Point(), new Point());
-            return points.Skip(1).Aggregate((points[0], points[0]),
-                (abba, p) => (Point.Min(abba.Item1, p), Point.Max(abba.Item2, p)));
-        }
-
+        
         public override IEnumerable<Point> Points()
         {
             return points;
