@@ -22,6 +22,12 @@ namespace Lab06.Graph3D
         int width;
         int height;
 
+        public double phongAmbient = 0.1;
+        public double phongDiffuse = 1;
+        public double phongSpecular = 1;
+        public double phongPower = 1000;
+
+
         public ZBuffer(Context context)
         {
             this.context = context;
@@ -114,10 +120,9 @@ namespace Lab06.Graph3D
             }
         }
 
-        int colorScheme(double cos, int C)
+        int colorScheme(double pow, double k, int C)
         {
-            cos = Math.Min((Math.Pow(cos, 1000) + 0.1 + cos) * C, 255);
-            return (int) cos;
+            return Math.Min((int)(pow + C * k), 255);
         }
 
         void TrySet(double x, double y, Stuff s, Color color)
@@ -129,14 +134,14 @@ namespace Lab06.Graph3D
             if (s.Z <= buffer[ix, iy])
                 return;
             buffer[ix, iy] = s.Z;
-            double cos = -s.Normal.X / s.Normal.Length();
-            if (cos < 0)
-                cos = 0;
+            double cos = Math.Max(-s.Normal.X / s.Normal.Length(), 0);
+            double pow = Math.Pow(cos, phongPower) * phongSpecular * 255;
+            double k = (phongAmbient + phongDiffuse * cos);
 
             fastBitmap.SetPixel(ix, iy, Color.FromArgb(0,
-                        colorScheme(cos, color.R),
-                        colorScheme(cos, color.G),
-                        colorScheme(cos, color.B)));
+                        colorScheme(pow, k, color.R),
+                        colorScheme(pow, k, color.G),
+                        colorScheme(pow, k, color.B)));
         }
 
         void DrawTriangle(double x1, double y1, double x2, double y2, double x3, double y3,
