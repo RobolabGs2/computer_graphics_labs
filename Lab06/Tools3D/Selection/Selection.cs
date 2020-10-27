@@ -1,7 +1,9 @@
 ﻿using Lab06.Base3D;
+using Lab06.Tools3D.AddItem;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -41,10 +43,22 @@ namespace Lab06.Tools3D.Selection
                 context.Redraw();
             };
 
-            tab.AddButton(Properties.Resources.Trash, false).ButtonClick += b => { 
+            tab.AddButton(Properties.Resources.Trash, false).ButtonClick += b => {
                 context.world.entities.ExceptWith(context.world.selected);
                 context.world.selected.Clear();
                 context.Redraw();
+            };
+
+            tab.AddButton(Properties.Resources.Load).ButtonClick += b => {
+                SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+
+                saveFileDialog1.Filter = "txt files (*.obj)|*.obj";
+                saveFileDialog1.RestoreDirectory = true;
+
+                if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+                {
+                    File.WriteAllLines(saveFileDialog1.FileName, Obj.Store(context.world.selected).ToArray());
+                }
             };
         }
 

@@ -24,9 +24,9 @@ namespace Lab06.Tools3D.AddItem
                 {
                     current.Add(new Point
                     {
-                        X = double.Parse(lines[1].Replace(".", ",")),
-                        Y = double.Parse(lines[2].Replace(".", ",")),
-                        Z = double.Parse(lines[3].Replace(".", ","))
+                        X = double.Parse(lines[1]),
+                        Y = double.Parse(lines[2]),
+                        Z = double.Parse(lines[3])
                     });
                 }
                 else
@@ -34,9 +34,9 @@ namespace Lab06.Tools3D.AddItem
                 {
                     current.AddNormal(new Point
                     {
-                        X = double.Parse(lines[1].Replace(".", ",")),
-                        Y = double.Parse(lines[2].Replace(".", ",")),
-                        Z = double.Parse(lines[3].Replace(".", ","))
+                        X = double.Parse(lines[1]),
+                        Y = double.Parse(lines[2]),
+                        Z = double.Parse(lines[3])
                     });
                 }
                 else
@@ -51,6 +51,44 @@ namespace Lab06.Tools3D.AddItem
                 }
             }
             return current;
+        }
+
+        public static IEnumerable<string> Store(IEnumerable<Entity> entities)
+        {
+            int startPoint = 1;
+            int startNorm = 1;
+            int polyCounter = 1;
+            foreach (Entity e in entities)
+            {
+                if(e is Polytope poly)
+                {
+                    yield return "s off";
+
+                    yield return $"o Polytope_{polyCounter}";
+                    yield return $"g Polytope_{polyCounter++}";
+
+                    foreach (Point p in poly.points)
+                        yield return $"v {p.X} {p.Y} {p.Z}";
+                    foreach (Point p in poly.normals)
+                        yield return $"vn {p.X} {p.Y} {p.Z}";
+
+                    foreach (Polygon p in poly.polygons)
+                    {
+                        string result = "f";
+                        if(p.normals == null)
+                            foreach(int v in p.indexes)
+                                result += $" {v + startPoint}";
+                        else
+                            for(int i = 0; i < p.indexes.Count; ++i)
+                                result += $" {p.indexes[i] + startPoint}//{p.normals[i] + startNorm}";
+                        yield return result;
+                    }
+
+                    startNorm += poly.normals.Count;
+                    startPoint += poly.points.Count;
+                }
+            }
+            yield break;
         }
     }
 }

@@ -52,12 +52,12 @@ namespace Lab06.Tools3D.Graph
                     try
                     {
                         context.world.entities.Add(MakeGraph(p.Parse(funcText.Text),
-                            double.Parse(XStart.Text.Replace(".", ",")),
-                            double.Parse(XEnd.Text.Replace(".", ",")),
-                            double.Parse(XStep.Text.Replace(".", ",")),
-                            double.Parse(YStart.Text.Replace(".", ",")),
-                            double.Parse(YEnd.Text.Replace(".", ",")),
-                            double.Parse(YStep.Text.Replace(".", ","))));
+                            double.Parse(XStart.Text),
+                            double.Parse(XEnd.Text),
+                            double.Parse(XStep.Text),
+                            double.Parse(YStart.Text),
+                            double.Parse(YEnd.Text),
+                            double.Parse(YStep.Text)));
                         context.Redraw();
                     }
                     catch (Exception e)
@@ -165,7 +165,6 @@ namespace Lab06.Tools3D.Graph
                     result += Get();
                     ++idx;
                 }
-                result = result.Replace(".", ",");
                 SkipSpaces();
                 return new Number(double.Parse(result));
             }
