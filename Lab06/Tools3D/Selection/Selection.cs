@@ -49,7 +49,7 @@ namespace Lab06.Tools3D.Selection
                 context.Redraw();
             };
 
-            tab.AddButton(Properties.Resources.Load).ButtonClick += b => {
+            tab.AddButton(Properties.Resources.Save).ButtonClick += b => {
                 SaveFileDialog saveFileDialog1 = new SaveFileDialog();
 
                 saveFileDialog1.Filter = "txt files (*.obj)|*.obj";
