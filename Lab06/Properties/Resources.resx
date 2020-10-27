@@ -166,6 +166,9 @@
   <data name="Rotate" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\rotate.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Save" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Save.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Scale" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\scale.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -174,6 +177,12 @@
   </data>
   <data name="Skeleton" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\skeleton.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SolidOfRev" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SolidOfRev.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Spline" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Spline.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Tetrahedron" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\tetrahedron.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>

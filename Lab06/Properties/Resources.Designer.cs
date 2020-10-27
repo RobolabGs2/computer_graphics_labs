@@ -223,6 +223,16 @@ namespace Lab06.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Save {
+            get {
+                object obj = ResourceManager.GetObject("Save", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Scale {
             get {
                 object obj = ResourceManager.GetObject("Scale", resourceCulture);
@@ -246,6 +256,26 @@ namespace Lab06.Properties {
         internal static System.Drawing.Bitmap Skeleton {
             get {
                 object obj = ResourceManager.GetObject("Skeleton", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap SolidOfRev {
+            get {
+                object obj = ResourceManager.GetObject("SolidOfRev", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Spline {
+            get {
+                object obj = ResourceManager.GetObject("Spline", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
