@@ -71,15 +71,14 @@ namespace Lab06.Graph3D
         void DrawPolytope(Base3D.Polytope p, BaseMaterial material)
         {
             var points = p.points.Select(point => point * cameraMatric).ToList();
-            var rotating = p.points.Select(point => point * rotationCamera).ToList();
             Base3D.Point zero = new Base3D.Point() * rotationCamera;
             var normals = p.normals.Select(point => point * rotationCamera - zero).ToList();
             foreach (Polygon polygon in p.polygons)
-                DrawPolygon(polygon, points, rotating, normals, material.Color);
+                DrawPolygon(polygon, points, normals, material.Color);
         }
 
         Random r = new Random();
-        void DrawPolygon(Base3D.Polygon pol, List<Base3D.Point> points, List<Base3D.Point> rotated, List<Base3D.Point> normals, Color color)
+        void DrawPolygon(Base3D.Polygon pol, List<Base3D.Point> points, List<Base3D.Point> normals, Color color)
         {
             if (pol.indexes.Count < 3)
                 return;
