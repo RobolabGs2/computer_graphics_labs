@@ -72,14 +72,20 @@ namespace Lab06.Graph3D
             var polyPoints = pol.Points(points);
             if (hideInvisible)
             {
-                double area = 0;
-                for (int i = 0; i < pol.indexes.Count; ++i)
+                if (polyPoints.Any(p => !context.BeforeScreen(p.X)))
+                    return;
+                var v1 = polyPoints[1] - polyPoints[0];
+                var v2 = polyPoints[2] - polyPoints[0];
+                var prod = new Base3D.Point
                 {
-                    area +=
-                        polyPoints[i].Z * polyPoints[(i + 1) % polyPoints.Count].Y -
-                        polyPoints[i].Y * polyPoints[(i + 1) % polyPoints.Count].Z;
-                }
-                if (area < 0)
+                    X = v1.Y * v2.Z - v2.Y * v1.Z,
+                    Y = v1.Z * v2.X - v2.Z * v1.X,
+                    Z = v1.X * v2.Y - v2.X * v1.Y
+                };
+
+                if (prod.X > 0)
+                    return;
+                if (prod.Length() == 0)
                     return;
             }
             var end = polyPoints.Aggregate((p1, p2) => { DrawLine(p1, p2, pen); return p2; });

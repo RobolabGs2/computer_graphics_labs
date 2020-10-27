@@ -100,7 +100,6 @@ namespace Lab06.Graph3D
             if (prod.Length() == 0)
                 return;
 
-            Base3D.Point zero = new Base3D.Point() * cameraMatric;
             for (int i = 0; i < polyPoints.Count - 2; ++i)
             {
                 Base3D.Point p1 = polyPoints[0];
