@@ -283,6 +283,16 @@ namespace Lab06.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap SplineBezier {
+            get {
+                object obj = ResourceManager.GetObject("SplineBezier", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Tetrahedron {
             get {
                 object obj = ResourceManager.GetObject("Tetrahedron", resourceCulture);
