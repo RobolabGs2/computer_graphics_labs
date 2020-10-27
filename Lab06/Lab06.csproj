@@ -147,7 +147,10 @@
     <None Include="Resources\Icosahedron.png" />
     <Content Include="Resources\Load.png" />
     <Content Include="Resources\Render.png" />
+    <None Include="Resources\Save.png" />
     <Content Include="Resources\Skeleton.png" />
+    <None Include="Resources\Spline.png" />
+    <None Include="Resources\SolidOfRev.png" />
     <Content Include="Resources\Trash.png" />
     <None Include="Resources\icosahedron.obj" />
     <None Include="Resources\Tetrahedron.png" />

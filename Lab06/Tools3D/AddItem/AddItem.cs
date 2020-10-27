@@ -34,7 +34,7 @@ namespace Lab06.Tools3D.AddItem
             Item.AddButton(tab.AddButton(Properties.Resources.Icosahedron, true), GenerateIcosa, context);
             Item.AddButton(tab.AddButton(Properties.Resources.Dodecahedron, true), GenerateDodeca, context);
 
-            MultiItem<Spline, Spline>.AddButton(tab.AddButton(Properties.Resources.Mouse), 
+            MultiItem<Spline, Spline>.AddButton(tab.AddButton(Properties.Resources.Spline), 
                 () => new Spline(), 
                 (total, partial) => total.Add(partial.points.First()),
                 GeneratePoint,
