@@ -97,7 +97,7 @@ namespace Lab06
             mainContainer.Panel1.Controls.Add(panel);
             ClearEvents += () => buttons.ForEach(b =>
             {
-                if (b.ButtonEnable) b.ButtonDisable(b);
+                b.ButtonEnable = false;
             });
             mainContainer.Panel2.Padding = new Padding(10);
         }
@@ -116,16 +116,16 @@ namespace Lab06
             {
                 buttons.ForEach(b =>
                 {
-                    if (b.ButtonEnable) b.ButtonDisable(b);
+                    b.ButtonEnable = false;
                 });
                 if (s.Button.HasFlag(MouseButtons.Right) && p.ButtonEnable)
-                    p.ButtonDisable(p);
+                    p.ButtonEnable = false;
                 if (s.Button.HasFlag(MouseButtons.Left))
-                    p.ButtonClick(p);
+                    p.ButtonEnable = true;
             };
 
             if (!fixedButton)
-                p.MouseUp += (o, s) => p.ButtonDisable(p);
+                p.MouseUp += (o, s) => p.ButtonEnable = false;
             panel.Controls.Add(p);
             buttons.Add(p);
             return p;
@@ -136,20 +136,32 @@ namespace Lab06
     {
         public Action<TabButton> ButtonClick = t => { };
         public Action<TabButton> ButtonDisable = t => { };
-        public bool ButtonEnable { get; set; } = false;
 
-        public TabButton()
+        private bool enabled = false;
+
+        public bool ButtonEnable
         {
-            ButtonClick += t =>
+            get => enabled;
+            set
             {
-                BackColor = Constants.textColore;
-                ButtonEnable = true;
-            };
-            ButtonDisable += t =>
-            {
-                BackColor = Color.Transparent;
-                ButtonEnable = false;
-            };
+                if (value == enabled)
+                {
+                    return;
+                }
+                if (value)
+                {
+                    BackColor = Constants.textColore;
+                    enabled = true;
+                    ButtonClick(this);
+                }
+                else
+                {
+                    BackColor = Color.Transparent;
+                    enabled = false;
+                    ButtonDisable(this);
+                }
+            }
         }
+
     }
 }
