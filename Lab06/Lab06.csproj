@@ -153,6 +153,7 @@
     <Content Include="Resources\Skeleton.png" />
     <None Include="Resources\Spline.png" />
     <None Include="Resources\SolidOfRev.png" />
+    <None Include="Resources\SplineBezier.png" />
     <Content Include="Resources\Trash.png" />
     <None Include="Resources\icosahedron.obj" />
     <None Include="Resources\Tetrahedron.png" />
