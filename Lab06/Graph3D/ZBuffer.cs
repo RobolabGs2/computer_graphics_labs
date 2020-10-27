@@ -26,7 +26,7 @@ namespace Lab06.Graph3D
         public double phongDiffuse = 1;
         public double phongSpecular = 1;
         public double phongPower = 1000;
-
+        public bool smoothing = true;
 
         public ZBuffer(Context context)
         {
@@ -107,7 +107,7 @@ namespace Lab06.Graph3D
                 Base3D.Point p1 = polyPoints[0];
                 Base3D.Point p2 = polyPoints[i + 1];
                 Base3D.Point p3 = polyPoints[i + 2];
-                if (pol.normals == null)
+                if (pol.normals == null || !smoothing)
                     DrawTriangle(p1.Y, p1.Z, p2.Y, p2.Z, p3.Y, p3.Z,
                         new Stuff { Z = interval - p1.X, Normal = prod },
                         new Stuff { Z = interval - p2.X, Normal = prod },

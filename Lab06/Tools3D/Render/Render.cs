@@ -16,6 +16,7 @@ namespace Lab06.Tools3D.Render
         TextBox diffuse;
         TextBox specular;
         TextBox power;
+        CheckBox smoothing;
         Context context;
 
         public Bitmap Image => Properties.Resources.Render;
@@ -34,7 +35,15 @@ namespace Lab06.Tools3D.Render
                 context.Redraw();
             };
 
-            var panel = new TableLayoutPanel
+            var panel = new Panel
+            {
+                Dock = DockStyle.Fill,
+                Visible = false
+            };
+
+            tab.Settings.Controls.Add(panel);
+
+            var textPanel = new TableLayoutPanel
             {
                 ColumnCount = 2,
                 RowCount = 4,
@@ -42,19 +51,28 @@ namespace Lab06.Tools3D.Render
                 ForeColor = Constants.borderColore,
                 AutoSize = true,
                 CellBorderStyle = TableLayoutPanelCellBorderStyle.Single,
-                Font = new Font("Consalas", 12),
-                Visible = false
+                Font = new Font("Consalas", 12)
             };
 
+            smoothing = new CheckBox
+            {
+                Text = "smoothing",
+                Dock = DockStyle.Top,
+                ForeColor = Constants.borderColore,
+                Font = new Font("Consalas", 12),
+                Checked = true
+            };
+            panel.Controls.Add(smoothing);
+
             ambient = new TextBox { Dock = DockStyle.Fill, Text = "10" };
-            panel.Controls.AddRange(new Control[] { new Label { Text = "Ambient(%)" }, ambient });
+            textPanel.Controls.AddRange(new Control[] { new Label { Text = "Ambient(%)" }, ambient });
             diffuse = new TextBox { Dock = DockStyle.Fill, Text = "100" };
-            panel.Controls.AddRange(new Control[] { new Label { Text = "Diffuse(%)" }, diffuse });
+            textPanel.Controls.AddRange(new Control[] { new Label { Text = "Diffuse(%)" }, diffuse });
             specular = new TextBox { Dock = DockStyle.Fill, Text = "100" };
-            panel.Controls.AddRange(new Control[] { new Label { Text = "Specular(%)" }, specular });
+            textPanel.Controls.AddRange(new Control[] { new Label { Text = "Specular(%)" }, specular });
             power = new TextBox { Dock = DockStyle.Fill, Text = "1000" };
-            panel.Controls.AddRange(new Control[] { new Label { Text = "Power" }, power });
-            tab.Settings.Controls.Add(panel);
+            textPanel.Controls.AddRange(new Control[] { new Label { Text = "Power" }, power });
+            panel.Controls.Add(textPanel);
 
             var changeRender = new Button
             {
@@ -62,11 +80,10 @@ namespace Lab06.Tools3D.Render
                 ForeColor = Constants.textColore,
                 Font = Constants.font,
                 Dock = DockStyle.Top,
-                AutoSize = true,
-                Visible = false
+                AutoSize = true
             };
 
-            tab.Settings.Controls.Add(changeRender);
+            panel.Controls.Add(changeRender);
             changeRender.Click += (s, b) => SetDrawing();
 
             var renderButton = tab.AddButton(Properties.Resources.Render, true);
@@ -74,7 +91,6 @@ namespace Lab06.Tools3D.Render
             renderButton.ButtonClick += b =>
             {
                 panel.Visible = true;
-                changeRender.Visible = true;
                 context.drawing = new ZBuffer(context);
                 SetDrawing();
             };
@@ -82,7 +98,6 @@ namespace Lab06.Tools3D.Render
             renderButton.ButtonDisable += b =>
             {
                 panel.Visible = false;
-                changeRender.Visible = false;
             };
         }
 
@@ -96,6 +111,7 @@ namespace Lab06.Tools3D.Render
                     zBuffer.phongDiffuse = double.Parse(diffuse.Text) / 100;
                     zBuffer.phongSpecular = double.Parse(specular.Text) / 100;
                     zBuffer.phongPower = double.Parse(power.Text);
+                    zBuffer.smoothing = smoothing.Checked;
                 }
             }
             catch (Exception e)
