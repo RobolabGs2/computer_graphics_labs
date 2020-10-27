@@ -10,7 +10,6 @@ namespace Lab06.Tools3D.AddItem
     {
         PartialEntity entity;
         TotalEntity totalEntity;
-        Point location;
         Context context;
         Func<TotalEntity> newTotalEntity;
         Action<TotalEntity, PartialEntity> append;
@@ -35,8 +34,6 @@ namespace Lab06.Tools3D.AddItem
         private void Next()
         {
             entity = newPartialEntity();
-            context.world.selected.Add(entity);
-            location = new Point();
         }
         private void Restart()
         {
@@ -54,7 +51,6 @@ namespace Lab06.Tools3D.AddItem
                 item.New();
                 context.KeyUp += item.Keys;
                 context.pictureBox.MouseClick += item.MouseClick;
-                context.pictureBox.MouseMove += item.MouseMove;
             };
 
             button.ButtonDisable += b =>
@@ -62,7 +58,6 @@ namespace Lab06.Tools3D.AddItem
                 item.Flush();
                 context.KeyUp -= item.Keys;
                 context.pictureBox.MouseClick -= item.MouseClick;
-                context.pictureBox.MouseMove -= item.MouseMove;
                 context.Redraw();
             };
         }
@@ -74,45 +69,31 @@ namespace Lab06.Tools3D.AddItem
                 case System.Windows.Forms.Keys.Escape:
                     Restart();
                     break;
-                case System.Windows.Forms.Keys.Enter:
-                    Flush();
-                    New();
-                    break;
             }
             context.Redraw();
         }
 
         private void Flush()
         {
-            context.world.selected.Remove(entity);
+            context.world.selected.Clear();
             context.world.selected.Add(totalEntity);
         }
 
         private void MouseClick(object sender, MouseEventArgs e)
         {
             if (e.Button != MouseButtons.Left) return;
-            append(totalEntity, entity);
-            context.world.selected.Remove(entity);
-            Next();
-            context.Redraw();
-        }
-
-        private void MouseMove(object sender, MouseEventArgs e)
-        {
-            if (e.Button != MouseButtons.None)
-                return;
             var point = context.ScreenToXY(e.X, e.Y);
             if (!point.front)
                 return;
-            entity.Apply(Matrix.Move(point.p - location));
-            location = point.p;
+            entity.Apply(Matrix.Move(point.p));
+            append(totalEntity, entity);
+            Next();
             context.Redraw();
         }
 
         private void Delete()
         {
             context.world.entities.Remove(totalEntity);
-            context.world.selected.Remove(entity);
         }
     }
 }

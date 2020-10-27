@@ -46,6 +46,7 @@ namespace Lab06.Tools3D.AddItem
         {
             if (e.Button != MouseButtons.Left)
                 return;
+            context.world.selected.Clear();
             context.world.selected.Add(entity);
             entity = func();
             location = new Point();

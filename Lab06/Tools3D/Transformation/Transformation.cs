@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
+using Point = Lab06.Base3D.Point;
 
 namespace Lab06.Tools3D.Transformation
 {
@@ -67,7 +68,7 @@ namespace Lab06.Tools3D.Transformation
                 AutoSize = true
             };
             gizmo.CurrentStateChanged += state =>
-                moveGizmoToPoint.Enabled = state != Gizmo.State.Unset && context.world.selected.Count == 1;
+                moveGizmoToPoint.Enabled = context.world.selected.Count == 1;
             moveGizmoToPoint.Click += (sender, args) =>
             {
                 gizmo.RestartDirection(context.world.selected.First().Points().First());
@@ -89,7 +90,6 @@ namespace Lab06.Tools3D.Transformation
                 for (int i = 0; i < xyzSettings.Controls.Count; i++)
                     xyzSettings.Controls[i].Width = xyzSettings.ClientSize.Width / 3 - 8;
             };
-
             var xyzInput = axes.Select(s =>
             {
                 var textBox = new TextBox {Text = "", Font = Constants.font, ForeColor = s.Item2};
@@ -163,26 +163,25 @@ namespace Lab06.Tools3D.Transformation
                         {
                             throw new Exception("Не выбрана ось");
                         }
-
-                        var spline = context.world.selected.First() as Spline;
-
                         var count = int.Parse(surfaceCountTextBox.Text);
                         if (count < 3)
                         {
                             throw new Exception("Количество должно быть не меньше трёх");
                         }
-                        var rotateAngel = 2 * Math.PI / count;
-                        var points = Enumerable.Range(0, count).SelectMany((i) =>
-                        {
-                            var angel = rotateAngel * i;
-                            return spline.Points()
-                                .Select(p => p * gizmo.RotateMatrix(
-                                        xyzCheckboxes[0].Checked ? angel : 0,
-                                        xyzCheckboxes[1].Checked ? angel : 0,
-                                        xyzCheckboxes[2].Checked ? angel : 0)
-                                    .movingMatrix);
-                        }).ToList();
+                        var angel = 2 * Math.PI / count;
+                        var spline = context.world.selected.First() as Spline;
 
+                        var rotation = gizmo.RotateMatrix(
+                                xyzCheckboxes[0].Checked ? angel : 0,
+                                xyzCheckboxes[1].Checked ? angel : 0,
+                                xyzCheckboxes[2].Checked ? angel : 0)
+                            .movingMatrix;
+                        var points = Enumerable.Range(0, count).Aggregate(new List<List<Point>>{spline.points},
+                            (list, i) =>
+                            {
+                                list.Add(list[list.Count - 1].Select(p => p * rotation).ToList());
+                                return list;
+                            }).SelectMany((i) => i).ToList();
                         var result = new Polytope {points = points};
                         var pointsCount = spline.points.Count;
                         for (var i = 1; i < pointsCount; i++)
