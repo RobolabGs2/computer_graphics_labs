@@ -49,14 +49,12 @@ namespace Lab06.Tools3D.AddItem
             button.ButtonClick += b =>
             {
                 item.New();
-                context.KeyUp += item.Keys;
                 context.pictureBox.MouseClick += item.MouseClick;
             };
 
             button.ButtonDisable += b =>
             {
                 item.Flush();
-                context.KeyUp -= item.Keys;
                 context.pictureBox.MouseClick -= item.MouseClick;
                 context.Redraw();
             };

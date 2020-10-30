@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Runtime.Remoting;
 using System.Text;
 using System.Threading.Tasks;
@@ -41,7 +42,12 @@ namespace Lab06.Base3D
 
         public static Point operator *(Point p, double v)
         {
-            return new Point { X = p.X * v, Y = p.Y * v, Z = p.Z * v};
+            return new Point { X = p.X * v, Y = p.Y * v, Z = p.Z * v };
+        }
+
+        public static Point operator *(double v, Point p)
+        {
+            return new Point { X = p.X * v, Y = p.Y * v, Z = p.Z * v };
         }
 
         public static Point operator -(Point p1, Point p2)
@@ -52,6 +58,11 @@ namespace Lab06.Base3D
         public static Point operator +(Point p1, Point p2)
         {
             return new Point { X = p1.X + p2.X, Y = p1.Y + p2.Y, Z = p1.Z + p2.Z };
+        }
+
+        public double DotProd(Point p)
+        {
+            return X * p.X + Y * p.Y + Z * p.Z;
         }
 
         /// <summary>

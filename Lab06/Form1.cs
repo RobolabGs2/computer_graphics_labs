@@ -57,8 +57,6 @@ namespace Lab06
             bool lastMiddleCluck = false;
 
             KeyPreview = true;
-            KeyUp += (sender, args) => context.KeyUp(sender, args);
-            KeyDown += (sender, args) => context.KeyDown(sender, args);
 
             context.pictureBox.MouseUp += (o, s) =>
             {

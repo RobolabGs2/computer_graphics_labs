@@ -23,16 +23,20 @@ namespace Lab06.Base3D
         public Bitmap bitmap;
 
         public double scale = 100;
-
+        public Timer timer;
         public Action<Graphics> Posteffect = g => {};
-        public KeyEventHandler KeyUp = (sender, args) => {};
-        public KeyEventHandler KeyDown = (sender, args) => { };
+        bool needDrawing = true;
 
         public Context(PictureBox pictureBox)
         {
             this.pictureBox = pictureBox;
             pictureBox.SizeChanged += (o, s) => Resize();
             bitmap = new Bitmap(pictureBox.Width, pictureBox.Height);
+            timer = new System.Windows.Forms.Timer {
+                Interval = 30,
+                Enabled = true
+            };
+            timer.Tick += (s, e) => DrawTimer();
         }
 
         public Matrix DrawingMatrix()
@@ -114,10 +118,10 @@ namespace Lab06.Base3D
                 if (!points.All(p => BeforeScreen(p.X)))
                     return false;
                 int count = 0;
-                for (int i = 0; i < points.Count; ++i)
+                for (int i = 0; i < points.Length; ++i)
                 {
                     var p1 = points[i];
-                    var p2 = points[(i + 1) % points.Count];
+                    var p2 = points[(i + 1) % points.Length];
 
                     if (!(x < Math.Max(p1.Y, p2.Y)
                           && x >= Math.Min(p1.Y, p2.Y)))
@@ -130,11 +134,22 @@ namespace Lab06.Base3D
 
         public void Redraw()
         {
+            needDrawing = true;
+        }
+
+        private void DrawTimer()
+        {
+            if (!needDrawing)
+                return;
+            timer.Enabled = false;
+
             drawing.Draw(bitmap);
             Graphics g = Graphics.FromImage(bitmap);
             Posteffect(g);
             g.Dispose();
             pictureBox.Image = bitmap;
+            needDrawing = false;
+            timer.Enabled = true;
         }
 
         public bool BeforeScreen(double t)

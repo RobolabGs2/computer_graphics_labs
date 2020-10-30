@@ -18,7 +18,7 @@ namespace Lab06.Graph3D
 
         public Skeleton(Context context, bool hideInvisible = false)
         {
-            selectedPen = new Pen(Constants.textColore, 4);
+            selectedPen = new Pen(Constants.textColore, 2);
             this.context = context;
             this.hideInvisible = hideInvisible;
         }
@@ -34,10 +34,10 @@ namespace Lab06.Graph3D
                 if (context.world.selected.Contains(e))
                     DrawEntity(e, selectedPen);
                 else
-                    DrawEntity(e, new Pen(e.Matreial.Color, 4));
+                    DrawEntity(e, new Pen(e.Matreial.Color, 2));
             }
             foreach (Entity e in context.world.control)
-                    DrawEntity(e, new Pen(e.Matreial.Color, 4));
+                    DrawEntity(e, new Pen(e.Matreial.Color, 2));
             graphics.Dispose();
         }
 
@@ -66,7 +66,7 @@ namespace Lab06.Graph3D
 
         void DrawPolygon(Base3D.Polygon pol, List<Base3D.Point> points, Pen pen)
         {
-            if (pol.indexes.Count < 3)
+            if (pol.indexes.Length < 3)
                 return;
 
             var polyPoints = pol.Points(points);

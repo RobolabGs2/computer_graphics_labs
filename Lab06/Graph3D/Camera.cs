@@ -27,7 +27,6 @@ namespace Lab06.Graph3D
         public Matrix Rotation()
         {
             return
-                Matrix.Move(-location) *
                 Matrix.ZRotation(-leftAngle) *
                 Matrix.YRotation(-downAngle);
         }

@@ -171,6 +171,28 @@ namespace Lab06.Graph3D
             ColorToPixel(Data.PixelFormat, pixel, color);
         }
 
+        public void SetPixel(int x, int y, byte R, byte G, byte B)
+        {
+            var pixel = GetRawPixel(x, y);
+            switch (Data.PixelFormat)
+            {
+                case PixelFormat.Format24bppRgb:
+                case PixelFormat.Format32bppRgb:
+                    pixel[ColorChannel.R] = R;
+                    pixel[ColorChannel.G] = G;
+                    pixel[ColorChannel.B] = B;
+                    break;
+                case PixelFormat.Format32bppArgb:
+                    pixel[ColorChannel.R] = R;
+                    pixel[ColorChannel.G] = G;
+                    pixel[ColorChannel.B] = B;
+                    pixel[ColorChannel.A] = 0;
+                    break;
+                default:
+                    throw new NotSupportedException($"Unsupported pixel format:{Data.PixelFormat}");
+            }
+        }
+
         public static void ColorToPixel(PixelFormat format, byte* pixel, Color color)
         {
             switch (format)

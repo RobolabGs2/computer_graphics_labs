@@ -79,7 +79,7 @@ namespace Lab06.Tools3D.AddItem
                             foreach(int v in p.indexes)
                                 result += $" {v + startPoint}";
                         else
-                            for(int i = 0; i < p.indexes.Count; ++i)
+                            for(int i = 0; i < p.indexes.Length; ++i)
                                 result += $" {p.indexes[i] + startPoint}//{p.normals[i] + startNorm}";
                         yield return result;
                     }

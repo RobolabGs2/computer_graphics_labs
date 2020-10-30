@@ -187,13 +187,11 @@ namespace Lab06.Tools3D.Transformation
                         for (var i = 1; i < pointsCount; i++)
                         {
                             result.polygons.AddRange(Enumerable.Range(0, count).Select(j => new Polygon
-                            {
-                                indexes =
-                                {
+                            (new int[]{
                                     j * pointsCount + i, ((j + 1) % count) * pointsCount + i,
                                     ((j + 1) % count) * pointsCount + i - 1, j * pointsCount + i - 1
                                 }
-                            }));
+                            )));
                         }
                         context.world.entities.Add(result);
                         context.world.selected.Clear();
