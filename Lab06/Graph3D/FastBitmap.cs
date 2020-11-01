@@ -23,8 +23,8 @@ namespace Lab06.Graph3D
         // Bytes per pixel
         public readonly int Bpp;
         public readonly byte* Start;
-        public int Width => _bitmap.Width;
-        public int Height => _bitmap.Height;
+        public int Width;
+        public int Height;
 
         public FastBitmap(Bitmap bitmap, ImageLockMode lockMode, PixelFormat pixelFormat)
         {
@@ -32,6 +32,8 @@ namespace Lab06.Graph3D
             Data = bitmap.LockBits(new Rectangle(new Point(0, 0), bitmap.Size), lockMode, pixelFormat);
             Bpp = Data.Stride / Data.Width;
             Start = (byte*) Data.Scan0;
+            Width = _bitmap.Width;
+            Height = _bitmap.Height;
         }
 
         public unsafe struct MyColor

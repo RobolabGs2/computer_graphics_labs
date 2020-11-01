@@ -11,6 +11,7 @@ namespace Lab06.Base3D
     {
         public int[] indexes;
         public int[] normals;
+        public int[] texture;
         private Point[] vetexBuffer;
 
         public Polygon(IEnumerable<int> indexes)
@@ -19,10 +20,17 @@ namespace Lab06.Base3D
             vetexBuffer = new Point[this.indexes.Length];
         }
 
+        public Polygon(IEnumerable<int> indexes, IEnumerable<int> texture, IEnumerable<int> normals)
+        {
+            this.indexes = indexes.ToArray();
+            this.normals = normals?.ToArray();
+            this.texture = texture?.ToArray();
+            vetexBuffer = new Point[this.indexes.Length];
+        }
         public Polygon(IEnumerable<int> indexes, IEnumerable<int> normals)
         {
             this.indexes = indexes.ToArray();
-            this.normals = normals.ToArray();
+            this.normals = normals?.ToArray();
             vetexBuffer = new Point[this.indexes.Length];
         }
 

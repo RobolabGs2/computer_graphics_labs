@@ -67,10 +67,10 @@ namespace Lab06.Graph3D
             fastBitmap.Dispose();
         }
 
-        void DrawEntity(Entity entity, BaseMaterial material = null)
+        void DrawEntity(Entity entity)
         {
             if (entity is Base3D.Polytope pol)
-                DrawPolytope(pol, material == null ? pol.Matreial : material);
+                DrawPolytope(pol);
             if (entity is Base3D.Group group)
                 DrawGroup(group);
         }
@@ -78,10 +78,10 @@ namespace Lab06.Graph3D
         void DrawGroup(Base3D.Group p)
         {
             foreach (Entity e in p.entities)
-                DrawEntity(e, e.Matreial);
+                DrawEntity(e);
         }
 
-        void DrawPolytope(Base3D.Polytope p, BaseMaterial material)
+        void DrawPolytope(Base3D.Polytope p)
         {
             var points = new List<Base3D.Point>(p.points.Count);
             for (int i = 0; i < p.points.Count; ++i)
@@ -91,10 +91,11 @@ namespace Lab06.Graph3D
             for (int i = 0; i < p.normals.Count; ++i)
                 normals.Add(p.normals[i] * rotationCamera);
 
-            Parallel.ForEach(p.polygons, polygon => DrawPolygon(polygon, points, normals, material.Color));
+            Parallel.ForEach(p.polygons, polygon => DrawPolygon(polygon, points, normals, p.textures, p.Matreial));
         }
 
-        void DrawPolygon(Base3D.Polygon pol, List<Base3D.Point> points, List<Base3D.Point> normals, Color color)
+        void DrawPolygon(Base3D.Polygon pol, List<Base3D.Point> points, 
+            List<Base3D.Point> normals, List<(double X, double Y)> textures, BaseMaterial material)
         {
             if (pol.indexes.Length < 3)
                 return;
@@ -125,10 +126,16 @@ namespace Lab06.Graph3D
                 {
                     Base3D.Point p2 = polyPoints[i + 1];
                     Base3D.Point p3 = polyPoints[i + 2];
-                    CheckedDrawTriangle(p1.Y, p1.Z, p2.Y, p2.Z, p3.Y, p3.Z,
-                        new Stuff { Z = interval - p1.X, Normal = prod },
-                        new Stuff { Z = interval - p2.X, Normal = prod },
-                        new Stuff { Z = interval - p3.X, Normal = prod }, color);
+                    if (pol.texture == null)
+                        CheckedDrawTriangle(p1.Y, p1.Z, p2.Y, p2.Z, p3.Y, p3.Z,
+                            new Stuff { Z = interval - p1.X, Normal = prod },
+                            new Stuff { Z = interval - p2.X, Normal = prod },
+                            new Stuff { Z = interval - p3.X, Normal = prod }, material);
+                    else
+                        CheckedDrawTriangle(p1.Y, p1.Z, p2.Y, p2.Z, p3.Y, p3.Z,
+                            new Stuff { Z = interval - p1.X, Normal = prod, texture = textures[pol.texture[0]] },
+                            new Stuff { Z = interval - p2.X, Normal = prod, texture = textures[pol.texture[i + 1]] },
+                            new Stuff { Z = interval - p3.X, Normal = prod, texture = textures[pol.texture[i + 2]] }, material);
                 } 
             }else
             {
@@ -145,12 +152,19 @@ namespace Lab06.Graph3D
 
                 int i = 0;
                 int count = polyPoints.Length - 2;
-                while(true)
+                while (true)
                 {
-                    CheckedDrawTriangle(p1.Y, p1.Z, p2.Y, p2.Z, p3.Y, p3.Z,
-                        new Stuff { Z = interval - p1.X, Normal = norm1 },
-                        new Stuff { Z = interval - p2.X, Normal = norm2 },
-                        new Stuff { Z = interval - p3.X, Normal = norm3 }, color);
+                    if (pol.texture == null)
+                        CheckedDrawTriangle(p1.Y, p1.Z, p2.Y, p2.Z, p3.Y, p3.Z,
+                            new Stuff { Z = interval - p1.X, Normal = norm1 },
+                            new Stuff { Z = interval - p2.X, Normal = norm2 },
+                            new Stuff { Z = interval - p3.X, Normal = norm3 }, material);
+                    else
+                        CheckedDrawTriangle(p1.Y, p1.Z, p2.Y, p2.Z, p3.Y, p3.Z,
+                            new Stuff { Z = interval - p1.X, Normal = norm1, texture = textures[pol.texture[0]] },
+                            new Stuff { Z = interval - p2.X, Normal = norm2, texture = textures[pol.texture[i + 1]] },
+                            new Stuff { Z = interval - p3.X, Normal = norm3, texture = textures[pol.texture[i + 2]] }, material);
+
                     ++i;
                     if (i >= count)
                         break;
@@ -167,7 +181,7 @@ namespace Lab06.Graph3D
             return (byte)Math.Min((int)(pow + C * k), 255);
         }
 
-        void TrySet(int x, int y, Stuff s, Color color)
+        void TrySet(int x, int y, Stuff s, BaseMaterial material)
         {
             if (x < 0 || y < 0 || x >= width || y >= height)
                 return;
@@ -184,6 +198,8 @@ namespace Lab06.Graph3D
             double pow = Math.Pow(cos, phongPower) * phongSpecular * 255;
             double k = (phongAmbient + phongDiffuse * cos);
 
+            Color color = material[s.texture];
+
             fastBitmap.SetPixel(x, y,
                 colorScheme(pow, k, color.R),
                 colorScheme(pow, k, color.G),
@@ -191,7 +207,7 @@ namespace Lab06.Graph3D
         }
 
         void CheckedDrawTriangle(double x1, double y1, double x2, double y2, double x3, double y3,
-            Stuff s1, Stuff s2, Stuff s3, Color color)
+            Stuff s1, Stuff s2, Stuff s3, BaseMaterial material)
         {
             if ((x1 < 0 || x1 >= width || x2 < 0 || x2 >= width || x3 < 0 || x3 >= width ||
                 y1 < 0 || y1 >= height || y2 < 0 || y2 >= height || y3 < 0 || y3 >= height) &&
@@ -199,11 +215,11 @@ namespace Lab06.Graph3D
                 y1 < 0 && y2 < 0 && y3 < 0 || y1 >= height && y2 >= height && y3 >= height))
                 return;
 
-            DrawIntTriangle((int)x1, (int)y1, (int)x2, (int)y2, (int)x3, (int)y3, s1, s2, s3, color);
+            DrawIntTriangle((int)x1, (int)y1, (int)x2, (int)y2, (int)x3, (int)y3, s1, s2, s3, material);
         }
 
         void DrawIntTriangle(int x1, int y1, int x2, int y2, int x3, int y3, 
-            Stuff s1, Stuff s2, Stuff s3, Color color)
+            Stuff s1, Stuff s2, Stuff s3, BaseMaterial material)
         {
             if (y2 < y1)
                 (x1, y1, x2, y2, s1, s2) = (x2, y2, x1, y1, s2, s1);
@@ -268,7 +284,7 @@ namespace Lab06.Graph3D
                 Stuff deltaStf = (rightStf - leftStf) / (rightX - leftX);
                 for (int x = leftX; x < rightX; ++x)
                 {
-                    TrySet(x, y, stf, color);
+                    TrySet(x, y, stf, material);
                     stf += deltaStf;
                 }
 
@@ -309,7 +325,7 @@ namespace Lab06.Graph3D
                 Stuff deltaStf = (rightStf - leftStf) / (rightX - leftX);
                 for (int x = leftX; x < rightX; ++x)
                 {
-                    TrySet(x, y, stf, color);
+                    TrySet(x, y, stf, material);
                     stf += deltaStf;
                 }
 
@@ -332,6 +348,7 @@ namespace Lab06.Graph3D
 
         struct Stuff
         {
+            public (double X, double Y) texture;
             public Base3D.Point Normal;
             public double Z;
 
@@ -340,7 +357,11 @@ namespace Lab06.Graph3D
                 return new Stuff
                 {
                     Normal = s1.Normal + s2.Normal,
-                    Z = s1.Z + s2.Z
+                    Z = s1.Z + s2.Z,
+                    texture =  {
+                        X = s1.texture.X + s2.texture.X,
+                        Y = s1.texture.Y + s2.texture.Y,
+                    }
                 };
             }
             
@@ -349,7 +370,11 @@ namespace Lab06.Graph3D
                 return new Stuff
                 {
                     Normal = s1.Normal - s2.Normal,
-                    Z = s1.Z - s2.Z
+                    Z = s1.Z - s2.Z,
+                    texture = {
+                        X = s1.texture.X - s2.texture.X,
+                        Y = s1.texture.Y - s2.texture.Y,
+                    }
                 };
             }
 
@@ -358,7 +383,11 @@ namespace Lab06.Graph3D
                 return new Stuff
                 {
                     Normal = s.Normal * c,
-                    Z = s.Z * c
+                    Z = s.Z * c,
+                    texture = {
+                        X = s.texture.X * c,
+                        Y = s.texture.Y * c,
+                    }
                 };
             }
             public static Stuff operator *(double c, Stuff s)
@@ -371,7 +400,11 @@ namespace Lab06.Graph3D
                 return new Stuff
                 {
                     Normal = s.Normal / c,
-                    Z = s.Z / c
+                    Z = s.Z / c,
+                    texture = {
+                        X = s.texture.X / c,
+                        Y = s.texture.Y / c,
+                    }
                 };
             }
 

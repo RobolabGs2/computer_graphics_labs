@@ -12,6 +12,6 @@ namespace Lab06.Materials3D
     {
         public virtual Color Color { get; } = Constants.borderColore;
 
-        public virtual Color this[int x, int y] => Color;
+        public virtual Color this[(double X, double Y) p] => Color;
     }
 }
