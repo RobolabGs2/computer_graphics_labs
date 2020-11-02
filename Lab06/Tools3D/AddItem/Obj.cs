@@ -32,8 +32,8 @@ namespace Lab06.Tools3D.AddItem
                     current.Add(new Base3D.Point
                     {
                         X = double.Parse(lines[1]),
-                        Y = double.Parse(lines[2]),
-                        Z = double.Parse(lines[3])
+                        Y = -double.Parse(lines[3]),
+                        Z = double.Parse(lines[2])
                     });
                 }
                 else
@@ -42,8 +42,8 @@ namespace Lab06.Tools3D.AddItem
                     current.AddNormal(new Base3D.Point
                     {
                         X = double.Parse(lines[1]),
-                        Y = double.Parse(lines[2]),
-                        Z = double.Parse(lines[3])
+                        Y = -double.Parse(lines[3]),
+                        Z = double.Parse(lines[2])
                     });
                 }
                 else
@@ -71,7 +71,7 @@ namespace Lab06.Tools3D.AddItem
                 {
                     try
                     {
-                        var new_mtl = LoadMtl(Regex.Replace(s, @"mtllib\s*(.*\S)\s*$", "$1"));
+                        var new_mtl = LoadMtl(Regex.Replace(s, @"\s*mtllib\s*(.*\S)\s*$", "$1"));
                         mtl = new_mtl;
                     }
                     catch (Exception e)
@@ -83,7 +83,7 @@ namespace Lab06.Tools3D.AddItem
                 else
                 if (flag == "usemtl")
                 {
-                    string matName = Regex.Replace(s, @"usemtl\s*(.*\S)\s*$", "$1");
+                    string matName = Regex.Replace(s, @"\s*usemtl\s*(.*\S)\s*$", "$1");
                     if(mtl.ContainsKey(matName))
                         current.Matreial = mtl[matName];
                 }
@@ -107,13 +107,13 @@ namespace Lab06.Tools3D.AddItem
                 if(flag == "newmtl")
                 {
                     materials.Add(currentName, currentMat);
-                    currentName = Regex.Replace(s, @"newmtl\s*(.*\S)\s*$", "$1");
+                    currentName = Regex.Replace(s, @"\s*newmtl\s*(.*\S)\s*$", "$1");
                     currentMat = new SolidMaterial();
                 }
                 else
                 if (flag == "map_Kd")
                 {
-                    var imageName = Regex.Replace(s, @"map_Kd\s*(.*\S)\s*$", "$1");
+                    var imageName = Regex.Replace(s, @"\s*map_Kd\s*(.*\S)\s*$", "$1");
                     var img = new CSharpImageLibrary.ImageEngineImage(imageName);   
                     currentMat = new TextureMaterial(img);
                 }

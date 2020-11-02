@@ -19,19 +19,9 @@ namespace Lab06.Graph3D
         Context context;
         Matrix cameraMatric;
         Matrix rotationCamera;
-        FastBitmap fastBitmap;
-        double[,] buffer;
         double interval;
-        int width;
-        int height;
 
-        public double phongAmbient = 0.1;
-        public double phongDiffuse = 1;
-        public double phongSpecular = 1;
-        public double phongPower = 1000;
-        public bool smoothing = true;
-
-        Base3D.Point light;
+        public PixelDrawing pixelDrawing;
 
         public ZBuffer(Context context)
         {
@@ -43,28 +33,28 @@ namespace Lab06.Graph3D
             var graphics = Graphics.FromImage(bitmap);
             graphics.Clear(Constants.backColore);
             graphics.Dispose();
-            if (width != bitmap.Width)
+            if (pixelDrawing.width != bitmap.Width)
             {
-                width = bitmap.Width;
-                height = bitmap.Height;
+                pixelDrawing.width = bitmap.Width;
+                pixelDrawing.height = bitmap.Height;
 
-                buffer = new double[bitmap.Width, bitmap.Height];
+                pixelDrawing.buffer = new double[bitmap.Width, bitmap.Height];
             }else
             {
-                for (int i = 0; i < width; ++i)
-                    for (int j = 0; j < height; ++j)
-                        buffer[i, j] = 0;
+                for (int i = 0; i < pixelDrawing.width; ++i)
+                    for (int j = 0; j < pixelDrawing.height; ++j)
+                        pixelDrawing.buffer[i, j] = 0;
             }
 
-            fastBitmap = new FastBitmap(bitmap, System.Drawing.Imaging.ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+            pixelDrawing.fastBitmap = new FastBitmap(bitmap, System.Drawing.Imaging.ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
             cameraMatric = context.DrawingMatrix();
             rotationCamera = context.camera.Rotation() * Matrix.Scale(new Base3D.Point { X = 1, Y = -1, Z = -1 });
             interval = context.camera.interval * context.scale;
-            light = new Base3D.Point { X = 0.8, Z = -0.6 } * rotationCamera;
+            pixelDrawing.light = new Base3D.Point { X = 0.8, Z = -0.6 } * rotationCamera;
 
             foreach (Entity e in context.world.entities)
                 DrawEntity(e);
-            fastBitmap.Dispose();
+            pixelDrawing.fastBitmap.Dispose();
         }
 
         void DrawEntity(Entity entity)
@@ -105,7 +95,7 @@ namespace Lab06.Graph3D
                 if (!context.BeforeScreen(polyPoints[i].X))
                     return;
 
-            if (pol.normals == null || !smoothing)
+            if (pol.normals == null || !pixelDrawing.smoothing)
             {
                 Base3D.Point p1 = polyPoints[0];
                 var v1 = polyPoints[1] - p1;
@@ -176,43 +166,13 @@ namespace Lab06.Graph3D
             }
         }
 
-        byte colorScheme(double pow, double k, int C)
-        {
-            return (byte)Math.Min((int)(pow + C * k), 255);
-        }
-
-        void TrySet(int x, int y, Stuff s, BaseMaterial material)
-        {
-            if (x < 0 || y < 0 || x >= width || y >= height)
-                return;
-            if (s.Z <= buffer[x, y])
-                return;
-            buffer[x, y] = s.Z;
-
-            var norm = s.Normal.Normal();
-            double cos = norm.DotProd(light);
-            var flip_light = 2 * cos * norm.X - light.X;
-           
-            cos = Math.Max(-flip_light , 0);
-
-            double pow = Math.Pow(cos, phongPower) * phongSpecular * 255;
-            double k = (phongAmbient + phongDiffuse * cos);
-
-            Color color = material[s.texture];
-
-            fastBitmap.SetPixel(x, y,
-                colorScheme(pow, k, color.R),
-                colorScheme(pow, k, color.G),
-                colorScheme(pow, k, color.B));
-        }
-
         void CheckedDrawTriangle(double x1, double y1, double x2, double y2, double x3, double y3,
             Stuff s1, Stuff s2, Stuff s3, BaseMaterial material)
         {
-            if ((x1 < 0 || x1 >= width || x2 < 0 || x2 >= width || x3 < 0 || x3 >= width ||
-                y1 < 0 || y1 >= height || y2 < 0 || y2 >= height || y3 < 0 || y3 >= height) &&
-                (x1 < 0 && x2 < 0 && x3 < 0 || x1 >= width && x2 >= width && x3 >= width ||
-                y1 < 0 && y2 < 0 && y3 < 0 || y1 >= height && y2 >= height && y3 >= height))
+            if ((x1 < 0 || x1 >= pixelDrawing.width || x2 < 0 || x2 >= pixelDrawing.width || x3 < 0 || x3 >= pixelDrawing.width ||
+                y1 < 0 || y1 >= pixelDrawing.height || y2 < 0 || y2 >= pixelDrawing.height || y3 < 0 || y3 >= pixelDrawing.height) &&
+                (x1 < 0 && x2 < 0 && x3 < 0 || x1 >= pixelDrawing.width && x2 >= pixelDrawing.width && x3 >= pixelDrawing.width ||
+                y1 < 0 && y2 < 0 && y3 < 0 || y1 >= pixelDrawing.height && y2 >= pixelDrawing.height && y3 >= pixelDrawing.height))
                 return;
 
             DrawIntTriangle((int)x1, (int)y1, (int)x2, (int)y2, (int)x3, (int)y3, s1, s2, s3, material);
@@ -284,7 +244,7 @@ namespace Lab06.Graph3D
                 Stuff deltaStf = (rightStf - leftStf) / (rightX - leftX);
                 for (int x = leftX; x < rightX; ++x)
                 {
-                    TrySet(x, y, stf, material);
+                    pixelDrawing.TrySet(x, y, stf, material);
                     stf += deltaStf;
                 }
 
@@ -325,7 +285,7 @@ namespace Lab06.Graph3D
                 Stuff deltaStf = (rightStf - leftStf) / (rightX - leftX);
                 for (int x = leftX; x < rightX; ++x)
                 {
-                    TrySet(x, y, stf, material);
+                    pixelDrawing.TrySet(x, y, stf, material);
                     stf += deltaStf;
                 }
 
@@ -346,7 +306,254 @@ namespace Lab06.Graph3D
             }
         }
 
-        struct Stuff
+        abstract public class PixelDrawing
+        {
+            public FastBitmap fastBitmap;
+            public double[,] buffer;
+            public int width;
+            public int height;
+            public bool smoothing = true;
+            public Base3D.Point light;
+
+            public abstract void TrySet(int x, int y, Stuff s, BaseMaterial material);
+        }
+
+        public class PhongDrawing : PixelDrawing
+        {
+            public double ambient = 0.1;
+            public double diffuse = 1;
+            public double specular = 1;
+            public double power = 1000;
+
+            byte colorScheme(double pow, double k, int C)
+            {
+                return (byte)Math.Min((int)(pow + C * k), 255);
+            }
+
+            public override void TrySet(int x, int y, Stuff s, BaseMaterial material)
+            {
+                if (x < 0 || y < 0 || x >= width || y >= height)
+                    return;
+                if (s.Z <= buffer[x, y])
+                    return;
+                buffer[x, y] = s.Z;
+
+                var norm = s.Normal.Normal();
+                double cos = norm.DotProd(light);
+                var flip_light = 2 * cos * norm.X - light.X;
+
+                cos = Math.Max(-flip_light, 0);
+
+                double pow = Math.Pow(cos, power) * specular * 255;
+                double k = (ambient + diffuse * cos);
+
+                Color color = material[s.texture];
+
+                fastBitmap.SetPixel(x, y,
+                    colorScheme(pow, k, color.R),
+                    colorScheme(pow, k, color.G),
+                    colorScheme(pow, k, color.B));
+            }
+        }
+
+        public class BlinnDrawing : PixelDrawing
+        {
+            public double ambient = 0.1;
+            public double diffuse = 1;
+            public double specular = 1;
+            public double power = 1000;
+
+            byte colorScheme(double pow, double k, int C)
+            {
+                return (byte)Math.Min((int)(pow + C * k), 255);
+            }
+
+            public override void TrySet(int x, int y, Stuff s, BaseMaterial material)
+            {
+                if (x < 0 || y < 0 || x >= width || y >= height)
+                    return;
+                if (s.Z <= buffer[x, y])
+                    return;
+                buffer[x, y] = s.Z;
+
+                var u = new Base3D.Point { X = -1 };
+                var norm = s.Normal.Normal();
+                double cos = norm.DotProd(light);
+
+                var flip_light = 2 * cos * norm.X - light.X;
+
+                var h = (light + u).Normal();
+                var I = h.DotProd(norm);
+
+                cos = Math.Max(-flip_light, 0);
+
+                double pow = Math.Pow(I, power) * specular * 255;
+                double k = (ambient + diffuse * cos);
+
+                Color color = material[s.texture];
+
+                fastBitmap.SetPixel(x, y,
+                    colorScheme(pow, k, color.R),
+                    colorScheme(pow, k, color.G),
+                    colorScheme(pow, k, color.B));
+            }
+        }
+
+        public class WardDrawing : PixelDrawing
+        {
+            public double ambient = 0.1;
+            public double diffuse = 1;
+            public double specular = 1;
+            public double power = 1000;
+
+            byte colorScheme(double pow, double k, int C)
+            {
+                return (byte)Math.Min((int)(pow + C * k), 255);
+            }
+
+            public override void TrySet(int x, int y, Stuff s, BaseMaterial material)
+            {
+                if (x < 0 || y < 0 || x >= width || y >= height)
+                    return;
+                if (s.Z <= buffer[x, y])
+                    return;
+                buffer[x, y] = s.Z;
+
+                var u = new Base3D.Point { X = -1 };
+                var norm = s.Normal.Normal();
+                double cos = norm.DotProd(light);
+
+                var flip_light = 2 * cos * norm.X - light.X;
+
+                var h = (light + u).Normal();
+                var hh = h.DotProd(norm);
+                var hh2 = hh * hh;
+                var I = Math.Exp(-1 * (1 - hh2) / hh2);
+
+                cos = Math.Max(-flip_light, 0);
+
+                double pow = Math.Pow(I, power) * specular * 255;
+                double k = (ambient + diffuse * cos);
+
+                Color color = material[s.texture];
+
+                fastBitmap.SetPixel(x, y,
+                    colorScheme(pow, k, color.R),
+                    colorScheme(pow, k, color.G),
+                    colorScheme(pow, k, color.B));
+            }
+        }
+
+        public class OrenNayarDrawing: PixelDrawing
+        {
+            public double ambient { set
+                {
+                    double sigme2 = value;
+                    a = 1 - 0.5 * sigme2 / (sigme2 + 0.33);
+                    b = 0.45 * sigme2 / (sigme2 + 0.09);
+
+                } }
+            public double diffuse = 1;
+            public double specular = 1;
+            public double power = 1000;
+
+            double a;
+            double b;
+
+            byte colorScheme(double pow, double k, int C)
+            {
+                return (byte)Math.Min((int)(pow + C * k), 255);
+            }
+
+            public override void TrySet(int x, int y, Stuff s, BaseMaterial material)
+            {
+                if (x < 0 || y < 0 || x >= width || y >= height)
+                    return;
+                if (s.Z <= buffer[x, y])
+                    return;
+                buffer[x, y] = s.Z;
+
+                var v = new Base3D.Point { X = -1 };
+                var norm = s.Normal.Normal();
+                double nl = norm.DotProd(light);
+                double nv = norm.DotProd(v);
+                var lProj = (light - norm * nl).Normal();
+                var vProj = (v - norm * nv).Normal();
+                double cx = Math.Max(lProj.DotProd(vProj), 0);
+
+                double cosAlpha = nl > nv ? nl : nv;
+                double cosBeta = nl > nv ? nv : nl;
+                double dx = Math.Sqrt((1.0 - cosAlpha * cosAlpha) * (1.0 - cosBeta * cosBeta)) / cosBeta;
+
+                double k = Math.Max(0, nl) * (a + b * cx * dx);
+
+                Color color = material[s.texture];
+
+                fastBitmap.SetPixel(x, y,
+                    colorScheme(0, k, color.R),
+                    colorScheme(0, k, color.G),
+                    colorScheme(0, k, color.B));
+            }
+        }
+        public class CookTorranceDrawing : PixelDrawing
+        {
+            public double ambient = 0.1;
+            public double diffuse = 1;
+            public double specular = 1;
+            public double power = 1000;
+
+            byte colorScheme(double pow, double k, int C)
+            {
+                return (byte)Math.Min((int)(pow + C * k), 255);
+            }
+
+            double fresnel(double ca)
+            {
+                return (diffuse + (1 - diffuse) * Math.Pow(1 - ca, 5)) / ca;
+            }
+            double mix(double x, double y, double a)
+            {
+                return x * (1 - a) + y * a;
+            }
+
+            public override void TrySet(int ix, int iy, Stuff s, BaseMaterial material)
+            {
+                if (ix < 0 || iy < 0 || ix >= width || iy >= height)
+                    return;
+                if (s.Z <= buffer[ix, iy])
+                    return;
+                buffer[ix, iy] = s.Z;
+
+                var u = new Base3D.Point { X = -1 };
+                var norm = s.Normal.Normal();
+                var h = (light + u).Normal();
+
+                double nh = norm.DotProd(h);
+                double nv = norm.DotProd(u);
+                double nl = norm.DotProd(light);
+                double r2 = specular * specular;
+                double nh2 = nh * nh;
+                double ex = -(1.0 - nh2) / (nh2 * r2);
+                double d = Math.Exp(ex) / (r2 * nh2 * nh2);
+
+                double f = mix(Math.Pow(1.0 - nv, 5.0), 1, diffuse);
+                double x = 2.0 * nh / u.DotProd(h);
+                double g = Math.Min(1.0, Math.Min(x * nl, x * nv));
+                double ct = d * f * g / nv;
+
+                double k = Math.Max(0.0, nl);
+                double pow = Math.Max(0.0, ct);
+
+                Color color = material[s.texture];
+
+                fastBitmap.SetPixel(ix, iy,
+                    colorScheme(pow, k, color.R),
+                    colorScheme(pow, k, color.G),
+                    colorScheme(pow, k, color.B));
+            }
+        }
+
+        public struct Stuff
         {
             public (double X, double Y) texture;
             public Base3D.Point Normal;

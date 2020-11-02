@@ -74,44 +74,195 @@ namespace Lab06.Tools3D.Render
             textPanel.Controls.AddRange(new Control[] { new Label { Text = "Power" }, power });
             panel.Controls.Add(textPanel);
 
-            var changeRender = new Button
-            {
-                Text = "Apply",
-                ForeColor = Constants.textColore,
-                Font = Constants.font,
-                Dock = DockStyle.Top,
-                AutoSize = true
-            };
+            //var changeRender = new Button
+            //{
+            //    Text = "Apply",
+            //    ForeColor = Constants.textColore,
+            //    Font = Constants.font,
+            //    Dock = DockStyle.Top,
+            //    AutoSize = true
+            //};
 
-            panel.Controls.Add(changeRender);
-            changeRender.Click += (s, b) => SetDrawing();
+            //panel.Controls.Add(changeRender);
+            //changeRender.Click += (s, b) => SetBlinnDrawing();
 
-            var renderButton = tab.AddButton(Properties.Resources.Render, true);
+            var phongButton = tab.AddButton(Properties.Resources.Render, true);
 
-            renderButton.ButtonClick += b =>
+            phongButton.ButtonClick += b =>
             {
                 panel.Visible = true;
                 context.drawing = new ZBuffer(context);
-                SetDrawing();
+                SetPhongDrawing();
             };
 
-            renderButton.ButtonDisable += b =>
+            phongButton.ButtonDisable += b =>
+            {
+                panel.Visible = false;
+            };
+
+            var blinnButton = tab.AddButton(Properties.Resources.Render, true);
+
+            blinnButton.ButtonClick += b =>
+            {
+                panel.Visible = true;
+                context.drawing = new ZBuffer(context);
+                SetBlinnDrawing();
+            };
+
+            blinnButton.ButtonDisable += b =>
+            {
+                panel.Visible = false;
+            };
+
+            var wardButton = tab.AddButton(Properties.Resources.Render, true);
+
+            wardButton.ButtonClick += b =>
+            {
+                panel.Visible = true;
+                context.drawing = new ZBuffer(context);
+                SetWardDrawing();
+            };
+
+            wardButton.ButtonDisable += b =>
+            {
+                panel.Visible = false;
+            };
+
+            var orenNayarButton = tab.AddButton(Properties.Resources.Render, true);
+
+            orenNayarButton.ButtonClick += b =>
+            {
+                panel.Visible = true;
+                context.drawing = new ZBuffer(context);
+                SetOrenNayarDrawing();
+            };
+
+            orenNayarButton.ButtonDisable += b =>
+            {
+                panel.Visible = false;
+            };
+
+            var cookTorranceButton = tab.AddButton(Properties.Resources.Render, true);
+
+            cookTorranceButton.ButtonClick += b =>
+            {
+                panel.Visible = true;
+                context.drawing = new ZBuffer(context);
+                SetCookTorranceDrawing();
+            };
+
+            cookTorranceButton.ButtonDisable += b =>
             {
                 panel.Visible = false;
             };
         }
 
-        void SetDrawing()
+        void SetPhongDrawing()
         {
             try
             {
                 if (context.drawing is ZBuffer zBuffer)
                 {
-                    zBuffer.phongAmbient = double.Parse(ambient.Text) / 100;
-                    zBuffer.phongDiffuse = double.Parse(diffuse.Text) / 100;
-                    zBuffer.phongSpecular = double.Parse(specular.Text) / 100;
-                    zBuffer.phongPower = double.Parse(power.Text);
-                    zBuffer.smoothing = smoothing.Checked;
+                    zBuffer.pixelDrawing = new ZBuffer.PhongDrawing
+                    {
+                        ambient = double.Parse(ambient.Text) / 100,
+                        diffuse = double.Parse(diffuse.Text) / 100,
+                        specular = double.Parse(specular.Text) / 100,
+                        power = double.Parse(power.Text),
+                        smoothing = smoothing.Checked
+                    };
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($"Ошибка: \"{e.Message}\"", "Окошко-всплывашка", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+            }
+            context.Redraw();
+        }
+        void SetBlinnDrawing()
+        {
+            try
+            {
+                if (context.drawing is ZBuffer zBuffer)
+                {
+                    zBuffer.pixelDrawing = new ZBuffer.BlinnDrawing
+                    {
+                        ambient = double.Parse(ambient.Text) / 100,
+                        diffuse = double.Parse(diffuse.Text) / 100,
+                        specular = double.Parse(specular.Text) / 100,
+                        power = double.Parse(power.Text),
+                        smoothing = smoothing.Checked
+                    };
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($"Ошибка: \"{e.Message}\"", "Окошко-всплывашка", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+            }
+            context.Redraw();
+        }
+        void SetWardDrawing()
+        {
+            try
+            {
+                if (context.drawing is ZBuffer zBuffer)
+                {
+                    zBuffer.pixelDrawing = new ZBuffer.WardDrawing
+                    {
+                        ambient = double.Parse(ambient.Text) / 100,
+                        diffuse = double.Parse(diffuse.Text) / 100,
+                        specular = double.Parse(specular.Text) / 100,
+                        power = double.Parse(power.Text),
+                        smoothing = smoothing.Checked
+                    };
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($"Ошибка: \"{e.Message}\"", "Окошко-всплывашка", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+            }
+            context.Redraw();
+        }
+        void SetOrenNayarDrawing()
+        {
+            try
+            {
+                if (context.drawing is ZBuffer zBuffer)
+                {
+                    zBuffer.pixelDrawing = new ZBuffer.OrenNayarDrawing
+                    {
+                        ambient = double.Parse(ambient.Text) / 100,
+                        diffuse = double.Parse(diffuse.Text) / 100,
+                        specular = double.Parse(specular.Text) / 100,
+                        power = double.Parse(power.Text),
+                        smoothing = smoothing.Checked
+                    };
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($"Ошибка: \"{e.Message}\"", "Окошко-всплывашка", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+            }
+            context.Redraw();
+        }
+        void SetCookTorranceDrawing()
+        {
+            try
+            {
+                if (context.drawing is ZBuffer zBuffer)
+                {
+                    zBuffer.pixelDrawing = new ZBuffer.CookTorranceDrawing
+                    {
+                        ambient = double.Parse(ambient.Text) / 100,
+                        diffuse = double.Parse(diffuse.Text) / 100,
+                        specular = double.Parse(specular.Text) / 100,
+                        power = double.Parse(power.Text),
+                        smoothing = smoothing.Checked
+                    };
                 }
             }
             catch (Exception e)
