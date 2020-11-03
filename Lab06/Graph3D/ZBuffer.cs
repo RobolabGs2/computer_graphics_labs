@@ -315,6 +315,19 @@ namespace Lab06.Graph3D
             public bool smoothing = true;
             public Base3D.Point light;
 
+            protected byte colorScheme(double pow, double k, int C)
+            {
+                return (byte)Math.Min((int)(pow + C * k), 255);
+            }
+
+            protected void setPixel(int x, int y, double pow, double k, Color color)
+            {
+                fastBitmap.SetPixel(x, y,
+                    colorScheme(pow, k, color.R),
+                    colorScheme(pow, k, color.G),
+                    colorScheme(pow, k, color.B));
+            }
+
             public abstract void TrySet(int x, int y, Stuff s, BaseMaterial material);
         }
 
@@ -324,11 +337,6 @@ namespace Lab06.Graph3D
             public double diffuse = 1;
             public double specular = 1;
             public double power = 1000;
-
-            byte colorScheme(double pow, double k, int C)
-            {
-                return (byte)Math.Min((int)(pow + C * k), 255);
-            }
 
             public override void TrySet(int x, int y, Stuff s, BaseMaterial material)
             {
@@ -346,13 +354,8 @@ namespace Lab06.Graph3D
 
                 double pow = Math.Pow(cos, power) * specular * 255;
                 double k = (ambient + diffuse * cos);
-
-                Color color = material[s.texture];
-
-                fastBitmap.SetPixel(x, y,
-                    colorScheme(pow, k, color.R),
-                    colorScheme(pow, k, color.G),
-                    colorScheme(pow, k, color.B));
+                
+                setPixel(x, y, pow, k, material[s.texture]);
             }
         }
 
@@ -362,11 +365,6 @@ namespace Lab06.Graph3D
             public double diffuse = 1;
             public double specular = 1;
             public double power = 1000;
-
-            byte colorScheme(double pow, double k, int C)
-            {
-                return (byte)Math.Min((int)(pow + C * k), 255);
-            }
 
             public override void TrySet(int x, int y, Stuff s, BaseMaterial material)
             {
@@ -390,12 +388,7 @@ namespace Lab06.Graph3D
                 double pow = Math.Pow(I, power) * specular * 255;
                 double k = (ambient + diffuse * cos);
 
-                Color color = material[s.texture];
-
-                fastBitmap.SetPixel(x, y,
-                    colorScheme(pow, k, color.R),
-                    colorScheme(pow, k, color.G),
-                    colorScheme(pow, k, color.B));
+                setPixel(x, y, pow, k, material[s.texture]);
             }
         }
 
@@ -405,11 +398,6 @@ namespace Lab06.Graph3D
             public double diffuse = 1;
             public double specular = 1;
             public double power = 1000;
-
-            byte colorScheme(double pow, double k, int C)
-            {
-                return (byte)Math.Min((int)(pow + C * k), 255);
-            }
 
             public override void TrySet(int x, int y, Stuff s, BaseMaterial material)
             {
@@ -435,12 +423,7 @@ namespace Lab06.Graph3D
                 double pow = Math.Pow(I, power) * specular * 255;
                 double k = (ambient + diffuse * cos);
 
-                Color color = material[s.texture];
-
-                fastBitmap.SetPixel(x, y,
-                    colorScheme(pow, k, color.R),
-                    colorScheme(pow, k, color.G),
-                    colorScheme(pow, k, color.B));
+                setPixel(x, y, pow, k, material[s.texture]);
             }
         }
 
@@ -459,11 +442,6 @@ namespace Lab06.Graph3D
 
             double a;
             double b;
-
-            byte colorScheme(double pow, double k, int C)
-            {
-                return (byte)Math.Min((int)(pow + C * k), 255);
-            }
 
             public override void TrySet(int x, int y, Stuff s, BaseMaterial material)
             {
@@ -487,12 +465,7 @@ namespace Lab06.Graph3D
 
                 double k = Math.Max(0, nl) * (a + b * cx * dx);
 
-                Color color = material[s.texture];
-
-                fastBitmap.SetPixel(x, y,
-                    colorScheme(0, k, color.R),
-                    colorScheme(0, k, color.G),
-                    colorScheme(0, k, color.B));
+                setPixel(x, y, 0, k, material[s.texture]);
             }
         }
         public class CookTorranceDrawing : PixelDrawing
@@ -502,15 +475,11 @@ namespace Lab06.Graph3D
             public double specular = 1;
             public double power = 1000;
 
-            byte colorScheme(double pow, double k, int C)
-            {
-                return (byte)Math.Min((int)(pow + C * k), 255);
-            }
-
             double fresnel(double ca)
             {
                 return (diffuse + (1 - diffuse) * Math.Pow(1 - ca, 5)) / ca;
             }
+
             double mix(double x, double y, double a)
             {
                 return x * (1 - a) + y * a;
@@ -533,23 +502,18 @@ namespace Lab06.Graph3D
                 double nl = norm.DotProd(light);
                 double r2 = specular * specular;
                 double nh2 = nh * nh;
-                double ex = -(1.0 - nh2) / (nh2 * r2);
+                double ex = -(1 - nh2) / (nh2 * r2);
                 double d = Math.Exp(ex) / (r2 * nh2 * nh2);
 
-                double f = mix(Math.Pow(1.0 - nv, 5.0), 1, diffuse);
-                double x = 2.0 * nh / u.DotProd(h);
-                double g = Math.Min(1.0, Math.Min(x * nl, x * nv));
+                double f = mix(Math.Pow(1 - nv, 5), 1, diffuse);
+                double x = 2 * nh / u.DotProd(h);
+                double g = Math.Min(1, Math.Min(x * nl, x * nv));
                 double ct = d * f * g / nv;
 
                 double k = Math.Max(0.0, nl);
                 double pow = Math.Max(0.0, ct);
 
-                Color color = material[s.texture];
-
-                fastBitmap.SetPixel(ix, iy,
-                    colorScheme(pow, k, color.R),
-                    colorScheme(pow, k, color.G),
-                    colorScheme(pow, k, color.B));
+                setPixel(ix, iy, pow, k, material[s.texture]);
             }
         }
 

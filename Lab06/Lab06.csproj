@@ -162,10 +162,15 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Resources\Blinn.png" />
+    <Content Include="Resources\CookTorrance.png" />
     <Content Include="Resources\Cube.png" />
+    <Content Include="Resources\Ward.png" />
     <None Include="Resources\Dodecahedron.png" />
     <None Include="Resources\Icosahedron.png" />
     <Content Include="Resources\Load.png" />
+    <Content Include="Resources\OrenNayar.png" />
+    <Content Include="Resources\Phong.png" />
     <Content Include="Resources\Render.png" />
     <None Include="Resources\Save.png" />
     <Content Include="Resources\Skeleton.png" />

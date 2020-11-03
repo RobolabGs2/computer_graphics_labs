@@ -86,7 +86,7 @@ namespace Lab06.Tools3D.Render
             //panel.Controls.Add(changeRender);
             //changeRender.Click += (s, b) => SetBlinnDrawing();
 
-            var phongButton = tab.AddButton(Properties.Resources.Render, true);
+            var phongButton = tab.AddButton(Properties.Resources.Phong, true);
 
             phongButton.ButtonClick += b =>
             {
@@ -100,7 +100,7 @@ namespace Lab06.Tools3D.Render
                 panel.Visible = false;
             };
 
-            var blinnButton = tab.AddButton(Properties.Resources.Render, true);
+            var blinnButton = tab.AddButton(Properties.Resources.Blinn, true);
 
             blinnButton.ButtonClick += b =>
             {
@@ -114,7 +114,7 @@ namespace Lab06.Tools3D.Render
                 panel.Visible = false;
             };
 
-            var wardButton = tab.AddButton(Properties.Resources.Render, true);
+            var wardButton = tab.AddButton(Properties.Resources.Ward, true);
 
             wardButton.ButtonClick += b =>
             {
@@ -128,7 +128,7 @@ namespace Lab06.Tools3D.Render
                 panel.Visible = false;
             };
 
-            var orenNayarButton = tab.AddButton(Properties.Resources.Render, true);
+            var orenNayarButton = tab.AddButton(Properties.Resources.OrenNayar, true);
 
             orenNayarButton.ButtonClick += b =>
             {
@@ -142,7 +142,7 @@ namespace Lab06.Tools3D.Render
                 panel.Visible = false;
             };
 
-            var cookTorranceButton = tab.AddButton(Properties.Resources.Render, true);
+            var cookTorranceButton = tab.AddButton(Properties.Resources.CookTorrance, true);
 
             cookTorranceButton.ButtonClick += b =>
             {
