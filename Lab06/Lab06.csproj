@@ -86,6 +86,7 @@
     <Compile Include="Base3D\Context.cs" />
     <Compile Include="Base3D\Entity.cs" />
     <Compile Include="Base3D\Group.cs" />
+    <Compile Include="Base3D\Primitives.cs" />
     <Compile Include="Graph3D\FastBitmap.cs" />
     <Compile Include="Graph3D\FloatingHorizont.cs" />
     <Compile Include="Graph3D\ZBuffer.cs" />
@@ -174,6 +175,7 @@
     <Content Include="Resources\Load.png" />
     <Content Include="Resources\OrenNayar.png" />
     <Content Include="Resources\Phong.png" />
+    <Content Include="Resources\Sun.png" />
     <Content Include="Resources\Render.png" />
     <None Include="Resources\Save.png" />
     <Content Include="Resources\Skeleton.png" />
