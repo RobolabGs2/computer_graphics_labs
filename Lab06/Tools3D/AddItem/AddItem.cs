@@ -163,9 +163,9 @@ namespace Lab06.Tools3D.AddItem
             {
                 return Obj.Parse(filePath);
             }
-            catch
+            catch(Exception e)
             {
-                MessageBox.Show("Не вышло загрузить файл", "Окошко-всплывашка", MessageBoxButtons.OK,
+                MessageBox.Show($"Не вышло загрузить файл: {e.Message}", "Окошко-всплывашка", MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
                 return new Group();
             }

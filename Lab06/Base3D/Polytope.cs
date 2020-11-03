@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,6 +16,7 @@ namespace Lab06.Base3D
         //  что бы можно было получить точки без повторов
         public List<Point> points = new List<Point>();
         public List<Point> normals = new List<Point>();
+        public List<(double X, double Y)> textures = new List<(double X, double Y)>();
 
         public void Add(Point p)
         {
@@ -30,7 +32,11 @@ namespace Lab06.Base3D
         {
             normals.Add(n);
         }
-        
+        public void Addtexture((double X, double Y) p)
+        {
+            textures.Add(p);
+        }
+
         public override IEnumerable<Point> Points()
         {
             return points;
