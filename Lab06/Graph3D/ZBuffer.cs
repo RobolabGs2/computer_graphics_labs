@@ -60,7 +60,7 @@ namespace Lab06.Graph3D
             cameraMatric = context.DrawingMatrix();
             rotationCamera = context.camera.Rotation() * Matrix.Scale(new Base3D.Point { X = 1, Y = -1, Z = -1 });
             interval = context.camera.interval * context.scale;
-            light = new Base3D.Point { X = 0.8, Z = -0.6 } * rotationCamera;
+            light = context.world.Sun * rotationCamera;
 
             foreach (Entity e in context.world.entities)
                 DrawEntity(e);
