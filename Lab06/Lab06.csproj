@@ -81,10 +81,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AuxTools3D\Node.cs" />
+    <Compile Include="AuxTools3D\Parser.cs" />
     <Compile Include="Base3D\Context.cs" />
     <Compile Include="Base3D\Entity.cs" />
     <Compile Include="Base3D\Group.cs" />
     <Compile Include="Graph3D\FastBitmap.cs" />
+    <Compile Include="Graph3D\FloatingHorizont.cs" />
     <Compile Include="Graph3D\ZBuffer.cs" />
     <Compile Include="IToolPage.cs" />
     <Compile Include="Base3D\Polygon.cs" />
@@ -193,5 +196,6 @@
     <Content Include="Resources\Scale.png" />
     <Content Include="Resources\SelectAll.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
