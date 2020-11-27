@@ -1,4 +1,4 @@
-#include "world.h"
+#include "game.h"
 
 #include <Windows.h>
 #include <gl\freeglut.h>
@@ -10,18 +10,18 @@
 
 namespace chn = std::chrono;
 
-World world;
+Game game;
 
 void GlobalTick() {
 	static chn::steady_clock::time_point old_time = chn::steady_clock::now();
 	chn::steady_clock::time_point new_time = chn::steady_clock::now();
-	world.Tick((chn::duration_cast<chn::duration<double, std::ratio<1>>>(new_time - old_time)).count());
+	game.Tick((chn::duration_cast<chn::duration<double, std::ratio<1>>>(new_time - old_time)).count());
 	old_time = new_time;
 }
 
 void Reshape(int width, int height)
 {
-	world.ResizeWindow(width, height);
+	game.ResizeWindow(width, height);
 }
 
 template<bool value>
@@ -29,14 +29,15 @@ void KeyEvent(unsigned char key, int x, int y)
 {
 	switch (key)
 	{
-	case 'a':	world.keys.left = value; return;
-	case 'd':	world.keys.right = value; return;
-	case 'w':	world.keys.up = value; return;
-	case 's':	world.keys.down = value; return;
-	case 'A':	world.keys.left = value; return;
-	case 'D':	world.keys.right = value; return;
-	case 'W':	world.keys.up = value; return;
-	case 'S':	world.keys.down = value; return;
+	case 'a':	game.keys.left = value; return;
+	case 'd':	game.keys.right = value; return;
+	case 'w':	game.keys.up = value; return;
+	case 's':	game.keys.down = value; return;
+	case 'A':	game.keys.left = value; return;
+	case 'D':	game.keys.right = value; return;
+	case 'W':	game.keys.up = value; return;
+	case 'S':	game.keys.down = value; return;
+	case ' ':	game.keys.space = value; return;
 	}
 }
 

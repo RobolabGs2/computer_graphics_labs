@@ -1,23 +1,24 @@
 #pragma once
 
 #include "garbage_collector.h"
-#include "entity.h"
+#include "world.h"
 
-#include <Windows.h>
-#include <gl\freeglut.h>
+ 
+//		$$$$$$$$\  $$$$$$\  $$$$$$$\   $$$$$$\  
+//		\__$$  __|$$  __$$\ $$  __$$\ $$  __$$\ 
+//		   $$ |   $$ /  $$ |$$ |  $$ |$$ /  $$ |
+//		   $$ |   $$ |  $$ |$$ |  $$ |$$ |  $$ |
+//		   $$ |   $$ |  $$ |$$ |  $$ |$$ |  $$ |
+//		   $$ |   $$ |  $$ |$$ |  $$ |$$ |  $$ |
+//		   $$ |    $$$$$$  |$$$$$$$  | $$$$$$  |
+//		   \__|    \______/ \_______/  \______/ 
+
 
 struct Body : Garbage
 {
 	Entity* parent;
-	Body(Entity* parent) :
-		parent(parent)
-	{ }
-
-	virtual void Tick(double dt)
-	{
-		if (!parent->alive)
-			alive = false;
-	}
+	Body(Entity* parent);
+	virtual void Tick(double dt);
 };
 
 class MovingRight : Body
@@ -28,10 +29,5 @@ class MovingRight : Body
 class Physics : public GarbageCollector<Body>
 {
 public:
-	void Tick(double dt)
-	{
-		GarbageCollector::Tick();
-
-	}
-
+	void Tick(double dt);
 };

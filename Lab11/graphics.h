@@ -1,45 +1,29 @@
 #pragma once
 
 #include "garbage_collector.h"
-#include "entity.h"
+#include "world.h"
 
-#include <Windows.h>
-#include <gl\freeglut.h>
 
 struct Mesh : public Garbage
 {
 	Entity* parent;
-	Mesh(Entity* parent) :
-		parent(parent)
-	{ }
 
-	virtual void Tick(double dt) 
-	{
-		if (!parent->alive)
-			alive = false;
-	}
+	Mesh(Entity* parent);
+	void Tick(double dt);
+
+protected:
+	virtual void Draw() = 0;
 };
 
 class Cube : public Mesh
 {
 	float size;
+
 public:
-	Cube(Entity* parent, float size) :
-		Mesh(parent),
-		size(size)
-	{ }
+	Cube(Entity* parent, float size);
 
-	void Tick(double dt) override
-	{
-		Mesh::Tick(dt);
-		if (!alive) return;
-
-		glPushMatrix();
-		parent->TransformGL();
-		glutWireCube(size);
-		//glutSolidCube(size);
-		glPopMatrix();
-	}
+protected:
+	void Draw() override;
 };
 
 class Sphere : public Mesh
@@ -48,21 +32,10 @@ class Sphere : public Mesh
 	double radius;
 
 public:
-	Sphere(Entity* parent, double radius) :
-		Mesh(parent),
-		radius(radius)
-	{ }
+	Sphere(Entity* parent, double radius);
 
-	void Tick(double dt) override
-	{
-		Mesh::Tick(dt);
-		if (!alive) return;
-
-		glPushMatrix();
-		parent->TransformGL();
-		glutWireSphere(radius, 10, 10);
-		glPopMatrix();
-	}
+protected:
+	void Draw() override;
 };
 
 class Cone : public Mesh
@@ -72,22 +45,10 @@ class Cone : public Mesh
 	double height;
 
 public:
-	Cone(Entity* parent, double base, double height) :
-		Mesh(parent),
-		base(base),
-		height(height)
-	{ }
+	Cone(Entity* parent, double base, double height);
 
-	void Tick(double dt) override
-	{
-		Mesh::Tick(dt);
-		if (!alive) return;
-
-		glPushMatrix();
-		parent->TransformGL();
-		glutWireCone(base, height, 10, 10);
-		glPopMatrix();
-	}
+protected:
+	void Draw() override;
 };
 
 
@@ -98,61 +59,19 @@ class Torus : public Mesh
 	double outerRadius;
 
 public:
-	Torus(Entity* parent, double innerRadius, double outerRadius) :
-		Mesh(parent),
-		innerRadius(innerRadius),
-		outerRadius(outerRadius)
-	{ }
+	Torus(Entity* parent, double innerRadius, double outerRadius);
 
-	void Tick(double dt) override
-	{
-		Mesh::Tick(dt);
-		if (!alive) return;
-
-		glPushMatrix();
-		parent->TransformGL();
-		glutWireTorus(innerRadius, outerRadius, 10, 30);
-		glPopMatrix();
-	}
+protected:
+	void Draw() override;
 };
 
 
 class Graphics: public GarbageCollector<Mesh>
 {
 public:
-
-	void Tick(double dt)
-	{
-		GarbageCollector::Tick();
-		for (Mesh* m : data)
-			m->Tick(dt);
-	}
-
-	Cube* AddCube(Entity* parent, double size)
-	{
-		Cube* result = new Cube(parent, size);
-		GarbageCollector::AddTracking(result);
-		return result;
-	}
-
-	Sphere* AddSphere(Entity* parent, double radius)
-	{
-		Sphere* result = new Sphere(parent, radius);
-		GarbageCollector::AddTracking(result);
-		return result;
-	}
-
-	Cone* AddCone(Entity* parent, double base, double height)
-	{
-		Cone* result = new Cone(parent, base, height);
-		GarbageCollector::AddTracking(result);
-		return result;
-	}
-
-	Torus* AddTorus(Entity* parent, double innerRadius, double outerRadius)
-	{
-		Torus* result = new Torus(parent, innerRadius, outerRadius);
-		GarbageCollector::AddTracking(result);
-		return result;
-	}
+	void Tick(double dt);
+	Cube* AddCube(Entity* parent, double size);
+	Sphere* AddSphere(Entity* parent, double radius);
+	Cone* AddCone(Entity* parent, double base, double height);
+	Torus* AddTorus(Entity* parent, double innerRadius, double outerRadius);
 };

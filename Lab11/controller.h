@@ -1,73 +1,39 @@
 #pragma once
 
 #include "garbage_collector.h"
-#include "physics.h"
-#include "entity.h"
+#include "world.h"
 
-#include <Windows.h>
-#include <gl\freeglut.h>
-#include <cmath>
-
-struct Keyboard
-{
-	bool left = false;
-	bool right = false;
-	bool up = false;
-	bool down = false;
-};
+class Game;
 
 struct Control: public Garbage
 { 
 	virtual void Tick(double dt) = 0;
 };
 
-struct SimpleUser: public Control
+struct SimpleUser : public Control
 {
-	const Keyboard& keys;
+	Game& game;
 	Entity* entity;
-	SimpleUser(const Keyboard& keys, Entity* entity):
-		keys(keys), entity(entity)
-	{ }
 
-	void Tick(double dt) override
-	{
-		if (!(alive = entity->alive)) return;
-		
-		if (keys.left) entity->yAngle += 100 * dt;
-		if (keys.right) entity->yAngle -= 100 * dt;
-		
-		double radYAngle = entity->yAngle * 2 * PI / 360;
-		dt *= 10;
-		if (keys.up)
-		{
-			entity->location.z -= dt * std::cos(radYAngle);
-			entity->location.x -= dt * std::sin(radYAngle);
-		}
+	SimpleUser(Game& game, Entity* entity);
+	void Tick(double dt) override;
+};
 
-		if (keys.down)
-		{
-			entity->location.z += dt * std::cos(radYAngle);
-			entity->location.x += dt * std::sin(radYAngle);
-		}
+struct Bullet : public Control
+{
+	Entity* entity;
 
-	}
+	Bullet(Entity* entity);
+	void Tick(double dt) override;
 };
 
 class Controller : public GarbageCollector<Control>
 {
 public:
-	void Tick(double dt)
-	{
-		GarbageCollector::Tick();
-		for (Control* m : data)
-			m->Tick(dt);
-	}
+	Game& game;
 
-	SimpleUser* AddSimpleUser(const Keyboard& keys, Entity* entity)
-	{
-		SimpleUser* result = new SimpleUser(keys, entity);
-		AddTracking(result);
-		return result;
-	}
-
+	Controller(Game& game);
+	void Tick(double dt);
+	SimpleUser* AddSimpleUser(Entity* entity);
+	Bullet* AddBullet(Entity* entity);
 };

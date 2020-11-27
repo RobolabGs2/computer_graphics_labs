@@ -79,12 +79,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="camera.cpp" />
+    <ClCompile Include="controller.cpp" />
+    <ClCompile Include="game.cpp" />
+    <ClCompile Include="graphics.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="physics.cpp" />
+    <ClCompile Include="world.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
     <ClInclude Include="controller.h" />
-    <ClInclude Include="entity.h" />
+    <ClInclude Include="game.h" />
     <ClInclude Include="garbage_collector.h" />
     <ClInclude Include="graphics.h" />
     <ClInclude Include="physics.h" />
