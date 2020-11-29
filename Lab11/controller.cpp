@@ -1,5 +1,6 @@
 #include "controller.h"
 #include "game.h"
+#include "common.h"
 
 #include <Windows.h>
 #include <gl\freeglut.h>
@@ -35,10 +36,17 @@ Bullet* Controller::AddBullet(Entity* entity)
 	return result;
 }
 
+Whirligig* Controller::AddWhirligig(Entity* entity)
+{
+	Whirligig* result = new Whirligig(entity);
+	AddTracking(result);
+	return result;
+}
 
-//	*****************************************
-//	**            SimpleUser               **
-//	*****************************************
+
+//	*****************************************  //
+//	**            SimpleUser               **  //
+//	*****************************************  //
 
 SimpleUser::SimpleUser(Game& game, Entity* entity) :
 	game(game), entity(entity)
@@ -72,9 +80,9 @@ void SimpleUser::Tick(double dt)
 	}
 }
 
-//	*****************************************
-//	**              Bullet                 **
-//	*****************************************
+//	*****************************************  //
+//	**              Bullet                 **  //
+//	*****************************************  //
 
 Bullet::Bullet(Entity* entity) :
 	entity(entity)
@@ -86,6 +94,21 @@ void Bullet::Tick(double dt)
 
 	double radYAngle = entity->yAngle * 2 * PI / 360;
 	dt *= 50;
-		entity->location.z -= dt * std::cos(radYAngle);
-		entity->location.x -= dt * std::sin(radYAngle);
+	entity->location.z -= dt * std::cos(radYAngle);
+	entity->location.x -= dt * std::sin(radYAngle);
+}
+
+//	*****************************************  //
+//	**            Whirligig                **  //
+//	*****************************************  //
+
+Whirligig::Whirligig(Entity* entity) :
+	entity(entity)
+{ }
+
+void Whirligig::Tick(double dt)
+{
+	if (!(alive = entity->alive)) return;
+
+	entity->yAngle += dt * 100;
 }

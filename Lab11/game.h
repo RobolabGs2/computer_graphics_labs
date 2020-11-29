@@ -5,17 +5,19 @@
 #include "controller.h"
 #include "graphics.h"
 #include "physics.h"
+#include "illumination.h"
 
 
 class Game
 {
 public:
-	Camera		camera;
+	Camera			camera;
 
-	Graphics	graphics;
-	Controller	controller;
-	Physics		physics;
-	World		world;
+	Graphics		graphics;
+	Controller		controller;
+	Physics			physics;
+	Illumination	illumination;
+	World			world;
 
 	struct {
 		bool left = false;

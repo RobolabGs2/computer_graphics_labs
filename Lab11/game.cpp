@@ -3,9 +3,14 @@
 #include <Windows.h>
 #include <gl\freeglut.h>
 
+
+//	*****************************************  //
+//	**                Game                 **  //
+//	*****************************************  //
+
 Game::Game():
 	controller(*this)
-{ 
+{
 	Init();
 }
 
@@ -15,13 +20,23 @@ void Game::Tick(double dt)
 		dt = 0.1;
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClearDepth(1.0f);
+
+	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	camera.TransformGL();
+	
+	glEnable(GL_LIGHTING);
+	glEnable(GL_DEPTH_TEST);
 
-	controller.Tick(dt);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
 	world.Tick(dt);
 	physics.Tick(dt);
 	graphics.Tick(dt);
+	controller.Tick(dt);
+	illumination.Tick(dt);
 
 	glFlush(); glutSwapBuffers();
 }
@@ -70,9 +85,9 @@ Entity* Game::AddBullet(Point location, float yAngle)
 }
 
 
-//	*****************************************
-//	**       Описание игрового мира	       **
-//	*****************************************
+//	*****************************************  //
+//	**       Описание игрового мира	       **  //
+//	*****************************************  //
 
 
 void Game::Init()
@@ -82,10 +97,24 @@ void Game::Init()
 		Entity* cameraPoint = world.AddTailEntity(car, { 0, 2, 10 }); {
 			camera.parent = cameraPoint;
 		}
+
+		Entity* lightPoint = world.AddTailEntity(car, { 0, 0, -1 }); {
+			illumination.AddSpot(lightPoint, {1, 1, 0.5}, 30);
+		}
 	}
 	Entity* car2 = AddCar({ 5, 0.65, -10 }, 45);
 	Entity* tree = world.AddEntity({ 0, 0, 0 }); {
 		tree->xAngle = -90;
 		graphics.AddCone(tree, 2, 10);
+	}
+
+	Entity* lightPoint = world.AddEntity({ 0, 0, 3 }); {
+		illumination.AddDirection(lightPoint, { 1, 1, 1 });
+		lightPoint->xAngle = -90;
+	}
+
+	Entity* testPoint = world.AddEntity({ -10, 0, -10 }); {
+		testPoint->xAngle = -90;
+		graphics.AddTriangleMesh(testPoint, "..\\Lab06\\Resources\\Skull.obj");
 	}
 }

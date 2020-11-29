@@ -3,6 +3,9 @@
 #include "garbage_collector.h"
 #include "world.h"
 
+#include <string>
+#include <vector>
+
 
 struct Mesh : public Garbage
 {
@@ -66,6 +69,26 @@ protected:
 };
 
 
+class TriangleMesh : public Mesh
+{
+	struct Polygon
+	{
+		int vertex[3];
+		int texture[3];
+		int normal[3];
+	};
+
+	std::vector<Polygon> polygons;
+	std::vector<Point> vertexes;
+	std::vector<Point> normales;
+public:
+	TriangleMesh(Entity* parent, std::string filename);
+
+protected:
+	void Draw() override;
+};
+
+
 class Graphics: public GarbageCollector<Mesh>
 {
 public:
@@ -74,4 +97,5 @@ public:
 	Sphere* AddSphere(Entity* parent, double radius);
 	Cone* AddCone(Entity* parent, double base, double height);
 	Torus* AddTorus(Entity* parent, double innerRadius, double outerRadius);
+	TriangleMesh* AddTriangleMesh(Entity* parent, std::string filename);
 };

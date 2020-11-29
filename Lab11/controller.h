@@ -27,6 +27,14 @@ struct Bullet : public Control
 	void Tick(double dt) override;
 };
 
+struct Whirligig : public Control
+{
+	Entity* entity;
+
+	Whirligig(Entity* entity);
+	void Tick(double dt) override;
+};
+
 class Controller : public GarbageCollector<Control>
 {
 public:
@@ -36,4 +44,5 @@ public:
 	void Tick(double dt);
 	SimpleUser* AddSimpleUser(Entity* entity);
 	Bullet* AddBullet(Entity* entity);
+	Whirligig* AddWhirligig(Entity* entity);
 };
