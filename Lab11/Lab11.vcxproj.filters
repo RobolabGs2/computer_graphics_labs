@@ -80,5 +80,31 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Car.mtl">
+      <Filter>Файлы ресурсов</Filter>
+    </None>
+    <None Include="Bus.mtl">
+      <Filter>Файлы ресурсов</Filter>
+    </None>
+    <None Include="Gun.mtl">
+      <Filter>Файлы ресурсов</Filter>
+    </None>
+    <None Include="Tank.mtl">
+      <Filter>Файлы ресурсов</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="Car.obj">
+      <Filter>Файлы ресурсов</Filter>
+    </Object>
+    <Object Include="Bus.obj">
+      <Filter>Файлы ресурсов</Filter>
+    </Object>
+    <Object Include="Gun.obj">
+      <Filter>Файлы ресурсов</Filter>
+    </Object>
+    <Object Include="Tank.obj">
+      <Filter>Файлы ресурсов</Filter>
+    </Object>
   </ItemGroup>
 </Project>

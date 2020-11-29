@@ -197,7 +197,7 @@ void DynamicCylinder::Tick(double dt)
 
 #ifdef _DEBUG
 	glPushMatrix();
-	glTranslated(parent->location.x, parent->location.y - radius, parent->location.z);
+	glTranslated(parent->location.x, parent->location.y - height / 2, parent->location.z);
 	glRotated(-90, 1, 0, 0);
 	//glTranslated(0, 0, -radius);
 	glutWireCylinder(radius, height, 10, 2);

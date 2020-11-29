@@ -33,6 +33,9 @@ public:
 	void ResizeWindow(int width, int height);
 
 	Entity* AddCar(Point location, float rotation);
+	Entity* AddTank(Point location, float rotation);
+	Entity* AddGun(Point location, float rotation);
+	Entity* AddBus(Point location, float rotation);
 	Entity* AddUserCar(Point location);
 	Entity* AddBullet(Point location, float yAngle);
 private:

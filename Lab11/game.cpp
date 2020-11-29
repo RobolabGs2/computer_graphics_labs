@@ -17,8 +17,8 @@ Game::Game():
 
 void Game::Tick(double dt)
 {
-	if (dt > 0.1)
-		dt = 0.1;
+	if (dt > 0.03)
+		dt = 0.03;
 
 	if (!camera.parent->alive)
 		AddUserCar({ 0, 2, 10 });
@@ -55,25 +55,45 @@ void Game::ResizeWindow(int width, int height)
 Entity* Game::AddCar(Point location, float rotation)
 {
 	Entity* car = world.AddEntity(location); {
-		graphics.AddCube(car, 1);
 		car->yAngle = rotation;
 
-		Entity* weel1 = world.AddTailEntity(car, { 0.4, -0.5, 0.5 }); {
-			weel1->yAngle = 90;
-			graphics.AddTorus(weel1, 0.05, 0.2);
-		}
-		Entity* weel2 = world.AddTailEntity(car, { -0.4, -0.5, 0.5 }); {
-			weel2->yAngle = 90;
-			graphics.AddTorus(weel2, 0.05, 0.2);
-		}
-		Entity* weel3 = world.AddTailEntity(car, { 0.4, -0.5, -0.5 }); {
-			weel3->yAngle = 90;
-			graphics.AddTorus(weel3, 0.05, 0.2);
-		}
-		Entity* weel4 = world.AddTailEntity(car, { -0.4, -0.5, -0.5 }); {
-			weel4->yAngle = 90;
-			graphics.AddTorus(weel4, 0.05, 0.2);
-		}
+		graphics.AddTriangleMesh(car, "Car.obj");
+
+	}
+	return car;
+}
+
+
+Entity* Game::AddTank(Point location, float rotation)
+{
+	Entity* car = world.AddEntity(location); {
+		car->yAngle = rotation;
+
+		graphics.AddTriangleMesh(car, "Tank.obj");
+
+	}
+	return car;
+}
+
+
+Entity* Game::AddGun(Point location, float rotation)
+{
+	Entity* car = world.AddEntity(location); {
+		car->yAngle = rotation;
+
+		graphics.AddTriangleMesh(car, "Gun.obj");
+
+	}
+	return car;
+}
+
+
+Entity* Game::AddBus(Point location, float rotation)
+{
+	Entity* car = world.AddEntity(location); {
+		car->yAngle = rotation;
+
+		graphics.AddTriangleMesh(car, "Bus.obj");
 
 	}
 	return car;
@@ -82,7 +102,7 @@ Entity* Game::AddCar(Point location, float rotation)
 Entity* Game::AddUserCar(Point location)
 {
 	Entity* car = AddCar(location, 0); {
-		DynamicCylinder* body = physics.AddDynamicCylinder(car, 0.7, 1.5); {
+		DynamicCylinder* body = physics.AddDynamicCylinder(car, 0.7, 0.9); {
 			controller.AddSimpleUser(body);
 			body->friction = { 0.1, 0, 0.01 };
 		}
@@ -129,8 +149,16 @@ void Game::Init()
 		physics.AddStaticCube(plane, {100, 100, 100});
 	}
 
-	Entity* car2 = AddCar({ 5,2, -10 }, 45); {
-		DynamicCylinder* body = physics.AddDynamicCylinder(car2, 0.7, 1.5);
+	Entity* car2 = AddTank({ 5,2, -10 }, 45); {
+		DynamicCylinder* body = physics.AddDynamicCylinder(car2, 0.7, 0.7);
+	}
+
+	Entity* gun = AddGun({ 5,2, -15 }, 45); {
+		DynamicCylinder* body = physics.AddDynamicCylinder(gun, 0.7, 0.7);
+	}
+
+	Entity* bus = AddBus({ 5,2, -20 }, 90); {
+		DynamicCylinder* body = physics.AddDynamicCylinder(bus, 0.7, 1.1);
 	}
 
 	Entity* tree = world.AddEntity({ 0, 0, 0 }); {
