@@ -20,9 +20,9 @@ protected:
 
 class Cube : public Mesh
 {
+public:
 	float size;
 
-public:
 	Cube(Entity* parent, float size);
 
 protected:
@@ -31,10 +31,10 @@ protected:
 
 class Sphere : public Mesh
 {
+public:
 	float size;
 	double radius;
 
-public:
 	Sphere(Entity* parent, double radius);
 
 protected:
@@ -43,11 +43,11 @@ protected:
 
 class Cone : public Mesh
 {
+public:
 	float size;
 	double base;
 	double height;
 
-public:
 	Cone(Entity* parent, double base, double height);
 
 protected:
@@ -63,6 +63,21 @@ class Torus : public Mesh
 
 public:
 	Torus(Entity* parent, double innerRadius, double outerRadius);
+
+protected:
+	void Draw() override;
+};
+
+
+class Plane : public Mesh
+{
+public:
+	float xSize;
+	float zSize;
+	int xPartition;
+	int zPartition;
+
+	Plane(Entity* parent, float xSize, float zSize, int xPartition, int zPartition);
 
 protected:
 	void Draw() override;
@@ -97,5 +112,6 @@ public:
 	Sphere* AddSphere(Entity* parent, double radius);
 	Cone* AddCone(Entity* parent, double base, double height);
 	Torus* AddTorus(Entity* parent, double innerRadius, double outerRadius);
+	Plane* AddPlane(Entity* parent, float xSize, float zSize, int xPartition = 10, int zPartition = 10);
 	TriangleMesh* AddTriangleMesh(Entity* parent, std::string filename);
 };

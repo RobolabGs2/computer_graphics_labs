@@ -2,6 +2,7 @@
 
 #include "garbage_collector.h"
 #include "world.h"
+#include "physics.h"
 
 class Game;
 
@@ -13,25 +14,35 @@ struct Control: public Garbage
 struct SimpleUser : public Control
 {
 	Game& game;
-	Entity* entity;
+	DynamicCylinder* parent;
 
-	SimpleUser(Game& game, Entity* entity);
+	SimpleUser(Game& game, DynamicCylinder* parent);
 	void Tick(double dt) override;
 };
 
 struct Bullet : public Control
 {
-	Entity* entity;
+	Game& game;
+	DynamicCylinder* parent;
 
-	Bullet(Entity* entity);
+	Bullet(Game& game, DynamicCylinder* parent);
 	void Tick(double dt) override;
 };
 
 struct Whirligig : public Control
 {
-	Entity* entity;
+	Entity* parent;
 
-	Whirligig(Entity* entity);
+	Whirligig(Entity* parent);
+	void Tick(double dt) override;
+};
+
+struct Suicidal : public Control
+{
+	Entity* parent;
+	double ttl;
+
+	Suicidal(Entity* parent, double ttl);
 	void Tick(double dt) override;
 };
 
@@ -42,7 +53,8 @@ public:
 
 	Controller(Game& game);
 	void Tick(double dt);
-	SimpleUser* AddSimpleUser(Entity* entity);
-	Bullet* AddBullet(Entity* entity);
-	Whirligig* AddWhirligig(Entity* entity);
+	SimpleUser* AddSimpleUser(DynamicCylinder* parent);
+	Bullet* AddBullet(DynamicCylinder* parent);
+	Whirligig* AddWhirligig(Entity* parent);
+	Suicidal* AddSuicidal(Entity* parent, double ttl);
 };

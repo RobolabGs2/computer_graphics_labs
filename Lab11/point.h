@@ -7,10 +7,15 @@ struct Point
 	float x;
 	float y;
 	float z;
-	
+
 	Point operator*(float c) const
 	{
 		return { x * c, y * c, z * c };
+	}
+
+	Point operator*(const Point& p) const
+	{
+		return { x * p.x, y * p.y, z * p.z };
 	}
 
 	Point operator/(float c) const
@@ -51,6 +56,11 @@ struct Point
 	float Sqr()const
 	{
 		return this->Dot(*this);
+	}
+
+	Point Abs()const
+	{
+		return { std::abs(x), std::abs(y), std::abs(z) };
 	}
 
 	Point Min(const Point& other)

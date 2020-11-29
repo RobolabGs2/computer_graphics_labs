@@ -22,61 +22,75 @@ void Controller::Tick(double dt)
 		m->Tick(dt);
 }
 
-SimpleUser* Controller::AddSimpleUser(Entity* entity)
+SimpleUser* Controller::AddSimpleUser(DynamicCylinder* parent)
 {
-	SimpleUser* result = new SimpleUser(game, entity);
+	SimpleUser* result = new SimpleUser(game, parent);
 	AddTracking(result);
 	return result;
 }
 
-Bullet* Controller::AddBullet(Entity* entity)
+Bullet* Controller::AddBullet(DynamicCylinder* parent)
 {
-	Bullet* result = new Bullet(entity);
+	Bullet* result = new Bullet(game, parent);
 	AddTracking(result);
 	return result;
 }
 
-Whirligig* Controller::AddWhirligig(Entity* entity)
+Whirligig* Controller::AddWhirligig(Entity* parent)
 {
-	Whirligig* result = new Whirligig(entity);
+	Whirligig* result = new Whirligig(parent);
 	AddTracking(result);
 	return result;
 }
 
+Suicidal* Controller::AddSuicidal(Entity* parent, double ttl)
+{
+	Suicidal* result = new Suicidal(parent, ttl);
+	AddTracking(result);
+	return result;
+}
 
 //	*****************************************  //
 //	**            SimpleUser               **  //
 //	*****************************************  //
 
-SimpleUser::SimpleUser(Game& game, Entity* entity) :
-	game(game), entity(entity)
+SimpleUser::SimpleUser(Game& game, DynamicCylinder* parent) :
+	game(game), parent(parent)
 { }
 
 void SimpleUser::Tick(double dt)
 {
-	if (!(alive = entity->alive)) return;
+	if (!(alive = parent->alive) &&
+		!(alive = parent->parent->alive)) return;
 
-	if (game.keys.left) entity->yAngle += 100 * dt;
-	if (game.keys.right) entity->yAngle -= 100 * dt;
+	double radYAngle = parent->parent->yAngle * 2 * PI / 360;
+	if (game.keys.left) 
+		parent->parent->yAngle -= 5 * dt * 
+		(parent->velocity.z * std::cos(radYAngle) + parent->velocity.x * std::sin(radYAngle));
+	if (game.keys.right) 
+		parent->parent->yAngle += 5 * dt *
+		(parent->velocity.z * std::cos(radYAngle) + parent->velocity.x * std::sin(radYAngle));
 
-	double radYAngle = entity->yAngle * 2 * PI / 360;
 	dt *= 10;
 	if (game.keys.up)
 	{
-		entity->location.z -= dt * std::cos(radYAngle);
-		entity->location.x -= dt * std::sin(radYAngle);
+		parent->force.z -= dt * std::cos(radYAngle);
+		parent->force.x -= dt * std::sin(radYAngle);
 	}
 
 	if (game.keys.down)
 	{
-		entity->location.z += dt * std::cos(radYAngle);
-		entity->location.x += dt * std::sin(radYAngle);
+		parent->force.z += dt * std::cos(radYAngle);
+		parent->force.x += dt * std::sin(radYAngle);
 	}
 
 	if (game.keys.space)
 	{
 		game.keys.space = false;
-		game.AddBullet(entity->location, entity->yAngle);
+		double radYAngle = parent->parent->yAngle * 2 * PI / 360;
+		game.AddBullet(parent->parent->location + 
+			Point{ -(float)std::sin(radYAngle), 0, -(float)std::cos(radYAngle) } * 2,
+			parent->parent->yAngle);
 	}
 }
 
@@ -84,31 +98,60 @@ void SimpleUser::Tick(double dt)
 //	**              Bullet                 **  //
 //	*****************************************  //
 
-Bullet::Bullet(Entity* entity) :
-	entity(entity)
+Bullet::Bullet(Game& game, DynamicCylinder* parent) :
+	game(game),
+	parent(parent)
 { }
 
 void Bullet::Tick(double dt)
 {
-	if (!(alive = entity->alive)) return;
+	if (!(alive = parent->alive)|| !(alive = parent->parent->alive)) return;
 
-	double radYAngle = entity->yAngle * 2 * PI / 360;
-	dt *= 50;
-	entity->location.z -= dt * std::cos(radYAngle);
-	entity->location.x -= dt * std::sin(radYAngle);
+	Entity* part = game.world.AddEntity(Point{ parent->parent->location } +
+		(Point{ (float)(rand() % 1000) , (float)(rand() % 1000) , (float)(rand() % 1000) } - Point{500, 500, 500}) / 2000.0); {
+		game.controller.AddSuicidal(part, 0.3);
+		game.graphics.AddSphere(part, 0.05);
+	}
+
+	if (parent->lastDCylinderCollision != nullptr)
+	{
+		parent->parent->alive = false;
+		parent->alive = false;
+		alive = false;
+
+		if (parent->lastDCylinderCollision->alive && parent->lastDCylinderCollision->parent->alive)
+			parent->lastDCylinderCollision->parent->alive = false;
+	}
 }
 
 //	*****************************************  //
 //	**            Whirligig                **  //
 //	*****************************************  //
 
-Whirligig::Whirligig(Entity* entity) :
-	entity(entity)
+Whirligig::Whirligig(Entity* parent) :
+	parent(parent)
 { }
 
 void Whirligig::Tick(double dt)
 {
-	if (!(alive = entity->alive)) return;
+	if (!(alive = parent->alive)) return;
 
-	entity->yAngle += dt * 100;
+	parent->yAngle += dt * 100;
+}
+
+//	*****************************************  //
+//	**             Suicidal                **  //
+//	*****************************************  //
+
+Suicidal::Suicidal(Entity* parent, double ttl) :
+	parent(parent),
+	ttl(ttl)
+{ }
+
+void Suicidal::Tick(double dt)
+{
+	if (!(alive = parent->alive)) return;
+	ttl -= dt;
+	if (ttl < 0)
+		parent->alive = false;
 }

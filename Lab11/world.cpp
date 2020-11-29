@@ -64,7 +64,11 @@ TailEntity::TailEntity(Entity* parent, Point location) :
 
 void TailEntity::TransformGL()
 {
-	if (!(alive = parent->alive)) return;
+	if (!(alive = parent->alive))
+	{
+		glTranslated(9999, 9999, 6666);
+		return;
+	}
 	parent->TransformGL();
 	Entity::TransformGL();
 }

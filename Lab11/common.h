@@ -23,3 +23,12 @@ static std::vector<std::string> Split(std::string input, char c, bool skip_empty
 		}
 	return result;
 }
+
+template <typename T>
+int Signum(T val) {
+	if (T(0) < val)
+		return -1;
+	if (T(0) > val)
+		return 1;
+	return 0;
+}

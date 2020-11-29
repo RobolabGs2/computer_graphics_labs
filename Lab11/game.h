@@ -33,6 +33,7 @@ public:
 	void ResizeWindow(int width, int height);
 
 	Entity* AddCar(Point location, float rotation);
+	Entity* AddUserCar(Point location);
 	Entity* AddBullet(Point location, float yAngle);
 private:
 	void Init();

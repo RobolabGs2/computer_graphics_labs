@@ -45,6 +45,13 @@ Torus* Graphics::AddTorus(Entity* parent, double innerRadius, double outerRadius
 	return result;
 }
 
+Plane* Graphics::AddPlane(Entity* parent, float xSize, float zSize, int xPartition, int zPartition)
+{
+	Plane* result = new Plane(parent, xSize, zSize, xPartition, zPartition);
+	GarbageCollector::AddTracking(result);
+	return result;
+}
+
 TriangleMesh* Graphics::AddTriangleMesh(Entity* parent, std::string filename)
 {
 	TriangleMesh* result = new TriangleMesh(parent, filename);
@@ -131,6 +138,41 @@ Torus::Torus(Entity* parent, double innerRadius, double outerRadius) :
 void Torus::Draw()
 {
 	glutSolidTorus(innerRadius, outerRadius, 10, 30);
+}
+
+
+//	*****************************************  //
+//	**              Plane                  **  //
+//	*****************************************  //
+
+Plane::Plane(Entity* parent, float xSize, float zSize, int xPartition, int zPartition):
+	Mesh(parent),
+	xSize(xSize),
+	zSize(zSize),
+	xPartition(xPartition),
+	zPartition(zPartition)
+{ }
+
+void Plane::Draw()
+{
+	float xk = xSize / xPartition;
+	float zk = zSize / zPartition;
+	float x0 = -xSize / 2;
+	float z0 = -zSize / 2;
+	glBegin(GL_QUADS); {
+		for (int i = 0; i < xPartition; ++i)
+			for (int j = 0; j < zPartition; ++j)
+			{
+				glNormal3f(0, 1, 0);
+				glVertex3f(x0 + i * xk, 0, z0 + j * zk);
+				glNormal3f(0, 1, 0);
+				glVertex3f(x0 + (i + 1) * xk, 0, z0 + j * zk);
+				glNormal3f(0, 1, 0);
+				glVertex3f(x0 + (i + 1) * xk, 0, z0 + (j + 1) * zk);
+				glNormal3f(0, 1, 0);
+				glVertex3f(x0 + i * xk, 0, z0 + (j + 1) * zk);
+			}
+	}glEnd();
 }
 
 
