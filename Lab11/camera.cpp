@@ -12,6 +12,6 @@ void Camera::TransformGL()
 {
 	glMatrixMode(GL_PROJECTION);
 	gluPerspective(65.0f, aspectRatio, 0.1f, 1000.0f);
-	if (parent)
+	if (parent && parent->alive)
 		parent->ReTransformGL();
 }

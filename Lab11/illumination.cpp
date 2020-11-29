@@ -104,6 +104,9 @@ void DirectionLight::Draw()
 
 	GLfloat direction[] = { 0.0, 0.0, 1.0, 0.0 };
 	glLightfv(id, GL_POSITION, direction);
+	glLightf(id, GL_LINEAR_ATTENUATION, 0.0);
+
+	glLightf(id, GL_SPOT_CUTOFF, 180);
 
 	color.CallGL([=](auto v) { glLightfv(id, GL_DIFFUSE, v); });
 	(color * 0.1).CallGL([=](auto v) { glLightfv(id, GL_AMBIENT, v); });
