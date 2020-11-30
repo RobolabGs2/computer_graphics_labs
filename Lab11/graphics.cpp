@@ -3,6 +3,7 @@
 #include <Windows.h>
 #include <gl\freeglut.h>
 #include <fstream>
+#include <iostream>
 
 
 //	*****************************************  //
@@ -44,7 +45,8 @@ Torus* Graphics::AddTorus(Entity* parent, const Material& material, double inner
 	return result;
 }
 
-Plane* Graphics::AddPlane(Entity* parent, const Material& material, float xSize, float zSize, int xPartition, int zPartition)
+Plane* Graphics::AddPlane(Entity* parent, const Material& material, float xSize, float zSize, int xPartition,
+                          int zPartition)
 {
 	Plane* result = new Plane(parent, xSize, zSize, xPartition, zPartition, material);
 	GarbageCollector::AddTracking(result);
@@ -65,7 +67,8 @@ TriangleMesh* Graphics::AddTriangleMesh(Entity* parent, std::string filename)
 
 Mesh::Mesh(Entity* parent) :
 	parent(parent)
-{ }
+{
+}
 
 void Mesh::Tick(double dt)
 {
@@ -86,7 +89,8 @@ Cube::Cube(Entity* parent, const Material& material, float size) :
 	Mesh(parent),
 	size(size),
 	material(material)
-{ }
+{
+}
 
 void Cube::Draw()
 {
@@ -103,7 +107,8 @@ Sphere::Sphere(Entity* parent, const Material& material, double radius) :
 	Mesh(parent),
 	radius(radius),
 	material(material)
-{ }
+{
+}
 
 void Sphere::Draw()
 {
@@ -121,7 +126,8 @@ Cone::Cone(Entity* parent, const Material& material, double base, double height)
 	base(base),
 	height(height),
 	material(material)
-{ }
+{
+}
 
 void Cone::Draw()
 {
@@ -139,7 +145,8 @@ Torus::Torus(Entity* parent, const Material& material, double innerRadius, doubl
 	innerRadius(innerRadius),
 	outerRadius(outerRadius),
 	material(material)
-{ }
+{
+}
 
 void Torus::Draw()
 {
@@ -159,7 +166,8 @@ Plane::Plane(Entity* parent, float xSize, float zSize, int xPartition, int zPart
 	xPartition(xPartition),
 	zPartition(zPartition),
 	material(material)
-{ }
+{
+}
 
 void Plane::Draw()
 {
@@ -169,8 +177,10 @@ void Plane::Draw()
 	float z0 = -zSize / 2;
 
 	material.SetActive();
-	glBegin(GL_QUADS); {
-		for (int i = 0; i < xPartition; ++i) {
+	glBegin(GL_QUADS);
+	{
+		for (int i = 0; i < xPartition; ++i)
+		{
 			for (int j = 0; j < zPartition; ++j)
 			{
 				glNormal3f(0, 1, 0);
@@ -192,6 +202,42 @@ void Plane::Draw()
 //	**           TriangleMesh              **  //
 //	*****************************************  //
 
+void ParseMaterialTo(std::unordered_map<std::string, Material>& lib, const std::string& filename)
+{
+	std::ifstream file(filename);
+	std::string s;
+	Material* current = nullptr;
+	std::cerr << filename << std::endl;
+	while (!file.eof())
+	{
+		std::getline(file, s, '\n');
+		auto strings = Split(s, " \t");
+		if (strings.empty())
+			continue;
+		if (strings[0] == "newmtl")
+		{
+			current = &lib[strings[1]];
+			std::cerr << strings[1]<< std::endl;
+			current->emission = { 0, 0, 0 };
+		}
+		else if (strings[0] == "Ns")
+		{
+			current->shininess = static_cast<signed char>(std::stof(strings[1]) / 1000 * 128);
+		}
+		else if (strings[0] == "Ks")
+		{
+			current->specular = {std::stof(strings[1]), std::stof(strings[2]) , std::stof(strings[3]) };
+		}
+		else if (strings[0] == "Ka")
+		{
+			current->ambient = { std::stof(strings[1]), std::stof(strings[2]) , std::stof(strings[3]) };
+		}
+		else if (strings[0] == "Kd")
+		{
+			current->diffuse = { std::stof(strings[1]), std::stof(strings[2]) , std::stof(strings[3]) };
+		}
+	}
+}
 
 TriangleMesh::TriangleMesh(Entity* parent, std::string filename):
 	Mesh(parent)
@@ -203,39 +249,65 @@ TriangleMesh::TriangleMesh(Entity* parent, std::string filename):
 	{
 		std::getline(file, s, '\n');
 		auto strings = Split(s, ' ');
-		if (strings.size() == 0)
+		if (strings.empty())
 			continue;
-		//std::cout << s << std::endl;
-		if (strings[0] == "v")
+		if (strings[0] == "mtllib")
+		{
+			ParseMaterialTo(mtlLibrary, strings[1]);
+		}
+		else if (strings[0] == "v")
 		{
 			Point p{
-					std::atof(strings[1].c_str()),
-					std::atof(strings[2].c_str()),
-					std::atof(strings[3].c_str())
+				std::atof(strings[1].c_str()),
+				std::atof(strings[2].c_str()),
+				std::atof(strings[3].c_str())
 			};
 			vertexes.push_back(p);
 		}
-		if (strings[0] == "vn")
+		else if (strings[0] == "vn")
 		{
 			Point p{
-					std::atof(strings[1].c_str()),
-					std::atof(strings[2].c_str()),
-					std::atof(strings[3].c_str())
+				std::atof(strings[1].c_str()),
+				std::atof(strings[2].c_str()),
+				std::atof(strings[3].c_str())
 			};
 			normales.push_back(p);
 		}
+		else if (strings[0] == "vt")
+		{
+			Point p{
+				std::atof(strings[1].c_str()),
+				std::atof(strings[2].c_str()),
+				std::atof(strings[3].c_str())
+			};
+			textures.push_back(p);
+		}
+		else if (strings[0] == "o")
+		{
+			objects.emplace_back();
+		}
+		else if (strings[0] == "usemtl")
+		{
+			objects.back().mtl = strings[1];
+		}
 		else if (strings[0] == "f")
 		{
-			for (int i = 0; i < strings.size() - 3; ++i)
-				polygons.push_back({ {
-						std::atoi(Split(strings[1], '/')[0].c_str()) - 1, 
-						std::atoi(Split(strings[2 + i], '/')[0].c_str()) - 1, 
-						std::atoi(Split(strings[3 + i], '/')[0].c_str()) - 1
+			for (size_t i = 0; i < strings.size() - 3; ++i)
+				objects.back().polygons.push_back({
+					{
+						std::atoi(Split(strings[1], '/')[0].c_str()) - 1,
+						std::atoi(Split(strings[2u + i], '/')[0].c_str()) - 1,
+						std::atoi(Split(strings[3u + i], '/')[0].c_str()) - 1
 					},
-					{0, 0, 0}, {
+					{
+						std::atoi(Split(strings[1], '/', false)[1].c_str()) - 1,
+						std::atoi(Split(strings[2u + i], '/', false)[1].c_str()) - 1,
+						std::atoi(Split(strings[3u + i], '/', false)[1].c_str()) - 1,
+					},
+					{
 						std::atoi(Split(strings[1], '/', false)[2].c_str()) - 1,
-						std::atoi(Split(strings[2 + i], '/', false)[2].c_str()) - 1,
-						std::atoi(Split(strings[3 + i], '/', false)[2].c_str()) - 1
+						std::atoi(Split(strings[2u + i], '/', false)[2].c_str()) - 1,
+						std::atoi(Split(strings[3u + i], '/', false)[2].c_str()) - 1
 					}
 				});
 		}
@@ -244,29 +316,31 @@ TriangleMesh::TriangleMesh(Entity* parent, std::string filename):
 
 void TriangleMesh::Draw()
 {
-	Material m = {
-	{0.0314, 0.0314, 0.0353},
-	{0.0314, 0.0314, 0.0353},
-	{0.3500, 0.3500, 0.3500},
-		{0, 0, 0},
-		static_cast<signed char>(32.0 / 1000 * 128),
-	};
-	m.SetActive();
 	glBegin(GL_TRIANGLES);
-	for (Polygon& p: polygons)
-	{
-		Point v1 = vertexes[p.vertex[0]];
-		Point v2 = vertexes[p.vertex[1]];
-		Point v3 = vertexes[p.vertex[2]];
-		Point n1 = normales[p.normal[0]];
-		Point n2 = normales[p.normal[1]];
-		Point n3 = normales[p.normal[2]];
-		glNormal3f(n1.x, n1.y, n1.z);
-		glVertex3f(v1.x, v1.y, v1.z);
-		glNormal3f(n2.x, n2.y, n2.z);
-		glVertex3f(v2.x, v2.y, v2.z);
-		glNormal3f(n3.x, n3.y, n3.z);
-		glVertex3f(v3.x, v3.y, v3.z);
+	for (Object& o : objects) {
+		if (!o.mtl.empty())
+			mtlLibrary[o.mtl].SetActive();
+		for (Polygon& p : o.polygons)
+		{
+			Point v1 = vertexes[p.vertex[0]];
+			Point v2 = vertexes[p.vertex[1]];
+			Point v3 = vertexes[p.vertex[2]];
+			Point n1 = normales[p.normal[0]];
+			Point n2 = normales[p.normal[1]];
+			Point n3 = normales[p.normal[2]];
+			Point t1 = textures[p.texture[0]];
+			Point t2 = textures[p.texture[1]];
+			Point t3 = textures[p.texture[2]];
+			glNormal3f(n1.x, n1.y, n1.z);
+			glTexCoord3f(t1.x, t1.y, t1.z);
+			glVertex3f(v1.x, v1.y, v1.z);
+			glNormal3f(n2.x, n2.y, n2.z);
+			glTexCoord3f(t2.x, t2.y, t2.z);
+			glVertex3f(v2.x, v2.y, v2.z);
+			glNormal3f(n3.x, n3.y, n3.z);
+			glTexCoord3f(t3.x, t3.y, t3.z);
+			glVertex3f(v3.x, v3.y, v3.z);
+		}
 	}
 	glEnd();
 }

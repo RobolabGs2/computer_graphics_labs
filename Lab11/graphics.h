@@ -5,6 +5,7 @@
 #include "material.h"
 
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 
@@ -99,9 +100,18 @@ class TriangleMesh : public Mesh
 		int normal[3];
 	};
 
-	std::vector<Polygon> polygons;
+	struct Object
+	{
+		std::vector<Polygon> polygons;
+		std::string mtl;
+	};
+
+	std::unordered_map<std::string, Material> mtlLibrary;
+	
+	std::vector<Object> objects;
 	std::vector<Point> vertexes;
 	std::vector<Point> normales;
+	std::vector<Point> textures;
 public:
 	TriangleMesh(Entity* parent, std::string filename);
 
