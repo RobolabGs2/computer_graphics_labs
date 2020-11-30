@@ -81,21 +81,152 @@ void Mesh::Tick(double dt)
 
 
 //	*****************************************  //
+//	**               Box                   **  //
+//	*****************************************  //
+Box::Box(Entity* parent, const Material& material, const Point& size): Mesh(parent), size(size), material(material)
+{
+}
+
+void Box::Draw()
+{
+	int divide = 50;
+	float xk = size.x / divide;
+	float yk = size.y / divide;
+	float zk = size.z / divide;
+	float x0 = -size.x / 2;
+	float y0 = -size.y / 2;
+	float z0 = -size.z / 2;
+	material.Activate();
+
+	glBegin(GL_QUADS);
+	{
+		// верх
+		for (int i = 0; i < divide; ++i)
+		{
+			for (int j = 0; j < divide; ++j)
+			{
+				glNormal3f(0, 1, 0);
+				glTexCoord2d(0, 0);
+				glVertex3f(x0 + i * xk, -y0, z0 + j * zk);
+				glNormal3f(0, 1, 0);
+				glTexCoord2d(1, 0);
+				glVertex3f(x0 + (i + 1) * xk, -y0, z0 + j * zk);
+				glNormal3f(0, 1, 0);
+				glTexCoord2d(1, 1);
+				glVertex3f(x0 + (i + 1) * xk, -y0, z0 + (j + 1) * zk);
+				glNormal3f(0, 1, 0);
+				glTexCoord2d(0, 1);
+				glVertex3f(x0 + i * xk, -y0, z0 + (j + 1) * zk);
+			}
+		}
+		// низ
+		for (int i = 0; i < divide; ++i)
+		{
+			for (int j = 0; j < divide; ++j)
+			{
+				glNormal3f(0, -1, 0);
+				glTexCoord2d(0, 0);
+				glVertex3f(x0 + i * xk, y0, z0 + j * zk);
+				glNormal3f(0, -1, 0);
+				glTexCoord2d(1, 0);
+				glVertex3f(x0 + (i + 1) * xk, y0, z0 + j * zk);
+				glNormal3f(0, -1, 0);
+				glTexCoord2d(1, 1);
+				glVertex3f(x0 + (i + 1) * xk, y0, z0 + (j + 1) * zk);
+				glNormal3f(0, -1, 0);
+				glTexCoord2d(0, 1);
+				glVertex3f(x0 + i * xk, 0, y0 + (j + 1) * zk);
+			}
+		}
+		for (int i = 0; i < divide; ++i)
+		{
+			GLfloat n[3] = { 1, 0, 0 };
+			for (int j = 0; j < divide; ++j)
+			{
+				glNormal3fv(n);
+				glTexCoord2d(0, 0);
+				glVertex3f(-x0, y0 + i * yk, z0 + j * zk);
+				glNormal3fv(n);
+				glTexCoord2d(1, 0);
+				glVertex3f(-x0, y0 + (i+1) * yk, z0 + j * zk);
+				glNormal3fv(n);
+				glTexCoord2d(1, 1);
+				glVertex3f(-x0, y0 + (i + 1) * yk, z0 + (j+1) * zk);
+				glNormal3fv(n);
+				glTexCoord2d(0, 1);
+				glVertex3f(-x0, y0 + i * yk, z0 + (j + 1) * zk);
+			}
+		}
+		for (int i = 0; i < divide; ++i)
+		{
+			GLfloat n[3] = { -1, 0, 0 };
+			for (int j = 0; j < divide; ++j)
+			{
+				glNormal3fv(n);
+				glTexCoord2d(0, 0);
+				glVertex3f(x0, y0 + i * yk, z0 + j * zk);
+				glNormal3fv(n);
+				glTexCoord2d(1, 0);
+				glVertex3f(x0, y0 + (i + 1) * yk, z0 + j * zk);
+				glNormal3fv(n);
+				glTexCoord2d(1, 1);
+				glVertex3f(x0, y0 + (i + 1) * yk, z0 + (j + 1) * zk);
+				glNormal3fv(n);
+				glTexCoord2d(0, 1);
+				glVertex3f(x0, y0 + i * yk, z0 + (j + 1) * zk);
+			}
+		}
+		for (int i = 0; i < divide; ++i)
+		{
+			GLfloat n[3] = { 0, 0, 1 };
+			for (int j = 0; j < divide; ++j)
+			{
+				glNormal3fv(n);
+				glTexCoord2d(0, 0);
+				glVertex3f(x0 + j * xk, y0 + i * yk, -z0);
+				glNormal3fv(n);
+				glTexCoord2d(1, 0);
+				glVertex3f(x0 + j * xk, y0 + (i + 1) * yk, -z0);
+				glNormal3fv(n);
+				glTexCoord2d(1, 1);
+				glVertex3f(x0 + (1 + j) * xk, y0 + (i + 1) * yk, -z0);
+				glNormal3fv(n);
+				glTexCoord2d(0, 1);
+				glVertex3f(x0 + (1 + j) * xk, y0 + i * yk, -z0);
+			}
+		}
+		for (int i = 0; i < divide; ++i)
+		{
+			GLfloat n[3] = { 0, 0, -1 };
+			for (int j = 0; j < divide; ++j)
+			{
+				glNormal3fv(n);
+				glTexCoord2d(0, 0);
+				glVertex3f(x0 + j * xk, y0 + i * yk, z0);
+				glNormal3fv(n);
+				glTexCoord2d(1, 0);
+				glVertex3f(x0 + j * xk, y0 + (i + 1) * yk, z0);
+				glNormal3fv(n);
+				glTexCoord2d(1, 1);
+				glVertex3f(x0 + (1+j) * xk, y0 + (i + 1) * yk, z0);
+				glNormal3fv(n);
+				glTexCoord2d(0, 1);
+				glVertex3f(x0 + (1 + j) * xk, y0 + i * yk, z0);
+			}
+		}
+	}
+	glEnd();
+	material.Deactivate();
+}
+
+//	*****************************************  //
 //	**               Cube                  **  //
 //	*****************************************  //
 
 Cube::Cube(Entity* parent, const Material& material, float size) :
-	Mesh(parent),
-	size(size),
-	material(material)
+	Box(parent, material, { size, size, size }),
+	size(size)
 {
-}
-
-void Cube::Draw()
-{
-	material.Activate();
-	glutSolidCube(size);
-	material.Deactivate();
 }
 
 
@@ -164,9 +295,6 @@ void Torus::Draw()
 //	*****************************************  //
 //	**              Plane                  **  //
 //	*****************************************  //
-
-GLuint tex_2d; 
-GLuint photo_tex;
 
 Plane::Plane(Entity* parent, float xSize, float zSize, int xPartition, int zPartition, Material material):
 	Mesh(parent),

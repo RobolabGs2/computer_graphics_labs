@@ -20,16 +20,24 @@ protected:
 	virtual void Draw() = 0;
 };
 
-class Cube : public Mesh
+class Box : public Mesh
 {
 public:
-	float size;
+	const Point size;
 	Material material;
-
-	Cube(Entity* parent, const Material& material, float size);
+	Box(Entity* parent, const Material& material, const Point& size);
 
 protected:
 	void Draw() override;
+};
+
+class Cube : public Box
+{
+public:
+	float size;
+
+	Cube(Entity* parent, const Material& material, float size);
+
 };
 
 class Sphere : public Mesh
