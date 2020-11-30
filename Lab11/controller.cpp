@@ -125,7 +125,13 @@ void Bullet::Tick(double dt)
 	Entity* part = game.world.AddEntity(Point{ parent->parent->location } +
 		(Point{ (float)(rand() % 1000) , (float)(rand() % 1000) , (float)(rand() % 1000) } - Point{500, 500, 500}) / 2000.0); {
 		game.controller.AddSuicidal(part, 0.3);
-		game.graphics.AddSphere(part, 0.05);
+		game.graphics.AddSphere(part, 0.05, {
+							  {0.235, 0.294, 0.431},
+							  {0.235, 0.294, 0.431},
+							  {0.3500, 0.3500, 0.3500},
+							  static_cast<signed char>(16.0 / 1000 * 128),
+							  {0.9, 0.4, 0},
+			});
 	}
 
 	if (parent->lastDCylinderCollision != nullptr)

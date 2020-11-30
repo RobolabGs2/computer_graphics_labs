@@ -42,6 +42,9 @@
     <ClCompile Include="illumination.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="material.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="world.h">
@@ -77,6 +80,9 @@
     <ClInclude Include="common.h">
       <Filter>Файлы заголовков\tools</Filter>
     </ClInclude>
+    <ClInclude Include="material.h">
+      <Filter>Файлы заголовков\tools</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -94,7 +100,8 @@
       <Filter>Файлы ресурсов</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="lantern.obj">
+    <Image Include="floor_148.jpg">
       <Filter>Файлы ресурсов</Filter>
-    </CopyFileToFolders>
+    </Image>
   </ItemGroup>
 </Project>
