@@ -25,6 +25,8 @@ public:
 		bool up = false;
 		bool down = false;
 		bool space = false;
+		bool headlamp = false;
+		bool lantern = false;
 	} keys;
 
 	Game();
@@ -38,6 +40,8 @@ public:
 	Entity* AddBus(Point location, float rotation);
 	Entity* AddUserCar(Point location);
 	Entity* AddBullet(Point location, float yAngle);
+	Entity* AddLantern(Point location, float rotation);
+
 private:
 	void Init();
 };

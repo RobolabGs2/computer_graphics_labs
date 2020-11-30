@@ -63,7 +63,6 @@ Entity* Game::AddCar(Point location, float rotation)
 	return car;
 }
 
-
 Entity* Game::AddTank(Point location, float rotation)
 {
 	Entity* car = world.AddEntity(location); {
@@ -112,7 +111,7 @@ Entity* Game::AddUserCar(Point location)
 		}
 
 		Entity* lightPoint = world.AddTailEntity(car, { 0, 0, -1 }); {
-			illumination.AddSpot(lightPoint, { 1, 1, 0.5 }, 30);
+			controller.light = illumination.AddSpot(lightPoint, { 1, 1, 0.5 }, 30);
 		}
 	}
 	return car;
@@ -135,6 +134,22 @@ Entity* Game::AddBullet(Point location, float yAngle)
 	return bullet;
 }
 
+Entity* Game::AddLantern(Point location, float rotation)
+{
+	Entity* lantern = world.AddEntity(location); {
+		lantern->yAngle = rotation;
+		graphics.AddTriangleMesh(lantern, "lantern.obj");
+		StaticCube* body = physics.AddStaticCube(lantern, { 1, 3, 1 });
+		controller.AddLantern(body);
+
+		Entity* lightPoint = world.AddTailEntity(lantern, { 0.5, 2, 0 }); {
+			controller.lanternLight = illumination.AddSpot(lightPoint, { 1, 1, 0.5 }, 180);
+		}		
+
+	}
+	return lantern;
+}
+
 
 //	*****************************************  //
 //	**       Описание игрового мира	       **  //
@@ -143,6 +158,11 @@ Entity* Game::AddBullet(Point location, float yAngle)
 void Game::Init()
 {
 	AddUserCar({ 0, 2, 10 });
+
+	AddLantern({ 15, 0, 14 }, 90);
+	AddLantern({ 25, 0, 14 }, 90);
+	AddLantern({ -17, 0, 9 }, 90);
+	AddLantern({ -23, 0, 9 }, 90);
 
 	Entity* plane = world.AddEntity({ 0, -50, 0 }); {
 		graphics.AddCube(plane, 100);
@@ -162,6 +182,7 @@ void Game::Init()
 	}
 
 	Entity* tree = world.AddEntity({ 0, 0, 0 }); {
+		controller.AddWhirligig(tree);
 		physics.AddDynamicCylinder(tree, 2, 10)->friction = { 1, 1, 1 };
 		Entity* visuzl = world.AddTailEntity(tree, {0, -5, 0}); {
 			visuzl->xAngle = -90;

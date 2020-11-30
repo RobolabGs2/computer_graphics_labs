@@ -11,7 +11,7 @@
 //	**            Controller               **
 //	*****************************************
 
-Controller::Controller(Game& game):
+Controller::Controller(Game& game) :
 	game(game)
 { }
 
@@ -46,6 +46,13 @@ Whirligig* Controller::AddWhirligig(Entity* parent)
 Suicidal* Controller::AddSuicidal(Entity* parent, double ttl)
 {
 	Suicidal* result = new Suicidal(parent, ttl);
+	AddTracking(result);
+	return result;
+}
+
+Lantern* Controller::AddLantern(StaticCube* parent)
+{
+	Lantern* result = new Lantern(game, parent);
 	AddTracking(result);
 	return result;
 }
@@ -91,6 +98,14 @@ void SimpleUser::Tick(double dt)
 		game.AddBullet(parent->parent->location + 
 			Point{ -(float)std::sin(radYAngle), 0, -(float)std::cos(radYAngle) } * 2,
 			parent->parent->yAngle);
+	}
+
+	if (game.keys.headlamp)
+	{
+		game.keys.headlamp = false;
+		on_off = !on_off;
+		if (alive = game.controller.light->alive)
+			game.controller.light->enable = on_off;
 	}
 }
 
@@ -154,4 +169,25 @@ void Suicidal::Tick(double dt)
 	ttl -= dt;
 	if (ttl < 0)
 		parent->alive = false;
+}
+
+//	*****************************************  //
+//	**            Lantern               **  //
+//	*****************************************  //
+
+Lantern::Lantern(Game& game, StaticCube* parent) :
+	game(game), parent(parent)
+{ }
+
+void Lantern::Tick(double dt)
+{
+	if (!(alive = parent->alive)) return;
+
+	if (game.keys.lantern)
+	{
+		game.keys.lantern = false;
+		on_off = !on_off;
+		if (alive = game.controller.light->alive)
+			game.controller.lanternLight->enable = on_off;
+	}
 }

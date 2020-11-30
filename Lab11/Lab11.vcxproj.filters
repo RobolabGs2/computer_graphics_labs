@@ -80,31 +80,21 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="Car.mtl">
-      <Filter>Файлы ресурсов</Filter>
-    </None>
-    <None Include="Bus.mtl">
-      <Filter>Файлы ресурсов</Filter>
-    </None>
-    <None Include="Gun.mtl">
-      <Filter>Файлы ресурсов</Filter>
-    </None>
-    <None Include="Tank.mtl">
-      <Filter>Файлы ресурсов</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
-    <Object Include="Car.obj">
+    <CopyFileToFolders Include="Car.mtl" />
+    <CopyFileToFolders Include="Bus.mtl" />
+    <CopyFileToFolders Include="Gun.mtl" />
+    <CopyFileToFolders Include="Tank.mtl" />
+    <CopyFileToFolders Include="Car.obj" />
+    <CopyFileToFolders Include="Bus.obj" />
+    <CopyFileToFolders Include="Gun.obj" />
+    <CopyFileToFolders Include="Tank.obj" />
+    <CopyFileToFolders Include="lantern.mtl">
       <Filter>Файлы ресурсов</Filter>
-    </Object>
-    <Object Include="Bus.obj">
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="lantern.obj">
       <Filter>Файлы ресурсов</Filter>
-    </Object>
-    <Object Include="Gun.obj">
-      <Filter>Файлы ресурсов</Filter>
-    </Object>
-    <Object Include="Tank.obj">
-      <Filter>Файлы ресурсов</Filter>
-    </Object>
+    </CopyFileToFolders>
   </ItemGroup>
 </Project>

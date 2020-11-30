@@ -111,6 +111,9 @@
     <CopyFileToFolders Include="Gun.mtl">
       <FileType>Document</FileType>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="lantern.mtl">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
     <None Include="packages.config" />
     <CopyFileToFolders Include="Tank.mtl">
       <FileType>Document</FileType>
@@ -129,6 +132,11 @@
       <FileType>Document</FileType>
     </CopyFileToFolders>
     <CopyFileToFolders Include="Tank.obj">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="lantern.obj">
       <FileType>Document</FileType>
     </CopyFileToFolders>
   </ItemGroup>
