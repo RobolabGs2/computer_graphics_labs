@@ -1,107 +1,122 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Исходные файлы">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Файлы заголовков">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="Файлы ресурсов">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="Файлы заголовков\tools">
-      <UniqueIdentifier>{4eb71c3b-acd8-4139-b653-49ec0a236023}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="world.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="game.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="camera.cpp">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="controller.cpp">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="graphics.cpp">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="physics.cpp">
-      <Filter>Исходные файлы</Filter>
+    <ClCompile Include="game.cpp">
+      <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="illumination.cpp">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="material.cpp">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="physics.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="world.cpp">
+      <Filter>Sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="world.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="camera.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="graphics.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="garbage_collector.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="controller.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="physics.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="game.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="illumination.h">
-      <Filter>Файлы заголовков</Filter>
+    <ClInclude Include="material.h">
+      <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="point.h">
-      <Filter>Файлы заголовков\tools</Filter>
+      <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="color.h">
-      <Filter>Файлы заголовков\tools</Filter>
+    <ClInclude Include="physics.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="world.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="game.h">
+      <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="common.h">
-      <Filter>Файлы заголовков\tools</Filter>
+      <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="material.h">
-      <Filter>Файлы заголовков\tools</Filter>
+    <ClInclude Include="color.h">
+      <Filter>Headers</Filter>
     </ClInclude>
+    <ClInclude Include="camera.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="garbage_collector.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="illumination.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="controller.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="Bus.mtl">
+      <Filter>Models</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Bus.obj">
+      <Filter>Models</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Car.mtl">
+      <Filter>Models</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Car.obj">
+      <Filter>Models</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Gun.mtl">
+      <Filter>Models</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Gun.obj">
+      <Filter>Models</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="lantern.obj">
+      <Filter>Models</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="lantern.mtl">
+      <Filter>Models</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Tank.obj">
+      <Filter>Models</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Tank.mtl">
+      <Filter>Models</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="floor_148.jpg">
+      <Filter>Textures</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <CopyFileToFolders Include="Car.mtl" />
-    <CopyFileToFolders Include="Bus.mtl" />
-    <CopyFileToFolders Include="Gun.mtl" />
-    <CopyFileToFolders Include="Tank.mtl" />
-    <CopyFileToFolders Include="Car.obj" />
-    <CopyFileToFolders Include="Bus.obj" />
-    <CopyFileToFolders Include="Gun.obj" />
-    <CopyFileToFolders Include="Tank.obj" />
-    <CopyFileToFolders Include="lantern.mtl">
-      <Filter>Файлы ресурсов</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="lantern.obj">
-    <Image Include="floor_148.jpg">
-      <Filter>Файлы ресурсов</Filter>
-    </Image>
+    <Filter Include="Headers">
+      <UniqueIdentifier>{85e447cd-5a0f-4e10-bdcf-8cefe37593f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources">
+      <UniqueIdentifier>{621916be-c848-4086-bc32-ac741b238965}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Models">
+      <UniqueIdentifier>{48c892ab-4150-486b-b6ee-546076b6e7bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Textures">
+      <UniqueIdentifier>{9d674649-f0d4-4661-941e-d238888825b7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>
