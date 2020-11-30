@@ -97,6 +97,7 @@
     <ClInclude Include="garbage_collector.h" />
     <ClInclude Include="graphics.h" />
     <ClInclude Include="illumination.h" />
+    <ClInclude Include="material.h" />
     <ClInclude Include="physics.h" />
     <ClInclude Include="point.h" />
     <ClInclude Include="world.h" />

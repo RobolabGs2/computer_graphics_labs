@@ -2,6 +2,7 @@
 
 #include "garbage_collector.h"
 #include "world.h"
+#include "material.h"
 
 #include <string>
 #include <vector>
@@ -22,8 +23,9 @@ class Cube : public Mesh
 {
 public:
 	float size;
+	Material material;
 
-	Cube(Entity* parent, float size);
+	Cube(Entity* parent, const Material& material, float size);
 
 protected:
 	void Draw() override;
@@ -34,8 +36,9 @@ class Sphere : public Mesh
 public:
 	float size;
 	double radius;
+	Material material;
 
-	Sphere(Entity* parent, double radius);
+	Sphere(Entity* parent, const Material& material, double radius);
 
 protected:
 	void Draw() override;
@@ -47,8 +50,9 @@ public:
 	float size;
 	double base;
 	double height;
+	Material material;
 
-	Cone(Entity* parent, double base, double height);
+	Cone(Entity* parent, const Material& material, double base, double height);
 
 protected:
 	void Draw() override;
@@ -60,9 +64,10 @@ class Torus : public Mesh
 	float size;
 	double innerRadius;
 	double outerRadius;
+	Material material;
 
 public:
-	Torus(Entity* parent, double innerRadius, double outerRadius);
+	Torus(Entity* parent, const Material& material, double innerRadius, double outerRadius);
 
 protected:
 	void Draw() override;
@@ -71,13 +76,14 @@ protected:
 
 class Plane : public Mesh
 {
-public:
 	float xSize;
 	float zSize;
 	int xPartition;
 	int zPartition;
-
-	Plane(Entity* parent, float xSize, float zSize, int xPartition, int zPartition);
+	Material material;
+	
+public:
+	Plane(Entity* parent, float xSize, float zSize, int xPartition, int zPartition, Material material);
 
 protected:
 	void Draw() override;
@@ -108,10 +114,10 @@ class Graphics: public GarbageCollector<Mesh>
 {
 public:
 	void Tick(double dt);
-	Cube* AddCube(Entity* parent, double size);
-	Sphere* AddSphere(Entity* parent, double radius);
-	Cone* AddCone(Entity* parent, double base, double height);
-	Torus* AddTorus(Entity* parent, double innerRadius, double outerRadius);
-	Plane* AddPlane(Entity* parent, float xSize, float zSize, int xPartition = 10, int zPartition = 10);
+	Cube* AddCube(Entity* parent, const Material& material, double size);
+	Sphere* AddSphere(Entity* parent, const Material& material, double radius);
+	Cone* AddCone(Entity* parent, const Material& material, double base, double height);
+	Torus* AddTorus(Entity* parent, const Material& material, double innerRadius, double outerRadius);
+	Plane* AddPlane(Entity* parent, const Material& material, float xSize, float zSize, int xPartition = 10, int zPartition = 10);
 	TriangleMesh* AddTriangleMesh(Entity* parent, std::string filename);
 };

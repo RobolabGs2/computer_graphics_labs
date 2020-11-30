@@ -77,34 +77,21 @@
     <ClInclude Include="common.h">
       <Filter>Файлы заголовков\tools</Filter>
     </ClInclude>
+    <ClInclude Include="material.h">
+      <Filter>Файлы заголовков\tools</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="Car.mtl">
-      <Filter>Файлы ресурсов</Filter>
-    </None>
-    <None Include="Bus.mtl">
-      <Filter>Файлы ресурсов</Filter>
-    </None>
-    <None Include="Gun.mtl">
-      <Filter>Файлы ресурсов</Filter>
-    </None>
-    <None Include="Tank.mtl">
-      <Filter>Файлы ресурсов</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
-    <Object Include="Car.obj">
-      <Filter>Файлы ресурсов</Filter>
-    </Object>
-    <Object Include="Bus.obj">
-      <Filter>Файлы ресурсов</Filter>
-    </Object>
-    <Object Include="Gun.obj">
-      <Filter>Файлы ресурсов</Filter>
-    </Object>
-    <Object Include="Tank.obj">
-      <Filter>Файлы ресурсов</Filter>
-    </Object>
+    <CopyFileToFolders Include="Car.mtl" />
+    <CopyFileToFolders Include="Bus.mtl" />
+    <CopyFileToFolders Include="Gun.mtl" />
+    <CopyFileToFolders Include="Tank.mtl" />
+    <CopyFileToFolders Include="Car.obj" />
+    <CopyFileToFolders Include="Bus.obj" />
+    <CopyFileToFolders Include="Gun.obj" />
+    <CopyFileToFolders Include="Tank.obj" />
   </ItemGroup>
 </Project>

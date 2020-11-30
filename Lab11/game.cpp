@@ -122,7 +122,13 @@ Entity* Game::AddBullet(Point location, float yAngle)
 {
 	Entity* bullet = world.AddEntity(location); {
 		bullet->yAngle = yAngle;
-		graphics.AddSphere(bullet, 0.2);
+		graphics.AddSphere(bullet, {
+							  {0.235, 0.294, 0.431},
+							  {0.235, 0.294, 0.431},
+							  {0.3500, 0.3500, 0.3500},
+							  {0.9, 0.4, 0},
+							  static_cast<signed char>(16.0 / 1000 * 128),
+			},0.2);
 		controller.AddSuicidal(bullet, 5);
 		DynamicCylinder* body = physics.AddDynamicCylinder(bullet, 0.2, 0.4); {
 			double radYAngle = yAngle * 2 * PI / 360;
@@ -144,9 +150,17 @@ void Game::Init()
 {
 	AddUserCar({ 0, 2, 10 });
 
-	Entity* plane = world.AddEntity({ 0, -50, 0 }); {
-		graphics.AddCube(plane, 100);
-		physics.AddStaticCube(plane, {100, 100, 100});
+	Entity* plane = world.AddEntity({ 0, 0, 0 }); {
+		// graphics.AddCube(plane, 100);
+		graphics.AddPlane(plane, {
+			                  {0.235, 0.294, 0.431},
+			                  {0.235, 0.294, 0.431},
+			                  {0.3500, 0.3500, 0.3500},
+			                  {0, 0, 0},
+			                  static_cast<signed char>(16.0 / 1000 * 128),
+		                  },
+			100, 100, 100, 100);
+		physics.AddStaticCube(plane, {100, 0, 100});
 	}
 
 	Entity* car2 = AddTank({ 5,2, -10 }, 45); {
@@ -165,7 +179,13 @@ void Game::Init()
 		physics.AddDynamicCylinder(tree, 2, 10)->friction = { 1, 1, 1 };
 		Entity* visuzl = world.AddTailEntity(tree, {0, -5, 0}); {
 			visuzl->xAngle = -90;
-			graphics.AddCone(visuzl, 2, 10);
+			graphics.AddCone(visuzl, {
+							  {0.235, 1, 0.431},
+							  {0.235, 1, 0.431},
+							  {0, 0, 0},
+							  {0, 0, 0},
+							  static_cast<signed char>(16.0 / 1000 * 128),
+				}, 2, 10);
 		}
 	}
 
@@ -176,7 +196,13 @@ void Game::Init()
 
 	Entity* testCube = world.AddEntity({ 20, 0, 20 }); {
 		physics.AddStaticCube(testCube, { 10, 10, 10 });
-		graphics.AddCube(testCube, 10);
+		graphics.AddCube(testCube, {
+							  {0.235, 0.294, 0.431},
+							  {0.235, 0.294, 0.431},
+							  {0.3500, 0.3500, 0.3500},
+							  {0, 0, 0},
+							  static_cast<signed char>(16.0 / 1000 * 128),
+			}, 10);
 	}
 	//Entity* skull = world.AddEntity({ -10, 0, -10 }); {
 	//	skull->xAngle = -90;
@@ -186,12 +212,24 @@ void Game::Init()
 	{
 		Entity* step = world.AddEntity({ -20, -2 + i / 3, i }); {
 			float size = 3 + i / 20;
-			graphics.AddCube(step, size);
+			graphics.AddCube(step, {
+							  {0.235, 0.294, 0.431},
+							  {0.235, 0.294, 0.431},
+							  {0.3500, 0.3500, 0.3500},
+							  {0, 0, 0},
+							  static_cast<signed char>(16.0 / 1000 * 128),
+				}, size);
 			physics.AddStaticCube(step, { size, size, size });
 		}
 	}
 	Entity* platform = world.AddEntity({ -20, -7, 20}); {
-		graphics.AddCube(platform, 20);
+		graphics.AddCube(platform, {
+							  {0.235, 0.294, 0.431},
+							  {0.235, 0.294, 0.431},
+							  {0.3500, 0.3500, 0.3500},
+							  {0, 0, 0},
+							  static_cast<signed char>(16.0 / 1000 * 128),
+			}, 20);
 		physics.AddStaticCube(platform, { 20, 20, 20 });
 	}
 }
