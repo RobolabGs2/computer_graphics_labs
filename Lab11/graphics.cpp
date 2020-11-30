@@ -5,7 +5,6 @@
 #include <fstream>
 #include <iostream>
 
-
 //	*****************************************  //
 //	**             Graphics                **  //
 //	*****************************************  //
@@ -17,35 +16,35 @@ void Graphics::Tick(double dt)
 		m->Tick(dt);
 }
 
-Cube* Graphics::AddCube(Entity* parent, const Material& material, double size)
+Cube* Graphics::AddCube(Entity* parent, double size, const Material& material)
 {
 	Cube* result = new Cube(parent, material, size);
 	GarbageCollector::AddTracking(result);
 	return result;
 }
 
-Sphere* Graphics::AddSphere(Entity* parent, const Material& material, double radius)
+Sphere* Graphics::AddSphere(Entity* parent, double radius, const Material& material)
 {
 	Sphere* result = new Sphere(parent, material, radius);
 	GarbageCollector::AddTracking(result);
 	return result;
 }
 
-Cone* Graphics::AddCone(Entity* parent, const Material& material, double base, double height)
+Cone* Graphics::AddCone(Entity* parent, double base, double height, const Material& material)
 {
 	Cone* result = new Cone(parent, material, base, height);
 	GarbageCollector::AddTracking(result);
 	return result;
 }
 
-Torus* Graphics::AddTorus(Entity* parent, const Material& material, double innerRadius, double outerRadius)
+Torus* Graphics::AddTorus(Entity* parent, double innerRadius, double outerRadius, const Material& material)
 {
 	Torus* result = new Torus(parent, material, innerRadius, outerRadius);
 	GarbageCollector::AddTracking(result);
 	return result;
 }
 
-Plane* Graphics::AddPlane(Entity* parent, const Material& material, float xSize, float zSize, int xPartition,
+Plane* Graphics::AddPlane(Entity* parent, float xSize, float zSize, const Material& material,  int xPartition,
                           int zPartition)
 {
 	Plane* result = new Plane(parent, xSize, zSize, xPartition, zPartition, material);
@@ -94,8 +93,9 @@ Cube::Cube(Entity* parent, const Material& material, float size) :
 
 void Cube::Draw()
 {
-	material.SetActive();
+	material.Activate();
 	glutSolidCube(size);
+	material.Deactivate();
 }
 
 
@@ -112,8 +112,12 @@ Sphere::Sphere(Entity* parent, const Material& material, double radius) :
 
 void Sphere::Draw()
 {
-	material.SetActive();
-	glutSolidSphere(radius, 10, 10);
+	material.Activate();
+	auto* quadObj= gluNewQuadric();
+	gluQuadricTexture(quadObj, true);
+	gluSphere(quadObj, radius, 10, 10);
+	gluDeleteQuadric(quadObj);
+	material.Deactivate();
 }
 
 
@@ -131,8 +135,9 @@ Cone::Cone(Entity* parent, const Material& material, double base, double height)
 
 void Cone::Draw()
 {
-	material.SetActive();
+	material.Activate();
 	glutSolidCone(base, height, 20, 20);
+	material.Deactivate();
 }
 
 
@@ -150,14 +155,18 @@ Torus::Torus(Entity* parent, const Material& material, double innerRadius, doubl
 
 void Torus::Draw()
 {
-	material.SetActive();
+	material.Activate();
 	glutSolidTorus(innerRadius, outerRadius, 10, 30);
+	material.Deactivate();
 }
 
 
 //	*****************************************  //
 //	**              Plane                  **  //
 //	*****************************************  //
+
+GLuint tex_2d; 
+GLuint photo_tex;
 
 Plane::Plane(Entity* parent, float xSize, float zSize, int xPartition, int zPartition, Material material):
 	Mesh(parent),
@@ -169,14 +178,16 @@ Plane::Plane(Entity* parent, float xSize, float zSize, int xPartition, int zPart
 {
 }
 
+
+
 void Plane::Draw()
 {
 	float xk = xSize / xPartition;
 	float zk = zSize / zPartition;
 	float x0 = -xSize / 2;
 	float z0 = -zSize / 2;
-
-	material.SetActive();
+	material.Activate();
+	
 	glBegin(GL_QUADS);
 	{
 		for (int i = 0; i < xPartition; ++i)
@@ -184,17 +195,22 @@ void Plane::Draw()
 			for (int j = 0; j < zPartition; ++j)
 			{
 				glNormal3f(0, 1, 0);
+				glTexCoord2d(0, 0);
 				glVertex3f(x0 + i * xk, 0, z0 + j * zk);
 				glNormal3f(0, 1, 0);
+				glTexCoord2d(1, 0);
 				glVertex3f(x0 + (i + 1) * xk, 0, z0 + j * zk);
 				glNormal3f(0, 1, 0);
+				glTexCoord2d(1, 1);
 				glVertex3f(x0 + (i + 1) * xk, 0, z0 + (j + 1) * zk);
 				glNormal3f(0, 1, 0);
+				glTexCoord2d(0, 1);
 				glVertex3f(x0 + i * xk, 0, z0 + (j + 1) * zk);
 			}
 		}
 	}
 	glEnd();
+	material.Deactivate();
 }
 
 
@@ -318,8 +334,7 @@ void TriangleMesh::Draw()
 {
 	glBegin(GL_TRIANGLES);
 	for (Object& o : objects) {
-		if (!o.mtl.empty())
-			mtlLibrary[o.mtl].SetActive();
+		mtlLibrary[o.mtl].Activate();
 		for (Polygon& p : o.polygons)
 		{
 			Point v1 = vertexes[p.vertex[0]];
@@ -341,6 +356,7 @@ void TriangleMesh::Draw()
 			glTexCoord3f(t3.x, t3.y, t3.z);
 			glVertex3f(v3.x, v3.y, v3.z);
 		}
+		mtlLibrary[o.mtl].Deactivate();
 	}
 	glEnd();
 }

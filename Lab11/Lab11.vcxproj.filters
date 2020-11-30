@@ -42,6 +42,9 @@
     <ClCompile Include="illumination.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="material.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="world.h">
@@ -93,5 +96,10 @@
     <CopyFileToFolders Include="Bus.obj" />
     <CopyFileToFolders Include="Gun.obj" />
     <CopyFileToFolders Include="Tank.obj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="floor_148.jpg">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
   </ItemGroup>
 </Project>

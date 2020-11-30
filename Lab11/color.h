@@ -35,7 +35,7 @@ struct Color
 	}
 
 	template<typename Func>
-	void CallGL(Func func)
+	void CallGL(Func func) const
 	{
 		GLfloat arr[] = {r, g, b, 1.0};
 		func(arr);

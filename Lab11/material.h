@@ -1,16 +1,26 @@
 #pragma once
+#include <string>
+
 #include "color.h"
 
 struct Material
 {
+public:
 	Color ambient, diffuse, specular, emission;
-	signed char shininess;
-	void SetActive()
-	{
-		diffuse.CallGL([=](auto v) {glMaterialfv(GL_FRONT, GL_DIFFUSE, v); });
-		ambient.CallGL([=](auto v) {glMaterialfv(GL_FRONT, GL_AMBIENT, v); });
-		specular.CallGL([=](auto v) {glMaterialfv(GL_FRONT, GL_SPECULAR, v); });
-		emission.CallGL([=](auto v) {glMaterialfv(GL_FRONT, GL_EMISSION, v); });
-		glMateriali(GL_FRONT, GL_SHININESS, shininess);
-	};
+	signed char shininess = 0;
+	GLuint diffuseMap = 0;
+
+	void Activate() const;
+
+	void Deactivate() const;
+
+
+	Material(Color ambient = {1, 1, 1}, Color diffuse = {1, 1, 1}, Color specular = {0, 0, 0},
+	         signed char shininess = 0, Color emission = { 0, 0, 0 });
+
+	Material(GLuint diffuseMap);
+	Material(const std::string& diffuseMapFilename);
+	static const Material defaultMaterial;
 };
+
+
