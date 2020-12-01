@@ -16,6 +16,7 @@ public:
 	Bus*			game_bus;
 	Tank*			game_tank;
 	Gun*			game_gun;
+	Entity*			tree;
 	
 	Graphics		graphics;
 	Controller		controller;
@@ -23,7 +24,7 @@ public:
 	Illumination	illumination;
 	World			world;
 
-	bool gamemode = true;
+	bool gamemode = false;
 
 	struct {
 		bool left = false;
@@ -45,6 +46,7 @@ public:
 	Entity* AddTank(Point location);
 	Entity* AddGun(Point location);
 	Entity* AddBus(Point location);
+	Entity* AddTree();
 	Entity* AddUserCar(Point location);
 	Entity* AddBullet(Point location, float yAngle, float size = 0.2, float speed = 100, float v_speed = 0);
 	Entity* AddLantern(Point location, float rotation);

@@ -84,7 +84,7 @@ int main(int argc, char** argv)
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
 	glutCreateWindow("My window");
 	game = new Game();
-	game->gamemode = false;
+	//game->gamemode = false;
 	glutIdleFunc(NULL);
 	glutDisplayFunc(GlobalTick);
 	glutReshapeFunc(Reshape);
