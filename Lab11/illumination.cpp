@@ -10,6 +10,14 @@
 
 void Illumination::Tick(double dt)
 {
+	glDisable(GL_LIGHT0);
+	glDisable(GL_LIGHT1);
+	glDisable(GL_LIGHT2);
+	glDisable(GL_LIGHT3);
+	glDisable(GL_LIGHT4);
+	glDisable(GL_LIGHT5);
+	glDisable(GL_LIGHT6);
+	glDisable(GL_LIGHT7);
 	GarbageCollector::Tick();
 	stupudCounter = 0;
 	for (Light* l : data)

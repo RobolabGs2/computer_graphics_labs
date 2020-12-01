@@ -218,7 +218,7 @@ void Game::Init()
 	}
 
 	Entity* lightPoint = world.AddEntity({ 0, 0, 3 }); {
-		illumination.AddDirection(lightPoint, { 1, 1, 1 });
+		illumination.AddDirection(lightPoint, { 0.5, 0.5, 0.5 });
 		lightPoint->xAngle = -70;
 	}
 

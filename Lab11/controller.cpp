@@ -245,8 +245,8 @@ void Bus::Tick(double dt)
 	float angle_vel = (-parent->velocity.z * std::sin(radYAngle) + parent->velocity.x * std::cos(radYAngle));
 	parent->parent->zAngle = -5 * angle_vel;
 
-	parent->force.z -= 30 * dt * std::cos(radYAngle);
-	parent->force.x -= 30 * dt * std::sin(radYAngle);
+	parent->force.z -= 50 * dt * std::cos(radYAngle);
+	parent->force.x -= 50 * dt * std::sin(radYAngle);
 
 	if (parent->lastDCylinderCollision != nullptr && parent->lastDCylinderCollision->alive) {
 		parent->lastDCylinderCollision->parent->alive = false;
