@@ -71,10 +71,10 @@ void SimpleUser::Tick(double dt)
 		!(alive = parent->parent->alive)) return;
 
 	double radYAngle = parent->parent->yAngle * 2 * PI / 360;
-	if (game.keys.left) 
-		parent->parent->yAngle -= 5 * dt * 
+	if (game.keys.left)
+		parent->parent->yAngle -= 5 * dt *
 		(parent->velocity.z * std::cos(radYAngle) + parent->velocity.x * std::sin(radYAngle));
-	if (game.keys.right) 
+	if (game.keys.right)
 		parent->parent->yAngle += 5 * dt *
 		(parent->velocity.z * std::cos(radYAngle) + parent->velocity.x * std::sin(radYAngle));
 
@@ -95,8 +95,8 @@ void SimpleUser::Tick(double dt)
 	{
 		game.keys.space = false;
 		double radYAngle = parent->parent->yAngle * 2 * PI / 360;
-		game.AddBullet(parent->parent->location + 
-			Point{ -(float)std::sin(radYAngle), 0, -(float)std::cos(radYAngle) } * 2,
+		game.AddBullet(parent->parent->location +
+			Point{ -(float)std::sin(radYAngle), 0, -(float)std::cos(radYAngle) } *2,
 			parent->parent->yAngle);
 	}
 
@@ -120,10 +120,10 @@ Bullet::Bullet(Game& game, DynamicCylinder* parent) :
 
 void Bullet::Tick(double dt)
 {
-	if (!(alive = parent->alive)|| !(alive = parent->parent->alive)) return;
+	if (!(alive = parent->alive) || !(alive = parent->parent->alive)) return;
 
 	Entity* part = game.world.AddEntity(Point{ parent->parent->location } +
-		(Point{ (float)(rand() % 1000) , (float)(rand() % 1000) , (float)(rand() % 1000) } - Point{500, 500, 500}) / 2000.0); {
+		(Point{ (float)(rand() % 1000) , (float)(rand() % 1000) , (float)(rand() % 1000) } - Point{ 500, 500, 500 }) / 2000.0); {
 		game.controller.AddSuicidal(part, 0.3);
 		game.graphics.AddSphere(part, 0.05, {
 							  {0.235, 0.294, 0.431},
@@ -178,7 +178,7 @@ void Suicidal::Tick(double dt)
 }
 
 //	*****************************************  //
-//	**            Lantern               **  //
+//	**				  Lantern			   **  //
 //	*****************************************  //
 
 Lantern::Lantern(Game& game, StaticCube* parent) :
@@ -188,12 +188,16 @@ Lantern::Lantern(Game& game, StaticCube* parent) :
 void Lantern::Tick(double dt)
 {
 	if (!(alive = parent->alive)) return;
-
-	if (game.keys.lantern)
+	
+	if (game.keys.lantern && !game.controller.on)
 	{
+		if (alive = game.controller.light->alive) 
+		{
+			for (auto l : game.controller.lanternLight)
+				l->enable = on_off;
+		}
+		game.controller.on = true;
 		game.keys.lantern = false;
 		on_off = !on_off;
-		if (alive = game.controller.light->alive)
-			game.controller.lanternLight->enable = on_off;
 	}
 }
