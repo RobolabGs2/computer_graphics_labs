@@ -383,11 +383,20 @@ void ParseMaterialTo(std::unordered_map<std::string, Material>& lib, const std::
 	}
 }
 
+std::unordered_map<std::string, TriangleMesh::Obj> TriangleMesh::OBJCache;
+
 TriangleMesh::TriangleMesh(Entity* parent, std::string filename):
 	Mesh(parent)
 {
+	if(OBJCache.count(filename))
+	{
+		model = OBJCache[filename];
+		return;
+	}
+	
 	std::ifstream file(filename);
 	std::string s;
+	auto& newModel = OBJCache[filename];
 
 	while (!file.eof())
 	{
@@ -397,7 +406,7 @@ TriangleMesh::TriangleMesh(Entity* parent, std::string filename):
 			continue;
 		if (strings[0] == "mtllib")
 		{
-			ParseMaterialTo(mtlLibrary, strings[1]);
+			ParseMaterialTo(newModel.mtlLibrary, strings[1]);
 		}
 		else if (strings[0] == "v")
 		{
@@ -406,7 +415,7 @@ TriangleMesh::TriangleMesh(Entity* parent, std::string filename):
 				std::atof(strings[2].c_str()),
 				std::atof(strings[3].c_str())
 			};
-			vertexes.push_back(p);
+			newModel.vertexes.push_back(p);
 		}
 		else if (strings[0] == "vn")
 		{
@@ -415,7 +424,7 @@ TriangleMesh::TriangleMesh(Entity* parent, std::string filename):
 				std::atof(strings[2].c_str()),
 				std::atof(strings[3].c_str())
 			};
-			normales.push_back(p);
+			newModel.normales.push_back(p);
 		}
 		else if (strings[0] == "vt")
 		{
@@ -424,20 +433,20 @@ TriangleMesh::TriangleMesh(Entity* parent, std::string filename):
 				std::atof(strings[2].c_str()),
 				strings.size() < 4 ? 0 : std::atof(strings[3].c_str())
 			};
-			textures.push_back(p);
+			newModel.textures.push_back(p);
 		}
 		else if (strings[0] == "g")		
 		{
-			objects.emplace_back();
+			newModel.objects.emplace_back();
 		}
 		else if (strings[0] == "usemtl")
 		{
-			objects.back().mtl = strings[1];
+			newModel.objects.back().mtl = strings[1];
 		}
 		else if (strings[0] == "f")
 		{
 			for (size_t i = 0; i < strings.size() - 3; ++i)
-				objects.back().polygons.push_back({
+				newModel.objects.back().polygons.push_back({
 					{
 						std::atoi(Split(strings[1], '/')[0].c_str()) - 1,
 						std::atoi(Split(strings[2u + i], '/')[0].c_str()) - 1,
@@ -456,24 +465,25 @@ TriangleMesh::TriangleMesh(Entity* parent, std::string filename):
 				});
 		}
 	}
+	model = newModel;
 }
 
 void TriangleMesh::Draw()
 {
 	glBegin(GL_TRIANGLES);
-	for (Object& o : objects) {
-		mtlLibrary[o.mtl].Activate();
+	for (Object& o : model.objects) {
+		model.mtlLibrary[o.mtl].Activate();
 		for (Polygon& p : o.polygons)
 		{
-			Point v1 = vertexes[p.vertex[0]];
-			Point v2 = vertexes[p.vertex[1]];
-			Point v3 = vertexes[p.vertex[2]];
-			Point n1 = normales[p.normal[0]];
-			Point n2 = normales[p.normal[1]];
-			Point n3 = normales[p.normal[2]];
-			Point t1 = textures[p.texture[0]];
-			Point t2 = textures[p.texture[1]];
-			Point t3 = textures[p.texture[2]];
+			Point v1 = model.vertexes[p.vertex[0]];
+			Point v2 = model.vertexes[p.vertex[1]];
+			Point v3 = model.vertexes[p.vertex[2]];
+			Point n1 = model.normales[p.normal[0]];
+			Point n2 = model.normales[p.normal[1]];
+			Point n3 = model.normales[p.normal[2]];
+			Point t1 = model.textures[p.texture[0]];
+			Point t2 = model.textures[p.texture[1]];
+			Point t3 = model.textures[p.texture[2]];
 			glNormal3f(n1.x, n1.y, n1.z);
 			glTexCoord3f(t1.x, t1.y, t1.z);
 			glVertex3f(v1.x, v1.y, v1.z);
@@ -484,7 +494,7 @@ void TriangleMesh::Draw()
 			glTexCoord3f(t3.x, t3.y, t3.z);
 			glVertex3f(v3.x, v3.y, v3.z);
 		}
-		mtlLibrary[o.mtl].Deactivate();
+		model.mtlLibrary[o.mtl].Deactivate();
 	}
 	glEnd();
 }

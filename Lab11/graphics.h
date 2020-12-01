@@ -114,13 +114,18 @@ class TriangleMesh : public Mesh
 		std::string mtl;
 	};
 
-	std::unordered_map<std::string, Material> mtlLibrary;
-	
-	std::vector<Object> objects;
-	std::vector<Point> vertexes;
-	std::vector<Point> normales;
-	std::vector<Point> textures;
+	struct Obj
+	{
+		std::unordered_map<std::string, Material> mtlLibrary;
 
+		std::vector<Object> objects;
+		std::vector<Point> vertexes;
+		std::vector<Point> normales;
+		std::vector<Point> textures;
+	};
+
+	Obj model;
+	static std::unordered_map<std::string, Obj> OBJCache;
 public:
 	TriangleMesh(Entity* parent, std::string filename);
 
