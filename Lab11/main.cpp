@@ -59,7 +59,6 @@ void KeyUp(unsigned char key, int x, int y)
 
 void timf(int value)
 {
-	std::cout << (unsigned int)(last_dt * 1000) << std::endl;
 	glutTimerFunc(20, timf, 0);
 	glutPostRedisplay();
 }
@@ -85,6 +84,7 @@ int main(int argc, char** argv)
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
 	glutCreateWindow("My window");
 	game = new Game();
+	game->gamemode = false;
 	glutIdleFunc(NULL);
 	glutDisplayFunc(GlobalTick);
 	glutReshapeFunc(Reshape);

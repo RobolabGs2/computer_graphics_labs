@@ -47,6 +47,7 @@ public:
 	Entity* AddUserCar(Point location);
 	Entity* AddBullet(Point location, float yAngle, float size = 0.2, float speed = 100, float v_speed = 0);
 	Entity* AddLantern(Point location, float rotation);
+	Entity* AddHouse(Point location);
 
 private:
 	void Init();

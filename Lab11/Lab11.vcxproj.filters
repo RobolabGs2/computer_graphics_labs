@@ -104,6 +104,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="House.mtl">
+      <Filter>Models</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Headers">
@@ -118,5 +121,21 @@
     <Filter Include="Textures">
       <UniqueIdentifier>{9d674649-f0d4-4661-941e-d238888825b7}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="debug_square.png">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="house_panel.jpg">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="house_windows.jpg">
+      <Filter>Textures</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="House.obj">
+      <Filter>Models</Filter>
+    </Object>
   </ItemGroup>
 </Project>

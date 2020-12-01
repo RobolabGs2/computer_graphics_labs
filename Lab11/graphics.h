@@ -139,6 +139,7 @@ class Graphics: public GarbageCollector<Mesh>
 public:
 	void Tick(double dt);
 	Cube* AddCube(Entity* parent, double size, const Material& material = Material::defaultMaterial);
+	Box* AddBox(Entity* parent, Point size, const Material& material = Material::defaultMaterial);
 	Sphere* AddSphere(Entity* parent, double radius, const Material& material = Material::defaultMaterial);
 	Cone* AddCone(Entity* parent, double base, double height, const Material& material = Material::defaultMaterial);
 	Torus* AddTorus(Entity* parent, double innerRadius, double outerRadius, const Material& material = Material::defaultMaterial);

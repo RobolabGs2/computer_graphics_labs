@@ -23,6 +23,13 @@ Cube* Graphics::AddCube(Entity* parent, double size, const Material& material)
 	return result;
 }
 
+Box* Graphics::AddBox(Entity* parent, Point size, const Material& material)
+{
+	auto* result = new Box(parent, material, size);
+	GarbageCollector::AddTracking(result);
+	return result;
+}
+
 Sphere* Graphics::AddSphere(Entity* parent, double radius, const Material& material)
 {
 	Sphere* result = new Sphere(parent, material, radius);
@@ -107,16 +114,16 @@ void Box::Draw()
 			{
 				glNormal3f(0, 1, 0);
 				glTexCoord2d(0, 0);
-				glVertex3f(x0 + i * xk, -y0, z0 + j * zk);
+				glVertex3f(x0 + i * xk, -y0, z0 + (j + 1) * zk);
 				glNormal3f(0, 1, 0);
 				glTexCoord2d(1, 0);
-				glVertex3f(x0 + (i + 1) * xk, -y0, z0 + j * zk);
-				glNormal3f(0, 1, 0);
-				glTexCoord2d(1, 1);
 				glVertex3f(x0 + (i + 1) * xk, -y0, z0 + (j + 1) * zk);
 				glNormal3f(0, 1, 0);
+				glTexCoord2d(1, 1);
+				glVertex3f(x0 + (i + 1) * xk, -y0, z0 + j * zk);
+				glNormal3f(0, 1, 0);
 				glTexCoord2d(0, 1);
-				glVertex3f(x0 + i * xk, -y0, z0 + (j + 1) * zk);
+				glVertex3f(x0 + i * xk, -y0, z0 + j * zk);
 			}
 		}
 		// низ
@@ -135,7 +142,7 @@ void Box::Draw()
 				glVertex3f(x0 + (i + 1) * xk, y0, z0 + (j + 1) * zk);
 				glNormal3f(0, -1, 0);
 				glTexCoord2d(0, 1);
-				glVertex3f(x0 + i * xk, 0, y0 + (j + 1) * zk);
+				glVertex3f(x0 + i * xk, y0, z0+(j + 1) * zk);
 			}
 		}
 		for (int i = 0; i < divide; ++i)
@@ -315,25 +322,26 @@ void Plane::Draw()
 	float x0 = -xSize / 2;
 	float z0 = -zSize / 2;
 	material.Activate();
-	
+
+	GLfloat n[3] = { 0, 1, 0 };
 	glBegin(GL_QUADS);
 	{
 		for (int i = 0; i < xPartition; ++i)
 		{
 			for (int j = 0; j < zPartition; ++j)
 			{
-				glNormal3f(0, 1, 0);
+				glNormal3fv(n);
 				glTexCoord2d(0, 0);
-				glVertex3f(x0 + i * xk, 0, z0 + j * zk);
-				glNormal3f(0, 1, 0);
-				glTexCoord2d(1, 0);
-				glVertex3f(x0 + (i + 1) * xk, 0, z0 + j * zk);
-				glNormal3f(0, 1, 0);
-				glTexCoord2d(1, 1);
-				glVertex3f(x0 + (i + 1) * xk, 0, z0 + (j + 1) * zk);
-				glNormal3f(0, 1, 0);
-				glTexCoord2d(0, 1);
 				glVertex3f(x0 + i * xk, 0, z0 + (j + 1) * zk);
+				glNormal3fv(n);
+				glTexCoord2d(1, 0);
+				glVertex3f(x0 + (i + 1) * xk, 0, z0 + (j + 1) * zk);
+				glNormal3fv(n);
+				glTexCoord2d(1, 1);
+				glVertex3f(x0 + (i + 1) * xk, 0, z0 + j * zk);
+				glNormal3fv(n);
+				glTexCoord2d(0, 1);
+				glVertex3f(x0 + i * xk, 0, z0 + j * zk);
 			}
 		}
 	}
@@ -350,6 +358,7 @@ void ParseMaterialTo(std::unordered_map<std::string, Material>& lib, const std::
 {
 	std::ifstream file(filename);
 	std::string s;
+	std::string current_name;
 	Material* current = nullptr;
 	std::cerr << filename << std::endl;
 	while (!file.eof())
@@ -360,9 +369,8 @@ void ParseMaterialTo(std::unordered_map<std::string, Material>& lib, const std::
 			continue;
 		if (strings[0] == "newmtl")
 		{
-			current = &lib[strings[1]];
-			std::cerr << strings[1]<< std::endl;
-			current->emission = { 0, 0, 0 };
+			current = &lib[current_name = strings[1]];
+			std::cerr << strings[1] << std::endl;
 		}
 		else if (strings[0] == "Ns")
 		{
@@ -379,6 +387,11 @@ void ParseMaterialTo(std::unordered_map<std::string, Material>& lib, const std::
 		else if (strings[0] == "Kd")
 		{
 			current->diffuse = { std::stof(strings[1]), std::stof(strings[2]) , std::stof(strings[3]) };
+		}
+		else if (strings[0] == "map_Kd")
+		{
+			lib[current_name] = Material(strings[1]);
+			current = &lib[current_name];
 		}
 	}
 }
@@ -470,9 +483,11 @@ TriangleMesh::TriangleMesh(Entity* parent, std::string filename):
 
 void TriangleMesh::Draw()
 {
-	glBegin(GL_TRIANGLES);
 	for (Object& o : model.objects) {
-		model.mtlLibrary[o.mtl].Activate();
+		Material& material = model.mtlLibrary[o.mtl];
+		material.Activate();
+		std::cerr << o.mtl << "  " << material.diffuseMap << std::endl;
+		glBegin(GL_TRIANGLES);
 		for (Polygon& p : o.polygons)
 		{
 			Point v1 = model.vertexes[p.vertex[0]];
@@ -485,16 +500,16 @@ void TriangleMesh::Draw()
 			Point t2 = model.textures[p.texture[1]];
 			Point t3 = model.textures[p.texture[2]];
 			glNormal3f(n1.x, n1.y, n1.z);
-			glTexCoord3f(t1.x, t1.y, t1.z);
+			glTexCoord2d(t1.x, t1.y);
 			glVertex3f(v1.x, v1.y, v1.z);
 			glNormal3f(n2.x, n2.y, n2.z);
-			glTexCoord3f(t2.x, t2.y, t2.z);
+			glTexCoord2d(t2.x, t2.y);
 			glVertex3f(v2.x, v2.y, v2.z);
 			glNormal3f(n3.x, n3.y, n3.z);
-			glTexCoord3f(t3.x, t3.y, t3.z);
+			glTexCoord2d(t3.x, t3.y);
 			glVertex3f(v3.x, v3.y, v3.z);
 		}
-		model.mtlLibrary[o.mtl].Deactivate();
+		glEnd();
+		material.Deactivate();
 	}
-	glEnd();
 }

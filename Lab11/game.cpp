@@ -180,6 +180,15 @@ Entity* Game::AddLantern(Point location, float rotation)
 	return lantern;
 }
 
+Entity* Game::AddHouse(Point location)
+{
+	Entity* house = world.AddEntity(location+Point({0, 7.5, 0})); {
+		graphics.AddTriangleMesh(house, "House.obj");
+		physics.AddStaticCube(house, { 10, 15, 10 });
+	}
+	return house;
+}
+
 
 //	*****************************************  //
 //	**       Описание игрового мира	       **  //
@@ -194,6 +203,8 @@ void Game::Init()
 	AddLantern({ -17, 0, 9 }, 90);
 	AddLantern({ -23, 0, 9 }, 90);
 
+	AddHouse({ 30, 0, 30 });
+	
 	Entity* plane = world.AddEntity({ 0, 0, 0 }); {
 		graphics.AddPlane(plane, 100, 100, { "floor_148.jpg" }, 10, 10);
 		physics.AddStaticCube(plane, {100, 0, 100});
@@ -224,12 +235,7 @@ void Game::Init()
 
 	Entity* testCube = world.AddEntity({ 20, 0, 20 }); {
 		physics.AddStaticCube(testCube, { 10, 10, 10 });
-		graphics.AddCube(testCube, 10, {
-							  {0.235, 0.294, 0.431},
-							  {0.235, 0.294, 0.431},
-							  {0.3500, 0.3500, 0.3500},
-							  static_cast<signed char>(16.0 / 1000 * 128),
-			});
+		graphics.AddCube(testCube, 10, {"house_panel.jpg"});
 	}
 	//Entity* skull = world.AddEntity({ -10, 0, -10 }); {
 	//	skull->xAngle = -90;
@@ -248,8 +254,9 @@ void Game::Init()
 			physics.AddStaticCube(step, { size, size, size });
 		}
 	}
-	Entity* platform = world.AddEntity({ -20, -7, 20}); {
-		graphics.AddCube(platform,20);
-		physics.AddStaticCube(platform, { 20, 20, 20 });
+	Entity* platform = world.AddEntity({ -20, 0, 20}); {
+		graphics.AddBox(platform,{20, 5, 20});
+		physics.AddStaticCube(platform, { 20, 5, 20 });
 	}
+
 }
