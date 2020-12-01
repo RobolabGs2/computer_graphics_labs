@@ -12,12 +12,18 @@ class Game
 {
 public:
 	Camera			camera;
-
+	Entity*			user;
+	Bus*			game_bus;
+	Tank*			game_tank;
+	Gun*			game_gun;
+	
 	Graphics		graphics;
 	Controller		controller;
 	Physics			physics;
 	Illumination	illumination;
 	World			world;
+
+	bool gamemode = true;
 
 	struct {
 		bool left = false;
@@ -35,11 +41,11 @@ public:
 	void ResizeWindow(int width, int height);
 
 	Entity* AddCar(Point location, float rotation);
-	Entity* AddTank(Point location, float rotation);
-	Entity* AddGun(Point location, float rotation);
-	Entity* AddBus(Point location, float rotation);
+	Entity* AddTank(Point location);
+	Entity* AddGun(Point location);
+	Entity* AddBus(Point location);
 	Entity* AddUserCar(Point location);
-	Entity* AddBullet(Point location, float yAngle);
+	Entity* AddBullet(Point location, float yAngle, float size = 0.2, float speed = 100, float v_speed = 0);
 	Entity* AddLantern(Point location, float rotation);
 
 private:

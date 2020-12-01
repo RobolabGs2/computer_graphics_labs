@@ -11,11 +11,13 @@
 namespace chn = std::chrono;
 
 Game* game = nullptr;
+double last_dt = 20;
 
 void GlobalTick() {
 	static chn::steady_clock::time_point old_time = chn::steady_clock::now();
 	chn::steady_clock::time_point new_time = chn::steady_clock::now();
-	game->Tick((chn::duration_cast<chn::duration<double, std::ratio<1>>>(new_time - old_time)).count());
+	last_dt = (chn::duration_cast<chn::duration<double, std::ratio<1>>>(new_time - old_time)).count();
+	game->Tick(last_dt);
 	old_time = new_time;
 }
 
@@ -55,6 +57,14 @@ void KeyUp(unsigned char key, int x, int y)
 	KeyEvent<false>(key, x, y);
 }
 
+void timf(int value)
+{
+	std::cout << (unsigned int)(last_dt * 1000) << std::endl;
+	glutTimerFunc(20, timf, 0);
+	glutPostRedisplay();
+}
+
+
 #ifndef _DEBUG
 int WINAPI WinMain(
 	_In_ HINSTANCE hInstance,
@@ -75,11 +85,12 @@ int main(int argc, char** argv)
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
 	glutCreateWindow("My window");
 	game = new Game();
-	glutIdleFunc(GlobalTick);
+	glutIdleFunc(NULL);
 	glutDisplayFunc(GlobalTick);
 	glutReshapeFunc(Reshape);
 	glutKeyboardFunc(KeyDown);
 	glutKeyboardUpFunc(KeyUp);
+	glutTimerFunc(20, timf, 0); // Set up timer for 40ms, about 25 fps
 	glutMainLoop();
 	delete game;
 }

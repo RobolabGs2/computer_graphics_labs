@@ -22,6 +22,40 @@ struct SimpleUser : public Control
 	void Tick(double dt) override;
 };
 
+struct Tank : public Control
+{
+	Game& game;
+	DynamicCylinder* parent;
+	Entity* user;
+	double delay = 0;
+
+	Tank(Game& game, DynamicCylinder* parent, Entity* user);
+	void Tick(double dt) override;
+};
+
+struct Gun : public Control
+{
+	Game& game;
+	DynamicCylinder* parent;
+	Entity* user;
+	float speed_mult = 0;
+	double delay = 0;
+
+	Gun(Game& game, DynamicCylinder* parent, Entity* user);
+	void Tick(double dt) override;
+};
+
+struct Bus : public Control
+{
+	Game& game;
+	DynamicCylinder* parent;
+	Entity* user;
+	double delay = 0;
+
+	Bus(Game& game, DynamicCylinder* parent, Entity* user);
+	void Tick(double dt) override;
+};
+
 struct Bullet : public Control
 {
 	Game& game;
@@ -48,6 +82,14 @@ struct Suicidal : public Control
 	void Tick(double dt) override;
 };
 
+struct FallSuicidal : public Control
+{
+	Entity* parent;
+
+	FallSuicidal(Entity* parent);
+	void Tick(double dt) override;
+};
+
 struct Lantern : public Control
 {
 	Game& game;
@@ -69,9 +111,13 @@ public:
 	void Tick(double dt);
 
 	SimpleUser* AddSimpleUser(DynamicCylinder* parent);
+	Tank* AddTank(DynamicCylinder* parent, Entity* user);
+	Gun* AddGun(DynamicCylinder* parent, Entity* user);
+	Bus* AddBus(DynamicCylinder* parent, Entity* user);
 	Bullet* AddBullet(DynamicCylinder* parent);
 	Whirligig* AddWhirligig(Entity* parent);
 	Suicidal* AddSuicidal(Entity* parent, double ttl);
+	FallSuicidal* AddFallSuicidal(Entity* parent);
 	Lantern* AddLantern(StaticCube* parent);
 
 };

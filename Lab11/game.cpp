@@ -24,7 +24,21 @@ void Game::Tick(double dt)
 		dt = 0.03;
 
 	if (!camera.parent->alive)
+	{
 		AddUserCar({ 0, 2, 10 });
+		if (gamemode)
+		{
+			if (game_bus->alive) game_bus->user = user;
+			if (game_tank->alive) game_tank->user = user;
+			if (game_gun->alive) game_gun->user = user;
+		}
+	}
+
+	if (gamemode) {
+		if (!game_bus->alive) AddBus({ (float)(rand() % 100 - 50), 2 , float(rand() % 100 - 50) });
+		if (!game_tank->alive) AddTank({ (float)(rand() % 100 - 50), 2 , float(rand() % 100 - 50) });
+		if (!game_gun->alive) AddGun({ (float)(rand() % 100 - 50), 2 , float(rand() % 100 - 50) });
+	}
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearDepth(1.0f);
@@ -61,42 +75,44 @@ Entity* Game::AddCar(Point location, float rotation)
 		car->yAngle = rotation;
 
 		graphics.AddTriangleMesh(car, "Car.obj");
-
+		controller.AddFallSuicidal(car);
 	}
 	return car;
 }
 
-Entity* Game::AddTank(Point location, float rotation)
+Entity* Game::AddTank(Point location)
 {
 	Entity* car = world.AddEntity(location); {
-		car->yAngle = rotation;
-
+		DynamicCylinder* body = physics.AddDynamicCylinder(car, 0.7, 0.7);
 		graphics.AddTriangleMesh(car, "Tank.obj");
-
+		if (gamemode) game_tank = controller.AddTank(body, user);
+		controller.AddFallSuicidal(car);
 	}
 	return car;
 }
 
 
-Entity* Game::AddGun(Point location, float rotation)
+Entity* Game::AddGun(Point location)
 {
 	Entity* car = world.AddEntity(location); {
-		car->yAngle = rotation;
 
 		graphics.AddTriangleMesh(car, "Gun.obj");
-
+		DynamicCylinder* body = physics.AddDynamicCylinder(car, 0.7, 0.7);
+		if (gamemode) game_gun = controller.AddGun(body, user);
+		controller.AddFallSuicidal(car);
 	}
 	return car;
 }
 
 
-Entity* Game::AddBus(Point location, float rotation)
+Entity* Game::AddBus(Point location)
 {
 	Entity* car = world.AddEntity(location); {
-		car->yAngle = rotation;
 
 		graphics.AddTriangleMesh(car, "Bus.obj");
-
+		DynamicCylinder* body = physics.AddDynamicCylinder(car, 0.7, 1.1);
+		if(gamemode) game_bus = controller.AddBus(body, user);
+		controller.AddFallSuicidal(car);
 	}
 	return car;
 }
@@ -116,15 +132,17 @@ Entity* Game::AddUserCar(Point location)
 		Entity* lightPoint = world.AddTailEntity(car, { 0, 0, -1 }); {
 			controller.light = illumination.AddSpot(lightPoint, { 1, 1, 0.5 }, 30);
 		}
+
+		user = car;
 	}
 	return car;
 }
 
-Entity* Game::AddBullet(Point location, float yAngle)
+Entity* Game::AddBullet(Point location, float yAngle, float size, float speed, float v_speed)
 {
 	Entity* bullet = world.AddEntity(location); {
 		bullet->yAngle = yAngle;
-		graphics.AddSphere(bullet, 0.2,
+		graphics.AddSphere(bullet, size,
 			{
 			{0.235, 0.294, 0.431},
 			{0.235, 0.294, 0.431},
@@ -136,8 +154,9 @@ Entity* Game::AddBullet(Point location, float yAngle)
 		controller.AddSuicidal(bullet, 5);
 		DynamicCylinder* body = physics.AddDynamicCylinder(bullet, 0.2, 0.4); {
 			double radYAngle = yAngle * 2 * PI / 360;
-			body->velocity.z = -100 * std::cos(radYAngle);
-			body->velocity.x = -100 * std::sin(radYAngle);
+			body->velocity.z = -speed * std::cos(radYAngle);
+			body->velocity.x = -speed * std::sin(radYAngle);
+			body->velocity.y = v_speed;
 			body->friction = { 0, 0, 0 };
 			controller.AddBullet(body);
 		}
@@ -169,7 +188,7 @@ Entity* Game::AddLantern(Point location, float rotation)
 void Game::Init()
 {
 	AddUserCar({ 0, 2, 10 });
-
+	 
 	AddLantern({ 15, 0, 14 }, 90);
 	AddLantern({ 25, 0, 14 }, 90);
 	AddLantern({ -17, 0, 9 }, 90);
@@ -180,17 +199,9 @@ void Game::Init()
 		physics.AddStaticCube(plane, {100, 0, 100});
 	}
 
-	Entity* car2 = AddTank({ 5,2, -10 }, 45); {
-		DynamicCylinder* body = physics.AddDynamicCylinder(car2, 0.7, 0.7);
-	}
-
-	Entity* gun = AddGun({ 5,2, -15 }, 45); {
-		DynamicCylinder* body = physics.AddDynamicCylinder(gun, 0.7, 0.7);
-	}
-
-	Entity* bus = AddBus({ 5,2, -20 }, 90); {
-		DynamicCylinder* body = physics.AddDynamicCylinder(bus, 0.7, 1.1);
-	}
+	Entity* car2 = AddTank({ 5,2, -10 });
+	Entity* gun = AddGun({ 5,2, -15 });
+	Entity* bus = AddBus({ 5,2, -20 });
 
 	Entity* tree = world.AddEntity({ 0, 0, 0 }); {
 		controller.AddWhirligig(tree);

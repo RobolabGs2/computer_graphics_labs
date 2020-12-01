@@ -89,7 +89,7 @@ Box::Box(Entity* parent, const Material& material, const Point& size): Mesh(pare
 
 void Box::Draw()
 {
-	int divide = 50;
+	int divide = 10;
 	float xk = size.x / divide;
 	float yk = size.y / divide;
 	float zk = size.z / divide;
