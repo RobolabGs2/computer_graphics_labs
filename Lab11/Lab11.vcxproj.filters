@@ -101,6 +101,45 @@
     <CopyFileToFolders Include="floor_148.jpg">
       <Filter>Textures</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="ball.jpg">
+      <Filter>Textures</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="blak-yellow.jpg">
+      <Filter>Textures</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="flowers.jpg">
+      <Filter>Textures</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="glass.jpg">
+      <Filter>Textures</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="golden-glitter.jpg">
+      <Filter>Textures</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="golden-green.jpg">
+      <Filter>Textures</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="santa.jpg">
+      <Filter>Textures</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="xmas.jpg">
+      <Filter>Textures</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="tree.jpg">
+      <Filter>Textures</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="star.mtl">
+      <Filter>Models</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="star.obj">
+      <Filter>Models</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="snowman.mtl">
+      <Filter>Models</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="snowman.obj">
+      <Filter>Models</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -32,13 +32,13 @@ void KeyEvent(unsigned char key, int x, int y)
 	switch (key)
 	{	
 	case 'q':	game->keys.headlamp = value; return;
-	case 'e':	game->keys.lantern = value; return;
+	case 'e':	game->keys.lantern = value; game->controller.on = false; return;
 	case 'a':	game->keys.left = value; return;
 	case 'd':	game->keys.right = value; return;
 	case 'w':	game->keys.up = value; return;
 	case 's':	game->keys.down = value; return;
 	case 'Q':	game->keys.headlamp = value; return;
-	case 'E':	game->keys.lantern = value; return;
+	case 'E':	game->keys.lantern = value; game->controller.on = false; return;
 	case 'A':	game->keys.left = value; return;
 	case 'D':	game->keys.right = value; return;
 	case 'W':	game->keys.up = value; return;

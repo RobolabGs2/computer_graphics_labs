@@ -94,7 +94,7 @@ struct Lantern : public Control
 {
 	Game& game;
 	StaticCube* parent;
-	bool on_off = true;
+	bool on_off = false;
 
 	Lantern(Game& game, StaticCube* parent);
 	void Tick(double dt) override;
@@ -105,7 +105,9 @@ class Controller : public GarbageCollector<Control>
 public:
 	Game& game;
 	SpotLight* light;
-	SpotLight* lanternLight;
+	std::vector<SpotLight*> lanternLight;
+	bool on = false;
+	int onn = 0;
 
 	Controller(Game& game);
 	void Tick(double dt);

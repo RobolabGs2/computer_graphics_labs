@@ -6,7 +6,7 @@
 #include "graphics.h"
 #include "physics.h"
 #include "illumination.h"
-
+#include <string>
 
 class Game
 {
@@ -35,6 +35,7 @@ public:
 		bool lantern = false;
 	} keys;
 
+
 	Game();
 
 	void Tick(double dt);
@@ -51,4 +52,22 @@ public:
 
 private:
 	void Init();
+	enum textures
+	{
+		Ball,
+		Flowers,
+		Glass,
+		GoldenGlitter,
+		GoldenGreen,
+		Santa,
+		Xmas,
+		Pink,
+		White,
+		Yellow,
+		Blue,
+		Tree,
+		Floor,
+	};	
+	Material getTexture(textures name);
+	
 };

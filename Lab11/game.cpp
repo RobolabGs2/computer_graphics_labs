@@ -7,12 +7,14 @@
 #include <Windows.h>
 #include <gl\freeglut.h>
 
+#include <math.h>
+#include <ctime>
 
 //	*****************************************  //
 //	**                Game                 **  //
 //	*****************************************  //
 
-Game::Game():
+Game::Game() :
 	controller(*this)
 {
 	Init();
@@ -46,7 +48,7 @@ void Game::Tick(double dt)
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	camera.TransformGL();
-	
+
 	glEnable(GL_LIGHTING);
 	glEnable(GL_DEPTH_TEST);
 
@@ -149,7 +151,7 @@ Entity* Game::AddBullet(Point location, float yAngle, float size, float speed, f
 			{0.3500, 0.3500, 0.3500},
 			static_cast<signed char>(16.0 / 1000 * 128),
 			{0.9, 0.4, 0}
-		 }
+			}
 		);
 		controller.AddSuicidal(bullet, 5);
 		DynamicCylinder* body = physics.AddDynamicCylinder(bullet, 0.2, 0.4); {
@@ -172,10 +174,9 @@ Entity* Game::AddLantern(Point location, float rotation)
 		StaticCube* body = physics.AddStaticCube(lantern, { 1, 3, 1 });
 		controller.AddLantern(body);
 
-		Entity* lightPoint = world.AddTailEntity(lantern, { 0.5, 2, 0 }); {
-			controller.lanternLight = illumination.AddSpot(lightPoint, { 1, 1, 0.5 }, 180);
-		}		
-
+		Entity* lightPoint = world.AddEntity({ location.x, location.y + 2.0f, location.z - 0.5f }); {
+			controller.lanternLight.push_back(illumination.AddSpot(lightPoint, { 1, 1, 0.5 }, 180));
+		}
 	}
 	return lantern;
 }
@@ -206,25 +207,75 @@ void Game::Init()
 	AddHouse({ 30, 0, 30 });
 	
 	Entity* plane = world.AddEntity({ 0, 0, 0 }); {
-		graphics.AddPlane(plane, 100, 100, { "floor_148.jpg" }, 10, 10);
-		physics.AddStaticCube(plane, {100, 0, 100});
+		graphics.AddPlane(plane, 100, 100, getTexture(Floor), 10, 10);
+		physics.AddStaticCube(plane, { 100, 0, 100 });
 	}
 
 	Entity* car2 = AddTank({ 5,2, -10 });
 	Entity* gun = AddGun({ 5,2, -15 });
 	Entity* bus = AddBus({ 5,2, -20 });
 
-	Entity* tree = world.AddEntity({ 0, 0, 0 }); {
+	Entity* tree = world.AddEntity({ 0, 2, 0 }); {
 		controller.AddWhirligig(tree);
 		physics.AddDynamicCylinder(tree, 2, 10)->friction = { 1, 1, 1 };
-		Entity* visuzl = world.AddTailEntity(tree, {0, -5, 0}); {
+		Entity* visuzl = world.AddTailEntity(tree, { 0, -5, 0 }); {
 			visuzl->xAngle = -90;
 			graphics.AddCone(visuzl, 2, 10,
 				{
-							  {0.235, 1, 0.431},
-							  {0.235, 1, 0.431}
+							  {0.07, 0.59, 0.28},
+							  {0.07, 0.59, 0.28}
 				}
-				);
+			);
+		}
+		srand(time(0));
+		Entity* star = world.AddTailEntity(tree, { 0, 5, 0 }); {
+			star->xAngle = -90;
+			graphics.AddTriangleMesh(star, "star.obj");
+		}
+		for (float i = -2; i <= 2; i += 4)
+		{
+			Entity* ball = world.AddTailEntity(tree, { i, -4, 0 }); {
+				graphics.AddSphere(ball, 0.2, getTexture((textures)(rand() % 11)));
+			}
+			Entity* ball2 = world.AddTailEntity(tree, { 0, -4, i }); {
+				graphics.AddSphere(ball2, 0.2, getTexture((textures)(rand() % 11)));
+			}
+		}
+		for (float i = -1.3; i <= 1.5; i += 2.6)
+		{
+			Entity* ball1 = world.AddTailEntity(tree, { i, -3.4, i }); {
+				graphics.AddSphere(ball1, 0.2, getTexture((textures)(rand() % 11)));
+			}
+			Entity* ball2 = world.AddTailEntity(tree, { i * -1, -3.4, i }); {
+				graphics.AddSphere(ball2, 0.2, getTexture((textures)(rand() % 11)));
+			}
+		}
+		for (float i = -1.5; i <= 1.5; i += 3)
+		{
+			Entity* ball1 = world.AddTailEntity(tree, { i, -1.7, 0 }); {
+				graphics.AddSphere(ball1, 0.2, getTexture((textures)(rand() % 11)));
+			}
+			Entity* ball2 = world.AddTailEntity(tree, { 0, -1.7, i }); {
+				graphics.AddSphere(ball2, 0.2, getTexture((textures)(rand() % 11)));
+			}
+		}
+		for (float i = -0.8; i <= 1; i += 1.6)
+		{
+			Entity* ball1 = world.AddTailEntity(tree, { i, 0, i }); {
+				graphics.AddSphere(ball1, 0.2, getTexture((textures)(rand() % 11)));
+			}
+			Entity* ball2 = world.AddTailEntity(tree, { i * -1, 0, i }); {
+				graphics.AddSphere(ball2, 0.2, getTexture((textures)(rand() % 11)));
+			}
+		}
+		for (float i = -0.8; i <= 1; i += 1.6)
+		{
+			Entity* ball1 = world.AddTailEntity(tree, { i, 1.7, 0 }); {
+				graphics.AddSphere(ball1, 0.2, getTexture((textures)(rand() % 11)));
+			}
+			Entity* ball2 = world.AddTailEntity(tree, { 0, 1.7, i }); {
+				graphics.AddSphere(ball2, 0.2, getTexture((textures)(rand() % 11)));
+			}
 		}
 	}
 
@@ -258,5 +309,39 @@ void Game::Init()
 		graphics.AddBox(platform,{20, 5, 20});
 		physics.AddStaticCube(platform, { 20, 5, 20 });
 	}
+}
 
+Material Game::getTexture(textures name)
+{
+	switch (name)
+	{
+	case(Ball): return Material("ball.jpg");
+		break;
+	case(Flowers): return Material("flowers.jpg");
+		break;
+	case(Glass): return Material("glass.jpg");
+		break;
+	case(GoldenGlitter): return Material("golden-glitter.jpg");
+		break;
+	case(GoldenGreen): return Material("golden-green.jpg");
+		break;
+	case(Santa): return Material("santa.jpg");
+		break;
+	case(Xmas): return Material("xmas.jpg");
+		break;
+	case(Pink): return Material({0, 0, 0}, { 0.86, 0.1, 0.77 }, { 1, 1, 1 }, '\111');
+		break;
+	case(White): return Material({ 0, 0, 0 }, { 1, 1, 1 }, { 1, 1, 1 }, '\111');
+		break;
+	case(Yellow): return Material({ 0, 0, 0 }, { 0.9, 0.8, 0.07 },  { 1, 1, 1 }, '\111');
+		break;
+	case(Blue): return Material({ 0, 0, 0 }, { 0.18, 0.1, 1 }, { 1, 1, 1 }, '\111');
+		break;
+	case(Tree): return Material("tree.jpg");
+		break;
+	case(Floor): return Material("floor_148.jpg");
+		break;
+	default:
+		break;
+	}
 }

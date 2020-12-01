@@ -128,6 +128,12 @@
     <CopyFileToFolders Include="Tank.mtl">
       <FileType>Document</FileType>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="star.mtl">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="snowman.mtl">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="Car.obj">
@@ -162,6 +168,29 @@
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="House.obj">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="ball.jpg" />
+    <CopyFileToFolders Include="blak-yellow.jpg" />
+    <CopyFileToFolders Include="flowers.jpg" />
+    <CopyFileToFolders Include="glass.jpg" />
+    <CopyFileToFolders Include="golden-glitter.jpg" />
+    <CopyFileToFolders Include="golden-green.jpg" />
+    <CopyFileToFolders Include="santa.jpg" />
+    <CopyFileToFolders Include="xmas.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="tree.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="star.obj">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="snowman.obj">
       <FileType>Document</FileType>
     </CopyFileToFolders>
   </ItemGroup>
