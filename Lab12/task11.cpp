@@ -8,8 +8,6 @@ using namespace std;
 
 GLuint Program;
 
-GLint Attrib_vertex;
-
 GLint Unif_color;
 GLint Unif_angle;
 
@@ -23,14 +21,12 @@ void checkOpenGLerror() {
 		std::cout << "OpenGl error! - " << gluErrorString(errCode) << "\n";
 }
 
-
 void freeShader()
 {
-	
 	glUseProgram(0);
-	
 	glDeleteProgram(Program);
 }
+
 void resizeWindow(int width, int height)
 {
 	glViewport(0, 0, width, height);
@@ -140,14 +136,6 @@ void initShader()
 	if (!link_ok)
 	{
 		std::cout << "error attach shaders \n";
-	}
-	
-	const char* attr_name = "coord";
-	Attrib_vertex = glGetAttribLocation(Program, attr_name);
-	if (Attrib_vertex == -1)
-	{
-		std::cout << "could not bind attrib " << attr_name << std::endl;
-		return;
 	}
 	
 	const char* unif_name = "angle";

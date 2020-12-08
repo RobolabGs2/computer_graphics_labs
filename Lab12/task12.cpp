@@ -5,7 +5,6 @@
 using namespace std;
 
 GLuint Program;
-GLint Attrib_vertex;
 GLint Unif_angle;
 
 float rotate_x = 0.0f;
@@ -96,13 +95,6 @@ void initShader()
 	if (!link_ok)
 	{
 		std::cout << "error attach shaders \n";
-	}
-	const char* attr_name = "coord";
-	Attrib_vertex = glGetAttribLocation(Program, attr_name);
-	if (Attrib_vertex == -1)
-	{
-		std::cout << "could not bind attrib " << attr_name << std::endl;
-		return;
 	}
 	const char* unif_name = "angle";
 	Unif_angle = glGetUniformLocation(Program, unif_name);
