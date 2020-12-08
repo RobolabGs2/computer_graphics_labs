@@ -66,9 +66,11 @@ void initShader()
 			float ycos = cos(angle.y);
 			float zsin = sin(angle.z);
 			float zcos = cos(angle.z);
-			vec3 rot_y = vec3(coord.x * ycos + coord.z * ysin,  coord.y, coord.z * ycos - coord.x * ysin);
-			vec3 rot_x = vec3(rot_y.x,  rot_y.y * xcos + rot_y.z * xsin, rot_y.z * xcos - rot_y.y * xsin);
-			vec3 rot_z = vec3(rot_x.x * zcos - rot_x.y * zsin,  rot_x.y * zcos + rot_x.x * zsin, rot_x.z);
+
+			vec3 rot_y = coord * mat3(ycos, 0, ysin, 0, 1, 0, -ysin, 0, ycos);
+			vec3 rot_x = rot_y * mat3(1, 0, 0, 0, xcos, xsin,  0, -xsin, xcos);
+			vec3 rot_z = rot_x * mat3(zcos,  zsin, 0, -zsin, zcos,  0,0, 0, 1);
+
 			gl_Position = vec4(rot_z, 1.0);
 			gl_FrontColor = vec4(vcolor, 1.0);
 		}

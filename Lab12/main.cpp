@@ -4,7 +4,7 @@
 #include <iostream>
 
 
-#define MAGIC_NUMBER 0
+#define MAGIC_NUMBER 5
 
 #if MAGIC_NUMBER == 1
 #include "task11.cpp"

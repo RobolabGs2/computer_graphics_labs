@@ -42,30 +42,6 @@ void specialKeys(int key, int x, int y) {
 	glutPostRedisplay();
 }
 
-void renderTriangle()
-{
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	glLoadIdentity();
-	//glRotatef(rotate_z, 0.0, 0.0, 1.0);
-	glUseProgram(Program);
-	glUniform1f(Unif_angle, rotate_z);
-	glBegin(GL_TRIANGLES);
-	glColor3f(1.0, 0.0, 0.0);
-	glVertex2f(-0.5f, -0.5f);
-	glColor3f(0.0, 1.0, 0.0);
-	glVertex2f(0.5f, -0.5f);
-	glColor3f(0.0, 0.0, 1.0);
-	glVertex2f(0.0f, 0.5f);
-	glEnd();
-
-	glFlush();
-
-	glUseProgram(0);
-	checkOpenGLerror();
-	glutSwapBuffers();
-}
-
 void initShader()
 {
 	const char* vsSource = R"(
@@ -84,15 +60,29 @@ void initShader()
 		)";
 
 	const char* fsSource = R"(
-			uniform vec4 color;
 			void main() {
 				 if (mod(gl_FragCoord.x * gl_FragCoord.y, 10) < 5.0) 
-				 gl_FragColor = color;
+				 gl_FragColor = vec4(0.0,0.0,0.0,0.0);
 				 else
 				 gl_FragColor = vec4(1.0,0.0,1.0,0.0);
 			}
 		)";
 
+	//const char* fsSource = R"(
+	//		uniform vec4 color;
+	//		void main() {
+	//			if (mod(gl_FragCoord.x, 10)<5.0) 
+	//				if (mod(gl_FragCoord.y, 10)<5.0) 
+	//					gl_FragColor = color;
+	//				else
+	//					gl_FragColor = vec4(1.0,0.0,1.0,0.0);
+	//			else
+	//				if (mod(gl_FragCoord.y, 10)<5.0) 
+	//					gl_FragColor = vec4(1.0,0.0,1.0,0.0);
+	//				else
+	//					gl_FragColor = color;
+	//		}
+	//	)";
 
 	GLuint  vShader, fShader;
 	vShader = glCreateShader(GL_VERTEX_SHADER);
@@ -148,10 +138,9 @@ void renderQuad()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glLoadIdentity();
-	//glRotatef(rotate_z, 0.0, 0.0, 1.0);
+
 	glUseProgram(Program);
 	static float black[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-	glUniform4fv(Unif_color, 1, black);
 	glUniform1f(Unif_angle, rotate_z);
 	glBegin(GL_QUADS);
 	glColor3f(1.0, 1.0, 1.0);

@@ -7,7 +7,6 @@ using namespace std;
 
 GLuint Program;
 GLint Attrib_vertex;
-GLint Unif_color;
 GLint Unif_angle;
 
 float rotate_x = 0.0f;
@@ -59,10 +58,9 @@ void initShader()
 			}
 		)";
 	const char* fsSource = R"(
-			uniform vec4 color;
 			void main() {
 				 if (mod(sqrt(gl_FragCoord.x * gl_FragCoord.x + gl_FragCoord.y * gl_FragCoord.y), 10) < 5.0)
-					gl_FragColor = color;
+					gl_FragColor = vec4(0.0,0.0,0.0,0.0);
 				 else
 					gl_FragColor = vec4(1.0,0.0,1.0,0.0);
 			}
@@ -122,10 +120,7 @@ void renderQuad()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glLoadIdentity();
-	//glRotatef(rotate_z, 0.0, 0.0, 1.0);
 	glUseProgram(Program);
-	static float black[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-	glUniform4fv(Unif_color, 1, black);
 	glUniform1f(Unif_angle, rotate_z);
 	glBegin(GL_QUADS);
 	glColor3f(1.0, 1.0, 1.0);

@@ -1,7 +1,7 @@
 
 GLuint Program;
+GLint Unif_angle;
 
-GLint Unif_color;
 double rotate_x = 0;
 double rotate_y = 0;
 double rotate_z = 0;
@@ -12,25 +12,66 @@ void checkOpenGLerror()
 	if ((errCode = glGetError()) != GL_NO_ERROR)
 		std::cout << "OpenGl error! - " << gluErrorString(errCode);
 }
+//! Функция печати лога шейдера
+void shaderLog(unsigned int shader)
+{
+	int infologLen = 0;
+	int charsWritten = 0;
+	char* infoLog;
+	glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infologLen);
+	if (infologLen > 1)
+	{
+		infoLog = new char[infologLen];
+		if (infoLog == NULL)
+		{
+			std::cout << "ERROR: Could not allocate InfoLog buffer\n";
+			exit(1);
+		}
+		glGetShaderInfoLog(shader, infologLen, &charsWritten, infoLog);
+		std::cout << "InfoLog: " << infoLog << "\n\n\n";
+		delete[] infoLog;
+	}
+}
 
 void initShader()
 {
-	const char* fsSource1 =
-		"uniform vec4 color;\n"
-		"void main() {\n"
-		" gl_FragColor = color;\n"
-		"}\n";
-	const char* fsSource =
-		"uniform vec4 color;\n"
-		"void main() {\n"
-		" gl_FragColor = gl_Color;\n"
-		"}\n";
-	GLuint fShader;
-	fShader = glCreateShader(GL_FRAGMENT_SHADER);
+	const char* vsSource = R"(
+		attribute vec3 coord;
+		uniform	vec3 angle;
+
+		void main() {
+			float xsin = sin(angle.x);
+			float xcos = cos(angle.x);
+			float ysin = sin(angle.y);
+			float ycos = cos(angle.y);
+			float zsin = sin(angle.z);
+			float zcos = cos(angle.z);
+			vec3 rot_y = vec3(coord.x * ycos + coord.z * ysin,  coord.y, coord.z * ycos - coord.x * ysin);
+			vec3 rot_x = vec3(rot_y.x,  rot_y.y * xcos + rot_y.z * xsin, rot_y.z * xcos - rot_y.y * xsin);
+			vec3 rot_z = vec3(rot_x.x * zcos - rot_x.y * zsin,  rot_x.y * zcos + rot_x.x * zsin, rot_x.z);
+			gl_Position = vec4(rot_z, 1.0);
+			gl_FrontColor = gl_Color;
+		}
+	)";
+
+	const char* fsSource = R"(
+			void main() {
+				gl_FragColor = gl_Color;
+			};
+		)";
+
+	GLuint vShader = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(vShader, 1, &vsSource, NULL);
+	glCompileShader(vShader);
+	std::cout << "vertex shader \n";
+	shaderLog(vShader);
+
+	GLuint fShader = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fShader, 1, &fsSource, NULL);
 	glCompileShader(fShader);
 	Program = glCreateProgram();
 	glAttachShader(Program, fShader);
+	glAttachShader(Program, vShader);
 	glLinkProgram(Program);
 	int link_ok;
 	glGetProgramiv(Program, GL_LINK_STATUS, &link_ok);
@@ -39,9 +80,10 @@ void initShader()
 		std::cout << "error attach shaders \n";
 		return;
 	}
-	const char* unif_name = "color";
-	Unif_color = glGetUniformLocation(Program, unif_name);
-	if (Unif_color == -1)
+
+	const char* unif_name = "angle";
+	Unif_angle = glGetUniformLocation(Program, unif_name);
+	if (Unif_angle == -1)
 	{
 		std::cout << "could not bind uniform " << unif_name << std::endl;
 		return;
@@ -67,12 +109,12 @@ void render2()
 	glEnable(GL_DEPTH_TEST);
 
 	glLoadIdentity();
-	glRotatef(rotate_x, 1.0, 0.0, 0.0);
-	glRotatef(rotate_y, 0.0, 1.0, 0.0);
-	glRotatef(rotate_z, 0.0, 0.0, 1.0);
 	glUseProgram(Program);
-	static float red[4] = { 1.0f, 0.0f, 0.0f, 1.0f };
-	glUniform4fv(Unif_color, 1, red);
+	double pi = 3.1415926535897932;
+	glUniform3f(Unif_angle,
+		(GLfloat)(rotate_x * pi / 180),
+		(GLfloat)(rotate_y * pi / 180),
+		(GLfloat)(rotate_z * pi / 180));
 
 	glBegin(GL_QUADS); {
 
