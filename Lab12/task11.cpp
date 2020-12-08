@@ -1,6 +1,5 @@
-#include <Windows.h>
-#include <GL\glew.h>
-#include <GL\freeglut.h>
+#include <gl/glew.h>
+#include <gl/freeglut.h>
 #include <iostream>
 
 using namespace std;

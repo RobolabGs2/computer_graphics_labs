@@ -1,3 +1,6 @@
+#include <gl/glew.h>
+#include <gl/freeglut.h>
+#include <iostream>
 
 double rotate_x = 0;
 double rotate_y = 0;

@@ -1,3 +1,6 @@
+#include <gl/glew.h>
+#include <gl/freeglut.h>
+#include <iostream>
 
 GLuint Program;
 GLint Unif_angle;
