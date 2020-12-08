@@ -24,7 +24,7 @@ public:
 	Illumination	illumination;
 	World			world;
 
-	bool gamemode = false;
+	bool gamemode = true;
 
 	struct {
 		bool left = false;

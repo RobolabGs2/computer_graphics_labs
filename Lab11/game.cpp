@@ -176,7 +176,8 @@ Entity* Game::AddLantern(Point location, float rotation)
 		controller.AddLantern(body);
 
 		Entity* lightPoint = world.AddEntity({ location.x, location.y + 2.0f, location.z - 0.5f }); {
-			controller.lanternLight.push_back(illumination.AddSpot(lightPoint, { 1, 1, 0.5 }, 180));
+			lightPoint->xAngle = -90;
+			controller.lanternLight.push_back(illumination.AddSpot(lightPoint, { 1, 1, 0.5 }, 30));
 		}
 	}
 	return lantern;
@@ -225,52 +226,6 @@ Entity* Game::AddTree()
 					rand() % 3 == 0 ? Color{ 1, 0, 0 }: Color{0, 1, 0}));
 			}
 		}
-
-		//for (float i = -2; i <= 2; i += 4)
-		//{
-		//	Entity* ball = world.AddTailEntity(tree, { i, -4, 0 }); {
-		//		graphics.AddSphere(ball, 0.2, getTexture((textures)(rand() % 11)));
-		//	}
-		//	Entity* ball2 = world.AddTailEntity(tree, { 0, -4, i }); {
-		//		graphics.AddSphere(ball2, 0.2, getTexture((textures)(rand() % 11)));
-		//	}
-		//}
-		//for (float i = -1.3; i <= 1.5; i += 2.6)
-		//{
-		//	Entity* ball1 = world.AddTailEntity(tree, { i, -3.4, i }); {
-		//		graphics.AddSphere(ball1, 0.2, getTexture((textures)(rand() % 11)));
-		//	}
-		//	Entity* ball2 = world.AddTailEntity(tree, { i * -1, -3.4, i }); {
-		//		graphics.AddSphere(ball2, 0.2, getTexture((textures)(rand() % 11)));
-		//	}
-		//}
-		//for (float i = -1.5; i <= 1.5; i += 3)
-		//{
-		//	Entity* ball1 = world.AddTailEntity(tree, { i, -1.7, 0 }); {
-		//		graphics.AddSphere(ball1, 0.2, getTexture((textures)(rand() % 11)));
-		//	}
-		//	Entity* ball2 = world.AddTailEntity(tree, { 0, -1.7, i }); {
-		//		graphics.AddSphere(ball2, 0.2, getTexture((textures)(rand() % 11)));
-		//	}
-		//}
-		//for (float i = -0.8; i <= 1; i += 1.6)
-		//{
-		//	Entity* ball1 = world.AddTailEntity(tree, { i, 0, i }); {
-		//		graphics.AddSphere(ball1, 0.2, getTexture((textures)(rand() % 11)));
-		//	}
-		//	Entity* ball2 = world.AddTailEntity(tree, { i * -1, 0, i }); {
-		//		graphics.AddSphere(ball2, 0.2, getTexture((textures)(rand() % 11)));
-		//	}
-		//}
-		//for (float i = -0.8; i <= 1; i += 1.6)
-		//{
-		//	Entity* ball1 = world.AddTailEntity(tree, { i, 1.7, 0 }); {
-		//		graphics.AddSphere(ball1, 0.2, getTexture((textures)(rand() % 11)));
-		//	}
-		//	Entity* ball2 = world.AddTailEntity(tree, { 0, 1.7, i }); {
-		//		graphics.AddSphere(ball2, 0.2, getTexture((textures)(rand() % 11)));
-		//	}
-		//}
 	}
 	return tree;
 }
