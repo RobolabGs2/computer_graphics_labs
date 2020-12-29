@@ -24,6 +24,23 @@ void Game::Tick(double dt)
 	if (dt > 0.03)
 		dt = 0.03;
 
+	if (!camera.parent->alive)
+	{
+		AddUserCar({ 0, 2, 10 });
+		if (gamemode)
+		{
+			if (game_bus->alive) game_bus->user = user;
+			if (game_tank->alive) game_tank->user = user;
+			if (game_gun->alive) game_gun->user = user;
+		}
+	}
+
+	if (gamemode) {
+		if (!game_bus->alive) AddBus({ (float)(rand() % 100 - 50), 2 , float(rand() % 100 - 50) });
+		if (!game_tank->alive) AddTank({ (float)(rand() % 100 - 50), 2 , float(rand() % 100 - 50) });
+		if (!game_gun->alive) AddGun({ (float)(rand() % 100 - 50), 2 , float(rand() % 100 - 50) });
+	}
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
 	glClearDepth(1.0f);
@@ -44,6 +61,78 @@ void Game::ResizeWindow(int width, int height)
 {
 	glViewport(0, 0, width, height);
 	camera.aspectRatio = width / (float)height;
+}
+
+Entity* Game::AddCar(Point location, float rotation)
+{
+	Entity* car = world.AddEntity(location); {
+		car->yAngle = rotation;
+
+		Entity* mesh = world.AddTailEntity(car, {0, 0, 0}); {
+			mesh->yAngle = 180;
+			graphics.AddSimpleColorMesh(mesh, "car.obj");
+		}
+		controller.AddFallSuicidal(car);
+	}
+	return car;
+}
+
+Entity* Game::AddTank(Point location)
+{
+	Entity* car = world.AddEntity(location); {
+		DynamicCylinder* body = physics.AddDynamicCylinder(car, 0.7, 0.7);
+		graphics.AddSimpleColorMesh(car, "Tank.obj");
+		if (gamemode) game_tank = controller.AddTank(body, user);
+		controller.AddFallSuicidal(car);
+	}
+	return car;
+}
+
+
+Entity* Game::AddGun(Point location)
+{
+	Entity* car = world.AddEntity(location); {
+
+		graphics.AddSimpleColorMesh(car, "Gun.obj");
+		DynamicCylinder* body = physics.AddDynamicCylinder(car, 0.7, 0.7);
+		if (gamemode) game_gun = controller.AddGun(body, user);
+		controller.AddFallSuicidal(car);
+	}
+	return car;
+}
+
+
+Entity* Game::AddBus(Point location)
+{
+	Entity* car = world.AddEntity(location); {
+
+		graphics.AddSimpleColorMesh(car, "Bus.obj");
+		DynamicCylinder* body = physics.AddDynamicCylinder(car, 0.7, 1.1);
+		if (gamemode) game_bus = controller.AddBus(body, user);
+		controller.AddFallSuicidal(car);
+	}
+	return car;
+}
+
+Entity* Game::AddUserCar(Point location)
+{
+	Entity* car = AddCar(location, 0); {
+		Entity* lightPoint = world.AddTailEntity(car, { 0, 0, 0 });
+		SpotLight* headlight = illumination.AddSpotLight(lightPoint, 30, 0);
+
+		DynamicCylinder* body = physics.AddDynamicCylinder(car, 0.6, 0.6); {
+			controller.AddCarUser(body, headlight);
+			body->friction = { 0.1, 0, 0.01 };
+		}
+
+		Entity* cameraPoint = world.AddTailEntity(car, { 0, 3, -5 }); {
+			cameraPoint->xAngle = 10;
+			camera.parent = cameraPoint;
+		}
+
+		user = car;
+	}
+	return car;
 }
 
 //	*****************************************  //
@@ -104,46 +193,33 @@ void Game::GenerateCubes()
 	}
 }
 
+Entity* Game::AddBullet(Point location, float yAngle, float speed, float v_speed)
+{
+	Entity* bullet = world.AddEntity(location); {
+		bullet->yAngle = yAngle;
+		graphics.AddSimpleTextureMesh(bullet, "bullet.obj");
+
+		controller.AddSuicidal(bullet, 5);
+		DynamicCylinder* body = physics.AddDynamicCylinder(bullet, 0.2, 0.4); {
+			double radYAngle = yAngle * 2 * PI / 360;
+			body->velocity.z = -speed * std::cos(radYAngle);
+			body->velocity.x = -speed * std::sin(radYAngle);
+			body->velocity.y = v_speed;
+			body->friction = { 0, 0, 0 };
+			controller.AddBullet(body);
+		}
+	}
+	return bullet;
+}
+
 void Game::Init()
 {
 	GenerateCubes();
-	Entity* user = world.AddEntity({0, 10, 0}); {
-		user->yAngle = 0;
-		Entity* cameraLocation = world.AddTailEntity(user, { 0, 3, -5}); {
-			cameraLocation->xAngle = 10;
-			camera.parent = cameraLocation;
-		}
+	AddUserCar({0, 0, 0});
 
-		Entity* mesh = world.AddTailEntity(user, { 0, 0, 0 }); {
-			mesh->yAngle = 180;
-			graphics.AddSimpleColorMesh(mesh, "car.obj");
-		}
-
-		Entity* light = world.AddTailEntity(user, { 0, 0, 0}); {
-			light->yAngle = 0;
-		}
-		SpotLight* headlight = illumination.AddSpotLight(light, 30, 0);
-
-		DynamicCylinder* body = physics.AddDynamicCylinder(user, 0.6, 0.6); {
-			controller.AddCarUser(body, headlight);
-			body->friction = { 0.1, 0, 0.01 };
-		}
-	}
-
-
-	Entity* car = world.AddEntity({ 0, 10, 3 }); {
-		physics.AddDynamicCylinder(car, 0.6, 0.6);
-
-		Entity* light = world.AddTailEntity(car, { 0, 0, 0 }); {
-			light->yAngle = 0;
-			illumination.AddSpotLight(light, 30, 0);
-		}
-
-		Entity* mesh = world.AddTailEntity(car, { 0, 0, 0 }); {
-			mesh->yAngle = 180;
-			graphics.AddSimpleColorMesh(mesh, "car.obj");
-		}
-	}
+	Entity* car2 = AddTank({ 5,2, -10 });
+	Entity* gun = AddGun({ 5,2, -15 });
+	Entity* bus = AddBus({ 5,2, -20 });
 
 	Entity* floor = world.AddEntity({ 0, -50, 0 }); {
 		Entity* mesh = world.AddTailEntity(floor, { 0, 50, 0 });

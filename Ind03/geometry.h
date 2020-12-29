@@ -238,3 +238,13 @@ static Point operator *(Point p, Matrix m)
 		(p.x * m[0][2] + p.y * m[1][2] + p.z * m[2][2] + m[3][2]) / T
 	};
 }
+
+template <typename T>
+static int Signum(T val)
+{
+	if (T(0) < val)
+		return -1;
+	if (T(0) > val)
+		return 1;
+	return 0;
+}

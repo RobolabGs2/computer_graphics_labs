@@ -10,8 +10,6 @@ static void Intersection(StaticCube* b1, StaticCube* b2);
 static void Intersection(DynamicCylinder* b1, StaticCube* b2);
 static void Intersection(DynamicCylinder* b1, DynamicCylinder* b2);
 
-template <typename T>
-static int Signum(T val);
 
 //	*****************************************  //
 //	**              Physics                **  //
@@ -263,14 +261,4 @@ static void Intersection(DynamicCylinder* b1, DynamicCylinder* b2)
 
 	b1->lastDCylinderCollision = b2;
 	b2->lastDCylinderCollision = b1;
-}
-
-template <typename T>
-static int Signum(T val)
-{
-	if (T(0) < val)
-		return -1;
-	if (T(0) > val)
-		return 1;
-	return 0;
 }
