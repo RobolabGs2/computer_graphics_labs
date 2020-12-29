@@ -17,19 +17,6 @@ struct Mesh
 	GLuint ambientMap;
 };
 
-struct Polygon
-{
-	int vertex[3];
-	int texture[3];
-	int normal[3];
-};
-
-struct Object
-{
-	std::vector<Polygon> polygons;
-	std::string mtl;
-};
-
 struct Material
 {
 	Color ambient;
@@ -44,16 +31,6 @@ struct Material
 		signed char shininess = 0, Color emission = { 0, 0, 0 });
 	Material(GLuint diffuseMap);
 	GLuint ParseMap(const std::string& diffuseMapFilename);
-};
-
-struct Obj
-{
-	std::unordered_map<std::string, Material> mtlLibrary;
-
-	std::vector<Object> objects;
-	std::vector<Point> vertexes;
-	std::vector<Point> normales;
-	std::vector<Point> textures;
 };
 
 

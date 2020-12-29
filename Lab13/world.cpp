@@ -26,12 +26,12 @@ void World::Draw()
 
 Matrix World::Camera()
 {
-	return location * rotation;
+	return location* rotation;
 }
 
 Matrix World::Projection()
 {
-	return projection;
+	return projection * Matrix::Scale(1, aspectRatio, 1);
 }
 
 World::~World()

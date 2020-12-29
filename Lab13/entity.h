@@ -5,23 +5,37 @@
 #include "tools.h"
 
 #include <GL\glew.h>
+#include <algorithm>
+#include <iterator>
+#include <string>
+
+
+#include "helper.h"
 
 class World;
 
 class Entity
 {
+	struct LightUnif
+	{
+		GLuint on, pos;
+	};
+	GLuint lcount;
+	std::vector<LightUnif> lights;
 public:
 	Matrix position = Matrix::Ident();
 	Matrix rotation = Matrix::Ident();
+	Matrix scale = Matrix::Ident();
 	World& world;
 
 	Entity(World& world) :
 		world(world)
-	{ }
+	{
+	}
 
 	Matrix Translation()
 	{
-		return rotation * position;
+		return scale * rotation * position;
 	}
 
 	void Move(Point p)
@@ -29,36 +43,61 @@ public:
 		position = position * Matrix::Move(p);
 	}
 
+	void Scale(float scale)
+	{
+		this->scale = Matrix::Scale(scale, scale, scale);
+	}
+
 	void Rotate(Matrix r)
 	{
 		rotation = rotation * r;
 	}
 
-	virtual void Draw() = 0;
+	virtual void Draw()
+	{
+	};
 
 	virtual ~Entity()
-	{ }
+	{
+	}
+
+protected:
+	void InitLight(GLuint program);
+
+	void SetLight();
 };
 
-class StrangeCube : public Entity
+template <typename T>
+class CompositeEntity : public Entity
 {
-	GLuint vertexVbo;
-	GLuint normalVbo;
-	GLuint program;
-	GLuint attribVertex;
-	GLuint attribVColor;
-	GLuint unifTransform;
-	GLuint unifCamera;
-	GLuint unifProjection;
-
-	void InitShaders();
-	void InitMesh();
-	void FreeShaders();
-	void FreeMesh();
+	std::vector<T*> entities;
 public:
-	StrangeCube(World& world);
-	void Draw() override;
-	~StrangeCube() override;
+	CompositeEntity(World& world, const std::string filename): Entity(world)
+	{
+		auto meshes = TriangleMesh(filename).ToMesh();
+		std::transform(meshes.begin(), meshes.end(), std::back_inserter(entities),
+		               [&](const Mesh& mesh) { return new T(world, mesh); });
+	}
+
+	CompositeEntity(World& world, const std::vector<Mesh> meshes) : Entity(world)
+	{
+		std::transform(meshes.begin(), meshes.end(), std::back_inserter(entities),
+		               [&](Mesh mesh) { return new T(world, mesh); });
+	}
+
+	void Draw() override
+	{
+		for (T* entity : entities)
+		{
+			entity->Draw(Translation());
+		}
+	}
+
+	~CompositeEntity()
+	{
+		for (Entity* e : entities)
+			delete e;
+	}
 };
 
 class TriangleEntity : public Entity
@@ -67,7 +106,8 @@ class TriangleEntity : public Entity
 	GLuint normalVbo;
 	GLuint program;
 	GLuint attribVertex;
-	GLuint attribVColor;
+	GLuint attribNormal;
+	GLuint unifColor;
 	GLuint unifTransform;
 	GLuint unifCamera;
 	GLuint unifProjection;
@@ -79,8 +119,8 @@ class TriangleEntity : public Entity
 	void FreeShaders();
 	void FreeMesh();
 public:
-	TriangleEntity(World& world, const std::string filename);
-	void Draw() override;
+	TriangleEntity(World& world, const Mesh& mesh);
+	void Draw(const Matrix& translation);
 	~TriangleEntity() override;
 };
 
@@ -105,8 +145,8 @@ class TexturedEntity : public Entity
 	void FreeShaders();
 	void FreeMesh();
 public:
-	TexturedEntity(World& world, const std::string filename);
-	void Draw() override;
+	TexturedEntity(World& world, const Mesh& mesh);
+	void Draw(const Matrix& translation);
 	~TexturedEntity() override;
 };
 
@@ -135,8 +175,8 @@ class ColorTexturedEntity : public Entity
 	void FreeMesh();
 	Color VertexColor(Point p);
 public:
-	ColorTexturedEntity(World& world, const std::string filename);
-	void Draw() override;
+	ColorTexturedEntity(World& world, const Mesh& mesh);
+	void Draw(const Matrix& translation);
 	~ColorTexturedEntity() override;
 };
 
@@ -165,85 +205,7 @@ class TexturedTexturedEntity : public Entity
 	void FreeMesh();
 public:
 	GLfloat intensity = 0.7;
-	TexturedTexturedEntity(World& world, const std::string filename);
-	void Draw() override;
+	TexturedTexturedEntity(World& world, const Mesh& mesh);
+	void Draw(const Matrix& translation);
 	~TexturedTexturedEntity() override;
-};
-
-class TexturedBlinnEntity : public Entity
-{
-	GLuint vertexVbo;
-	GLuint normalVbo;
-	GLuint textureVbo;
-	GLuint program;
-	GLuint attribVertex;
-	GLuint attribVColor;
-	GLuint attribTexture;
-	GLuint unifTransform;
-	GLuint unifCamera;
-	GLuint unifProjection;
-	GLuint unifTexmap;
-
-	Mesh mesh;
-
-	void InitShaders();
-	void InitMesh();
-	void FreeShaders();
-	void FreeMesh();
-public:
-	TexturedBlinnEntity(World& world, const std::string filename);
-	void Draw() override;
-	~TexturedBlinnEntity() override;
-};
-
-class TexturedToonEntity : public Entity
-{
-	GLuint vertexVbo;
-	GLuint normalVbo;
-	GLuint textureVbo;
-	GLuint program;
-	GLuint attribVertex;
-	GLuint attribVColor;
-	GLuint attribTexture;
-	GLuint unifTransform;
-	GLuint unifCamera;
-	GLuint unifProjection;
-	GLuint unifTexmap;
-
-	Mesh mesh;
-
-	void InitShaders();
-	void InitMesh();
-	void FreeShaders();
-	void FreeMesh();
-public:
-	TexturedToonEntity(World& world, const std::string filename);
-	void Draw() override;
-	~TexturedToonEntity() override;
-};
-
-class TexturedOtherEntity : public Entity
-{
-	GLuint vertexVbo;
-	GLuint normalVbo;
-	GLuint textureVbo;
-	GLuint program;
-	GLuint attribVertex;
-	GLuint attribVColor;
-	GLuint attribTexture;
-	GLuint unifTransform;
-	GLuint unifCamera;
-	GLuint unifProjection;
-	GLuint unifTexmap;
-
-	Mesh mesh;
-
-	void InitShaders();
-	void InitMesh();
-	void FreeShaders();
-	void FreeMesh();
-public:
-	TexturedOtherEntity(World& world, const std::string filename);
-	void Draw() override;
-	~TexturedOtherEntity() override;
 };

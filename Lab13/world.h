@@ -10,10 +10,14 @@ class World
 {
 	std::vector<Entity*> entities;
 public:
+	std::vector<Point> lightPos;
+	std::vector<int> lightOn;
 	Matrix projection = Matrix::Ident();
 	Matrix location = Matrix::Ident();
 	Matrix rotation = Matrix::Ident();
 
+	GLfloat aspectRatio = 1;
+	
 	World();
 
 	World(World&) = delete;

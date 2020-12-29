@@ -1,15 +1,16 @@
 #pragma once
+#include <string>
 
 
 namespace Shaders
 {
-	extern const char* simpleVertex;
-	extern const char* colorTextureVertex;
-	extern const char* simplePhong;
-	extern const char* simpleTexture;
-	extern const char* colorTexture;
-	extern const char* textureTexture;
-	extern const char* blinnTexture;
-	extern const char* toonTexture;
-	extern const char* otherTexture;
+	extern std::string simpleVertex;
+	extern std::string colorTextureVertex;
+	extern std::string simplePhong;
+	extern std::string simpleTexture;
+	extern std::string colorTexture;
+	extern std::string textureTexture;
+	extern std::string blinnTexture;
+	extern std::string toonTexture;
+	extern std::string otherTexture;
 }
