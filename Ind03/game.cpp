@@ -67,7 +67,6 @@ void Game::GenerateCubes()
 		physics.AddStaticCube(textured, { 4, 4, 4 });
 	}
 
-
 	Entity* texturedColor = world.AddEntity({ 20, 2, 0 }); {
 		graphics.AddSimpleColorTextureMesh(texturedColor, "box.obj");
 		physics.AddStaticCube(texturedColor, { 4, 4, 4 });
@@ -147,13 +146,33 @@ void Game::Init()
 	}
 
 	Entity* floor = world.AddEntity({ 0, -50, 0 }); {
-		Entity* mesh = world.AddTailEntity(floor, {0, 50, 0});
+		Entity* mesh = world.AddTailEntity(floor, { 0, 50, 0 });
 		graphics.AddSimpleTextureMesh(mesh, "floor.obj");
-		physics.AddStaticCube(floor, {100, 100, 100});
+		physics.AddStaticCube(floor, { 100, 100, 100 });
 	}
 
 	Entity* light1 = world.AddEntity({ 0, 20, 0 }); {
 		SpotLight* spotlight = illumination.AddSpotLight(light1);
 		controller.AddLightContriller(spotlight);
+	}
+
+	Entity* platform = world.AddEntity({ 0, 0, -45 }); {
+		platform->yAngle = 90;
+		graphics.AddSimpleTextureMesh(platform, "platform.obj");
+		physics.AddStaticCube(platform, { 100, 8, 20 });
+	}
+
+	for (int i = 0; i < 8; ++i)
+	{
+		GLfloat idx = (GLfloat)i;
+		Entity* textured1 = world.AddEntity({ idx + 20, idx / 2 - 1.99f, -25 - idx }); {
+			graphics.AddSimpleTextureMesh(textured1, "box.obj");
+			physics.AddStaticCube(textured1, { 4, 4, 4 });
+		}
+
+		Entity* textured2 = world.AddEntity({ idx - 20, (8 - idx) / 2 - 1.99f, -25 + idx - 8 }); {
+			graphics.AddSimpleTextureMesh(textured2, "box.obj");
+			physics.AddStaticCube(textured2, { 4, 4, 4 });
+		}
 	}
 }
