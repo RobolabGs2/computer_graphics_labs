@@ -29,15 +29,16 @@ void Reshape(int width, int height)
 template<bool value>
 void KeyEvent(unsigned char key, int x, int y)
 {
-	std::cout << key << std::endl;
 	switch (key)
 	{
 	case 'q':	game->keys.headlamp = value; return;
+	case 'e':	game->keys.lantern = value; return;
 	case 'a':	game->keys.left = value; return;
 	case 'd':	game->keys.right = value; return;
 	case 'w':	game->keys.up = value; return;
 	case 's':	game->keys.down = value; return;
 	case 'Q':	game->keys.headlamp = value; return;
+	case 'E':	game->keys.lantern = value; return;
 	case 'A':	game->keys.left = value; return;
 	case 'D':	game->keys.right = value; return;
 	case 'W':	game->keys.up = value; return;

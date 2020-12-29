@@ -150,6 +150,7 @@
     <ClCompile Include="game.cpp" />
     <ClCompile Include="graphics.cpp" />
     <ClCompile Include="helper.cpp" />
+    <ClCompile Include="illumination.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="obj_manager.cpp" />
     <ClCompile Include="physics.cpp" />
@@ -165,6 +166,7 @@
     <ClInclude Include="geometry.h" />
     <ClInclude Include="graphics.h" />
     <ClInclude Include="helper.h" />
+    <ClInclude Include="illumination.h" />
     <ClInclude Include="obj_manager.h" />
     <ClInclude Include="physics.h" />
     <ClInclude Include="shaders.h" />

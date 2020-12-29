@@ -22,9 +22,16 @@ void Controller::Tick(double dt)
 		m->Tick(dt);
 }
 
-CarUser* Controller::AddCarUser(DynamicCylinder* parent)
+CarUser* Controller::AddCarUser(DynamicCylinder* parent, SpotLight* headlight)
 {
-	CarUser* result = new CarUser(game, parent);
+	CarUser* result = new CarUser(game, parent, headlight);
+	AddTracking(result);
+	return result;
+}
+
+LightContriller* Controller::AddLightContriller(SpotLight* headlight)
+{
+	LightContriller* result = new LightContriller(game, headlight);
 	AddTracking(result);
 	return result;
 }
@@ -41,8 +48,8 @@ SimpleUser* Controller::AddSimpleUser(Entity* parent)
 //	**              CarUser                **  //
 //	*****************************************  //
 
-CarUser::CarUser(Game& game, DynamicCylinder* parent) :
-	game(game), parent(parent)
+CarUser::CarUser(Game& game, DynamicCylinder* parent, SpotLight* headlight) :
+	game(game), parent(parent), headlight(headlight)
 { }
 
 void CarUser::Tick(double dt)
@@ -61,14 +68,38 @@ void CarUser::Tick(double dt)
 	dt *= 10;
 	if (game.keys.up)
 	{
-		parent->force.z -= dt * std::cos(radYAngle);
-		parent->force.x -= dt * std::sin(radYAngle);
+		parent->force.z += dt * std::cos(radYAngle);
+		parent->force.x += dt * std::sin(radYAngle);
 	}
 
 	if (game.keys.down)
 	{
-		parent->force.z += dt * std::cos(radYAngle);
-		parent->force.x += dt * std::sin(radYAngle);
+		parent->force.z -= dt * std::cos(radYAngle);
+		parent->force.x -= dt * std::sin(radYAngle);
+	}
+
+	if (game.keys.headlamp)
+	{
+		headlight->enable = !headlight->enable;
+		game.keys.headlamp = false;
+	}
+}
+
+
+//	*****************************************  //
+//	**           LightContriller           **  //
+//	*****************************************  //
+
+LightContriller::LightContriller(Game& game, SpotLight* light) :
+	game(game), light(light)
+{ }
+
+void LightContriller::Tick(double dt)
+{
+	if (game.keys.lantern)
+	{
+		light->enable = !light->enable;
+		game.keys.lantern = false;
 	}
 }
 

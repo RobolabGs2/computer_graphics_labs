@@ -8,6 +8,7 @@
 ShaderManager::ShaderManager()
 {
 	InitShader(SIMPLE, Shaders::simpleVertex, Shaders::simpleTexture);
+	InitShader(GOURAUD, Shaders::gouraudVertex, Shaders::gouraudTexture);
 }
 
 void ShaderManager::SetCamera(const Matrix& projection, const Matrix& transform)
@@ -26,10 +27,12 @@ void ShaderManager::InitShader(ShaderType type, const char* vShaderSource, const
 	GLuint vShader = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vShader, 1, &vShaderSource, NULL);
 	glCompileShader(vShader);
+	shaderLog(vShader);
 
 	GLuint fShader = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fShader, 1, &fShaderSource, NULL);
 	glCompileShader(fShader);
+	shaderLog(fShader);
 
 	GLuint program = glCreateProgram();
 	glAttachShader(program, vShader);
@@ -46,10 +49,27 @@ void ShaderManager::InitShader(ShaderType type, const char* vShaderSource, const
 	programs[type].unifCamera = UnifLocation("camera", type);
 	programs[type].unifProjection = UnifLocation("projection", type);
 	programs[type].unifTransform = UnifLocation("transform", type);
+	programs[type].unifLightCount = UnifLocation("light_count", type);
+	programs[type].unifLightBlock = UnifBlockLocation("lightness", type);
 
 	checkOpenGLerror();
 }
 
+void ShaderManager::Initlight(const RawSpotLight* light, int count)
+{
+	if (lightBlockIndex != -1)
+	{
+		glDeleteBuffers(1, &lightBlockIndex);
+	}
+
+	glGenBuffers(1, &lightBlockIndex);
+	glBindBuffer(GL_UNIFORM_BUFFER, lightBlockIndex);
+	glBufferData(GL_UNIFORM_BUFFER, count * sizeof(RawSpotLight), light, GL_STATIC_DRAW);
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+	checkOpenGLerror();
+
+	lightCount = count;
+}
 
 GLuint ShaderManager::GetShader(ShaderType type)
 {
@@ -84,9 +104,41 @@ GLuint ShaderManager::UnifLocation(const char* name, ShaderType program)
 	return result;
 }
 
+GLuint ShaderManager::UnifBlockLocation(const char* name, ShaderType program)
+{
+	GLuint result = glGetUniformBlockIndex(GetShader(program), name);
+	if (result == -1)
+	{
+#ifdef _DEBUG
+		std::cout << "could not bind uniform " << name << std::endl;
+#else	// _DEBUG
+		throw std::exception((std::string("could not bind uniform ") + name).c_str());
+#endif	// _DEBUG
+	}
+	return result;
+}
+
 void ShaderManager::SetUniform(GLuint location, const Matrix& matrix)
 {
 	glUniformMatrix4fv(location, 1, GL_TRUE, matrix.Data());
+	checkOpenGLerror();
+}
+
+void ShaderManager::SetUniform(GLuint location, const Color& color)
+{
+	glUniform3fv(location, 1, &color.r);
+	checkOpenGLerror();
+}
+
+void ShaderManager::SetUniform(GLuint location, int value)
+{
+	glUniform1i(location, value);
+	checkOpenGLerror();
+}
+
+void ShaderManager::SetUniform(GLuint location, GLfloat value)
+{
+	glUniform1f(location, value);
 	checkOpenGLerror();
 }
 
@@ -116,6 +168,8 @@ void ShaderManager::UseShader(ShaderType program)
 	SetUniform(programs[program].unifCamera, cameraMatrix);
 	SetUniform(programs[program].unifProjection, projectionMatrix);
 	SetUniform(programs[program].unifTransform, transformMatrix);
+	glBindBufferBase(GL_UNIFORM_BUFFER, programs[program].unifLightBlock, lightBlockIndex);
+	SetUniform(programs[program].unifLightCount, lightCount);
 	checkOpenGLerror();
 }
 

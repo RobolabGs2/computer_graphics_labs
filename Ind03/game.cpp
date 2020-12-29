@@ -13,6 +13,7 @@
 
 Game::Game():
 	graphics(&shaderManager),
+	illumination(&shaderManager),
 	controller(*this)
 {
 	Init();
@@ -29,6 +30,7 @@ void Game::Tick(double dt)
 
 	shaderManager.SetCamera(camera.Projection(), camera.Transform());
 
+	illumination.Tick(dt);
 	world.Tick(dt);
 	physics.Tick(dt);
 	graphics.Tick(dt);
@@ -48,22 +50,110 @@ void Game::ResizeWindow(int width, int height)
 //	**       Описание игрового мира	       **  //
 //	*****************************************  //
 
-void Game::Init()
+void Game::GenerateCubes()
 {
-	Entity* user = world.AddEntity({0, 10, 0}); {
-		user->yAngle = 10;
-		camera.parent = user;
-		controller.AddCarUser(physics.AddDynamicCylinder(user, 1, 2));
+	Entity* textured2 = world.AddEntity({ 20, 2, 30 }); {
+		graphics.AddSimpleTexture2Mesh(textured2, "box.obj");
+		physics.AddStaticCube(textured2, { 4, 4, 4 });
 	}
 
-	Entity* car = world.AddEntity({ 0, -2, -3 }); {
-		graphics.AddSimpleMesh(car, "box.obj");
-		physics.AddDynamicCylinder(car, 1, 1);
+	Entity* texturedTextured = world.AddEntity({ 20, 2, 20 }); {
+		graphics.AddSimpleTextureTextureMesh(texturedTextured, "box.obj");
+		physics.AddStaticCube(texturedTextured, { 4, 4, 4 });
+	}
+
+	Entity* textured = world.AddEntity({ 20, 2, 10 }); {
+		graphics.AddSimpleTextureMesh(textured, "box.obj");
+		physics.AddStaticCube(textured, { 4, 4, 4 });
+	}
+
+
+	Entity* texturedColor = world.AddEntity({ 20, 2, 0 }); {
+		graphics.AddSimpleColorTextureMesh(texturedColor, "box.obj");
+		physics.AddStaticCube(texturedColor, { 4, 4, 4 });
+	}
+
+	Entity* color = world.AddEntity({ 20, 2, -10 }); {
+		graphics.AddSimpleColorMesh(color, "box.obj");
+		physics.AddStaticCube(color, { 4, 4, 4 });
+	}
+
+	Entity* gtextured2 = world.AddEntity({ -20, 2, 30 }); {
+		graphics.AddSimpleTexture2Mesh(gtextured2, "box.obj", ShaderManager::GOURAUD);
+		physics.AddStaticCube(gtextured2, { 4, 4, 4 });
+	}
+
+	Entity* gtexturedTextured = world.AddEntity({ -20, 2, 20 }); {
+		graphics.AddSimpleTextureTextureMesh(gtexturedTextured, "box.obj", ShaderManager::GOURAUD);
+		physics.AddStaticCube(gtexturedTextured, { 4, 4, 4 });
+	}
+
+	Entity* gtextured = world.AddEntity({ -20, 2, 10 }); {
+		graphics.AddSimpleTextureMesh(gtextured, "box.obj", ShaderManager::GOURAUD);
+		physics.AddStaticCube(gtextured, { 4, 4, 4 });
+	}
+
+
+	Entity* gtexturedColor = world.AddEntity({ -20, 2, 0 }); {
+		graphics.AddSimpleColorTextureMesh(gtexturedColor, "box.obj", ShaderManager::GOURAUD);
+		physics.AddStaticCube(gtexturedColor, { 4, 4, 4 });
+	}
+
+	Entity* gcolor = world.AddEntity({ -20, 2, -10 }); {
+		graphics.AddSimpleColorMesh(gcolor, "box.obj", ShaderManager::GOURAUD);
+		physics.AddStaticCube(gcolor, { 4, 4, 4 });
+	}
+}
+
+void Game::Init()
+{
+	GenerateCubes();
+	Entity* user = world.AddEntity({0, 10, 0}); {
+		user->yAngle = 0;
+		Entity* cameraLocation = world.AddTailEntity(user, { 0, 3, -5}); {
+			cameraLocation->xAngle = 10;
+			camera.parent = cameraLocation;
+		}
+
+		Entity* mesh = world.AddTailEntity(user, { 0, 0, 0 }); {
+			mesh->yAngle = 180;
+			graphics.AddSimpleColorMesh(mesh, "car.obj");
+		}
+
+		Entity* light = world.AddTailEntity(user, { 0, 0, 0}); {
+			light->yAngle = 0;
+		}
+		SpotLight* headlight = illumination.AddSpotLight(light, 30, 0);
+
+		DynamicCylinder* body = physics.AddDynamicCylinder(user, 0.6, 0.6); {
+			controller.AddCarUser(body, headlight);
+			body->friction = { 0.1, 0, 0.01 };
+		}
+	}
+
+
+	Entity* car = world.AddEntity({ 0, 10, 3 }); {
+		physics.AddDynamicCylinder(car, 0.6, 0.6);
+
+		Entity* light = world.AddTailEntity(car, { 0, 0, 0 }); {
+			light->yAngle = 0;
+			illumination.AddSpotLight(light, 30, 0);
+		}
+
+		Entity* mesh = world.AddTailEntity(car, { 0, 0, 0 }); {
+			mesh->yAngle = 180;
+			graphics.AddSimpleColorMesh(mesh, "car.obj");
+		}
 	}
 
 	Entity* floor = world.AddEntity({ 0, -50, 0 }); {
 		Entity* mesh = world.AddTailEntity(floor, {0, 50, 0});
-		graphics.AddSimpleMesh(mesh, "floor.obj");
+		graphics.AddSimpleTextureMesh(mesh, "floor.obj");
 		physics.AddStaticCube(floor, {100, 100, 100});
+	}
+
+	Entity* light1 = world.AddEntity({ 0, 20, 0 }); {
+		SpotLight* spotlight = illumination.AddSpotLight(light1);
+		controller.AddLightContriller(spotlight);
 	}
 }

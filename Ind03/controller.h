@@ -3,6 +3,7 @@
 #include "garbage_collector.h"
 #include "world.h"
 #include "physics.h"
+#include "illumination.h"
 
 class Game;
 
@@ -25,8 +26,18 @@ struct CarUser : public Control
 {
 	Game& game;
 	DynamicCylinder* parent;
+	SpotLight* headlight;
 
-	CarUser(Game& game, DynamicCylinder* parent);
+	CarUser(Game& game, DynamicCylinder* parent, SpotLight* headlight);
+	void Tick(double dt) override;
+};
+
+struct LightContriller : public Control
+{
+	Game& game;
+	SpotLight* light;
+
+	LightContriller(Game& game, SpotLight* light);
 	void Tick(double dt) override;
 };
 
@@ -38,6 +49,7 @@ public:
 	Controller(Game& game);
 	void Tick(double dt);
 
-	CarUser* AddCarUser(DynamicCylinder* parent);
+	CarUser* AddCarUser(DynamicCylinder* parent, SpotLight* headlight);
+	LightContriller* AddLightContriller(SpotLight* light);
 	SimpleUser* AddSimpleUser(Entity* parent);
 };

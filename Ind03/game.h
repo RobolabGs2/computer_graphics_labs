@@ -6,6 +6,7 @@
 #include "physics.h"
 #include "controller.h"
 #include "shader_manager.h"
+#include "illumination.h"
 #include <string>
 
 class Game
@@ -16,10 +17,11 @@ public:
 	
 	ShaderManager shaderManager;
 
-	Controller	controller;
-	Graphics	graphics;
-	Physics		physics;
-	World		world;
+	Illumination	illumination;
+	Controller		controller;
+	Graphics		graphics;
+	Physics			physics;
+	World			world;
 
 	struct {
 		bool left = false;
@@ -38,4 +40,5 @@ public:
 	void ResizeWindow(int width, int height);
 private:
 	void Init();
+	void GenerateCubes();
 };
